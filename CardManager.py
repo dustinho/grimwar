@@ -26,6 +26,8 @@ class CardManager:
         self.hand.remove(card)
         self.discard_pile.append(card)
 
+    ## Setters
+
     def set_discard_pile(self, discard_pile):
         self.discard_pile = deque(discard_pile)
 
@@ -35,10 +37,14 @@ class CardManager:
     def set_hand(self, hand):
         self.hand = deque(hand)
 
+    def set_inplay(self, inplay):
+        self.inplay = deque(inplay)
+
     def reset(self):
         self.deck = deque()
         self.discard_pile = deque()
         self.hand = deque()
+        self.inplay = deque()
 
 
 
