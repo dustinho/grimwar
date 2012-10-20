@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from CardManager import *
 import json
 import random
 import sys
@@ -8,8 +9,8 @@ BOARD_WIDTH = 7
 BOARD_HEIGHT = 4
 BOARD = {}
 
-P0_HP = 20;
-P1_HP = 20;
+PLAYER = {}
+CM = {}
 
 def main():
     print_startinfo()
@@ -33,9 +34,19 @@ def main():
         damage_phase(first)
         damage_phase(second)
 
+        print_state()
+
         cleanup_phase()
 
     sys.exit()
+
+## Debug function to print out current state
+def print_state():
+    for p, cm in CM.items():
+        print "%d card state:" % p
+        print cm
+    print ""
+    return
 
 def setup_phase():
     # Set up the board
@@ -45,6 +56,10 @@ def setup_phase():
             if x % 2 == 1 and y == BOARD_HEIGHT - 1:
                 continue
             BOARD[(x,y)] = None
+
+    # Instantiate Players/Card Managers
+    CM[0] = CardManager()
+    CM[1] = CardManager()
     return
 
 def place_phase(player):
@@ -57,11 +72,14 @@ def damage_phase(player):
     return
 
 def cleanup_phase():
+    # Calculate Gameover
+    sys.exit()
     return
 
 def calculate_advantage():
     return 0
 
+## Print out information needed to instantiate game
 def print_startinfo():
     startinfo = {
         "board_width" : BOARD_WIDTH,

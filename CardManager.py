@@ -5,6 +5,13 @@ class CardManager:
     def __init__(self):
         self.reset()
 
+    def __str__(self):
+        ret = ""
+        ret += "Hand: " + str(self.hand) + "\n"
+        ret += "Deck: " + str(self.deck) + "\n"
+        ret += "Discard: " + str(self.discard)
+        return ret
+
     def buy(self, card):
         self.discard.append(card)
 
