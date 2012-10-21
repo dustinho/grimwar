@@ -1,5 +1,6 @@
 from Player import *
 import logging
+
 # Right now, Board isn't really a class, but a container data structure.
 class Board:
     r"""A Board is essentially a map from coordinate pairs to Unit objects.

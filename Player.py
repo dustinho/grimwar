@@ -30,6 +30,10 @@ class Player:
         self.hand.remove(card)
         self.discard_pile.append(card)
 
+    def unit_died(self, unit):
+        self.inplay.remove(unit.card)
+        self.discard_pile.append(unit.card)
+
     ## Setters
 
     def set_discard_pile(self, discard_pile):

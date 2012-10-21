@@ -12,15 +12,15 @@ import sys
 BOARD_LENGTH = 31
 BOARD_WIDTH = 4
 
-PLAYER = {}
-BOARD = None
-
 def main():
+    players = {}
+    board = None
+
     print_startinfo()
     # input = raw_input()
 
     # Setup
-    setup_phase()
+    (players, board) = setup_phase(players, board)
 
     # Main Loop
     while (True):
@@ -36,29 +36,31 @@ def main():
         damage_phase(first)
         damage_phase(second)
 
-        print_state()
+        print_state(players, board)
 
-        cleanup_phase()
+        (players, board) = cleanup_phase(players, board)
 
+        # Run one turn
+        sys.exit()
     sys.exit()
 
 ## Debug function to print out current state
-def print_state():
-    for p, cm in PLAYER.items():
+def print_state(players, board):
+    for p, cm in players.items():
         print "%d card state:" % p
         print cm
     print ""
     return
 
-def setup_phase():
+def setup_phase(players, board):
     # Set up board
-    BOARD = Board(field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
+    board = Board(field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
 
     # Instantiate Players/Decks
-    PLAYER[0] = Player()
-    PLAYER[1] = Player()
+    players[0] = Player()
+    players[1] = Player()
 
-    return
+    return (players, board)
 
 def place_phase(player):
     return
@@ -69,10 +71,18 @@ def move_phase(player):
 def damage_phase(player):
     return
 
-def cleanup_phase():
-    # Calculate Gameover
-    sys.exit()
-    return
+def cleanup_phase(players, board):
+    locations_to_delete = []
+    for location, unit in board.grid.iteritems():
+        if unit.get_curr_hp() <= 0:
+            unit.owner.unit_died(unit)
+            locations_to_delete.append(location)
+
+    for loc in locations_to_delete:
+        del board.grid[loc]
+
+    # TODO Calculate Gameover
+    return (players, board)
 
 def calculate_advantage():
     return 0
