@@ -1,4 +1,5 @@
-import Player
+from Player import *
+
 # Right now, Board isn't really a class, but a container data structure.
 class Board:
     r"""A Board is essentially a map from coordinate pairs to Unit objects.
@@ -32,7 +33,7 @@ class Board:
     odd-numbered columns vertically offset and with one fewer row.
 
     A Board currently contains three pieces of data:
-    field_length: the length (in hexes 
+    field_length: the length (in hexes
 
     """
     def __init__(self, field_length=21, field_width=5):
@@ -55,7 +56,7 @@ class Board:
         many spaces as they can.  So if a speed 2 unit is behind a speed 1 unit,
         both will advance one square each tick.
         """
-        assert isinstance(player, Player.Player), "player {0} is not a Player".format(player)
+        assert isinstance(player, Player), "player {0} is not a Player".format(player)
         direction = player.get_direction()
 
         # Collect all the units that are owned by the specified player

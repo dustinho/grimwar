@@ -1,7 +1,7 @@
 import unittest
 from Board import Board
 from Card import Card
-import Player
+from Player import *
 from Unit import Unit
 
 TEST_FIELD_LENGTH = 9
@@ -10,7 +10,7 @@ TEST_FIELD_WIDTH = 3
 class TestBoard(unittest.TestCase):
     def setUp(self):
         self.b = Board(field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
-        self.p = Player.Player()
+        self.p = Player()
         self.footman_card = Card("Footman")
 
     def test_place_footman_and_move_once(self):

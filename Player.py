@@ -1,11 +1,11 @@
 from collections import deque
 import random
 
-STARTING_HEALTH = 20
-FACING_LEFT = 0
-FACING_RIGHT = 1
-
 class Player:
+    STARTING_HEALTH = 20
+    FACING_LEFT = 0
+    FACING_RIGHT = 1
+
     def __init__(self):
         self.reset()
 
@@ -49,8 +49,8 @@ class Player:
         self.discard_pile = deque()
         self.hand = deque()
         self.inplay = deque()
-        self.health = STARTING_HEALTH
-        self.set_direction(FACING_RIGHT)
+        self.health = Player.STARTING_HEALTH
+        self.set_direction(Player.FACING_RIGHT)
 
     def set_direction(self, direction):
         self.direction = direction

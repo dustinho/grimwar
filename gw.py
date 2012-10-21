@@ -1,19 +1,22 @@
 #!/usr/bin/python
 
-from Player import *
+from Player import Player
+from Board import *
+from Card import *
+from HeroCard import *
+
 import json
 import random
 import sys
 
-BOARD_WIDTH = 7
-BOARD_HEIGHT = 4
-BOARD = {}
+BOARD_LENGTH = 31
+BOARD_WIDTH = 4
 
 PLAYER = {}
+BOARD = None
 
 def main():
     print_startinfo()
-    BOARD[1] = 2;
     # input = raw_input()
 
     # Setup
@@ -48,17 +51,13 @@ def print_state():
     return
 
 def setup_phase():
-    # Set up the board
-    for x in range(BOARD_WIDTH):
-        for y in range(BOARD_HEIGHT):
-            # Odd rows are one less in height
-            if x % 2 == 1 and y == BOARD_HEIGHT - 1:
-                continue
-            BOARD[(x,y)] = None
+    # Set up board
+    BOARD = Board(field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
 
-    # Instantiate Players/Card Managers
+    # Instantiate Players/Decks
     PLAYER[0] = Player()
     PLAYER[1] = Player()
+
     return
 
 def place_phase(player):
@@ -81,8 +80,8 @@ def calculate_advantage():
 ## Print out information needed to instantiate game
 def print_startinfo():
     startinfo = {
+        "board_length" : BOARD_LENGTH,
         "board_width" : BOARD_WIDTH,
-        "board_height" : BOARD_HEIGHT,
     }
     print json.dumps(startinfo)
     return
