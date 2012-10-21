@@ -49,3 +49,11 @@ class Unit:
 
     def get_attack_pattern(self):
         return self._attack_pattern
+
+class Worker(Unit):
+    def __init__(self, card, owner):
+        Unit.__init__(self, card, owner)
+        self._waypoints = 0
+
+    def get_waypoints(self):
+        return self._waypoints

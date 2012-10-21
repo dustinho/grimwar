@@ -1,6 +1,8 @@
 import unittest
 from Board import Board
 from Card import Card
+from HeroCard import HeroCard
+from WorkerCard import WorkerCard
 from Player import *
 from Unit import Unit
 
@@ -16,6 +18,8 @@ class TestBoard(unittest.TestCase):
         self.footman_card = Card("Footman")
         self.fast_footman_card = Card("Footman")
         self.fast_footman_card.speed = 2
+        self.hero_card = HeroCard("Arius")
+        self.worker_card = WorkerCard("Peon")
 
     def test_place_footman_and_move_once(self):
         footman = Unit(self.footman_card, self.p1)
