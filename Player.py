@@ -1,4 +1,5 @@
 from collections import deque
+from Grimoire import Grimoire
 import random
 
 class Player:
@@ -58,6 +59,7 @@ class Player:
         self.health = Player.STARTING_HEALTH
         self.set_direction(Player.FACING_RIGHT)
         self.gold = Player.STARTING_GOLD
+        self.grimoire = Grimoire()
 
     def set_direction(self, direction):
         self.direction = direction

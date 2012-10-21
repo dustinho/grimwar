@@ -3,6 +3,8 @@ from Player import *
 from Board import *
 from Unit import *
 from Card import *
+from WorkerCard import *
+from HeroCard import *
 from gw import cleanup_phase
 
 class TestEngine(unittest.TestCase):
@@ -30,13 +32,6 @@ class TestEngine(unittest.TestCase):
         self.assertEqual(len(self.players[0].hand), 1)
         self.assertEqual(len(self.players[0].inplay), 1)
 
-    def test_money_phase(self):
-        worker_0 = Unit(Card('Peon'))
-        worker_2 = Unit(Card('Peon'))
-        sector2_col = board.SECTORS[2]
-
-        self.board.grid[(1,0)] = worker_0
-        self.board.grid[(sector2_col,0)] = worker_2
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
 import json
 import os
+from Card import Card
 
 class HeroCard(Card):
     """
