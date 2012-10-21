@@ -1,14 +1,14 @@
 import json
 import os
 
-class HeroCard:
+class WorkerCard:
     """
-    HeroCard is a special card. Its JSON is loaded from the /Cards/Hero
+    WorkerCard is a special card. Its JSON is loaded from the /Cards/Hero
     directory
     """
 
     def __init__(self, name):
-        spec_file = os.path.join(os.path.dirname(__file__), 'Cards/Heroes', name + ".json")
+        spec_file = os.path.join(os.path.dirname(__file__), 'Cards/Workers', name + ".json")
         self.name = self.ammo = self.cost = self.hp = self.speed = self.damage = self.attack_pattern = None
 
         data = json.load(open(spec_file))
