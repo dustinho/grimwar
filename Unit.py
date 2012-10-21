@@ -18,6 +18,8 @@ class Unit:
         self._hp = self.card.hp
         self._ammo = self.card.ammo
         self._speed = self.card.speed
+        self._damage = self.card.damage
+        self._attack_pattern = self.card.attack_pattern
         self.owner = owner
 
     def __str__(self):
@@ -42,4 +44,8 @@ class Unit:
     def get_speed(self):
         return self._speed
 
+    def get_damage(self):
+        return self._damage
 
+    def get_attack_pattern(self):
+        return self._attack_pattern
