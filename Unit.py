@@ -20,6 +20,7 @@ class Unit:
         self._speed = self.card.speed
         self._damage = self.card.damage
         self._attack_pattern = self.card.attack_pattern
+        self._attack_type = self.card.attack_type
         self.owner = owner
 
     def __str__(self):
@@ -42,13 +43,20 @@ class Unit:
         return []
 
     def get_speed(self):
+        # how many forward spaces the unit moves per turn (possibly fancier moves later)
         return self._speed
 
     def get_damage(self):
+        # amount of damage dealt per attack
         return self._damage
 
     def get_attack_pattern(self):
+        # an array of [x,y] coordinates it can attack if the unit is at [0,0]
         return self._attack_pattern
+
+    def get_attack_type(self):
+        # "single" attacks first enemy unit in range, "splash" attacks all in range
+        return self._attack_type
 
 class Worker(Unit):
     def __init__(self, card, owner):
@@ -56,4 +64,5 @@ class Worker(Unit):
         self._waypoints = 0
 
     def get_waypoints(self):
+        # keeps track of how many waypoints the worker has reached
         return self._waypoints
