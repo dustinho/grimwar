@@ -70,11 +70,7 @@ class Unit:
 class Worker(Unit):
     def __init__(self, card, owner):
         Unit.__init__(self, card, owner)
-        self._waypoints = 0
-
-    def get_waypoints(self):
-        # keeps track of how many waypoints the worker has reached
-        return self._waypoints
+        self.visited_sectors = []
 
 class Hero(Unit):
     def __init(self, card, owner):

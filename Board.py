@@ -38,7 +38,28 @@ class Board:
     field_length: the span of the field on the unit vector (1, 0)
     field_width: the width of the field on the unit vector (0, 1)
     """
-    def __init__(self, field_length=12, field_width=5):
+
+    """
+    SECTOR specifies the first column in which a worker is considered eligible
+    for a payout. Workers are only eligible for one payout from each zone.
+    """
+    SECTORS = {
+        0 : 0,
+        1 : 3,
+        2 : 6,
+        3 : 10,
+        4 : 13,
+    }
+
+    SECTOR_PAYOUT = {
+        0 : 0,
+        1 : 2,
+        2 : 2,
+        3 : 3,
+        4 : 3,
+    }
+
+    def __init__(self, field_length=17, field_width=5):
         self.field_length = field_length
         self.field_width = field_width
         self.grid = {}
@@ -165,4 +186,12 @@ class Board:
             return dist_from_left >= 0 and dist_from_left <= (self.field_length - 1) * 2
         else:
             return dist_from_left >= 1 and dist_from_left <= (self.field_length - 1) * 2 - 1
+
+    def get_zone_for_position(self, position):
+        for sector, col in self.SECTORS:
+            if position[0] >= col:
+                return sector
+        assert False, "Should have returned a zone for {0}".format(position)
+
+
 

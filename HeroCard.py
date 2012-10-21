@@ -1,7 +1,7 @@
 import json
 import os
 
-class HeroCard:
+class HeroCard(Card):
     """
     HeroCard is a special card. Its JSON is loaded from the /Cards/Hero
     directory

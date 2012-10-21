@@ -6,6 +6,7 @@ class Player:
     INVALID_PLAYER = 0
     FACING_LEFT = 1
     FACING_RIGHT = 2
+    STARTING_GOLD = 10
 
     def __init__(self):
         self.reset()
@@ -56,6 +57,7 @@ class Player:
         self.inplay = deque()
         self.health = Player.STARTING_HEALTH
         self.set_direction(Player.FACING_RIGHT)
+        self.gold = Player.STARTING_GOLD
 
     def set_direction(self, direction):
         self.direction = direction

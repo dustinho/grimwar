@@ -12,6 +12,8 @@ import sys
 BOARD_LENGTH = 31
 BOARD_WIDTH = 4
 
+UPKEEP_GOLD = 1
+
 def main():
     players = {}
     board = None
@@ -24,6 +26,8 @@ def main():
 
     # Main Loop
     while (True):
+        upkeep_phase(players, board)
+
         place_phase(1)
         place_phase(2)
 
@@ -35,6 +39,8 @@ def main():
 
         damage_phase(first)
         damage_phase(second)
+
+        money_phase(players, board)
 
         print_state(players, board)
 
@@ -51,6 +57,10 @@ def print_state(players, board):
         print cm
     print ""
     return
+
+def upkeep_phase(players, board):
+    for id, player in players:
+        player.gold += UPKEEP_GOLD
 
 def setup_phase(players, board):
     # Set up board
@@ -70,6 +80,18 @@ def move_phase(player):
 
 def damage_phase(player):
     return
+
+def money_phase(players, board):
+    """
+    Workers get money from the sector they end up in, but should only be paid
+    for a sector once per life.
+    """
+    for location, unit in board.grid.iteritems():
+        if isinstance(unit, Worker):
+            sector = board.get_sector_for_position(location)
+            if sector not in unit.visited_sectors:
+                unit.owner.gold += board.SECTOR_PAYOUT[sector]
+                unit.visited_sectors.append(sector)
 
 def cleanup_phase(players, board):
     locations_to_delete = []

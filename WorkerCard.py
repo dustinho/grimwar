@@ -1,7 +1,7 @@
 import json
 import os
 
-class WorkerCard:
+class WorkerCard(Card):
     """
     WorkerCard is a special card. Its JSON is loaded from the /Cards/Hero
     directory
