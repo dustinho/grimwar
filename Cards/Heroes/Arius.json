@@ -3,6 +3,8 @@
   "cost" : 5,
   "hp" : 10,
   "ammo" : 5,
-  "speed" : 1
+  "speed" : 1,
+  "damage" : 2, 
+  "attack_pattern" : [[1,0],[2,0],[1,-1]]
 }
 
