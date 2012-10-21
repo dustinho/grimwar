@@ -66,3 +66,8 @@ class Worker(Unit):
     def get_waypoints(self):
         # keeps track of how many waypoints the worker has reached
         return self._waypoints
+
+class Hero(Unit):
+    def __init(self, card, owner):
+        Unit.__init__(self, card, owner)
+        assert isinstance(card, HeroCard)
