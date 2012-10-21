@@ -79,4 +79,4 @@ class Worker(Unit):
 class Hero(Unit):
     def __init(self, card, owner):
         Unit.__init__(self, card, owner)
-        assert isinstance(card, HeroCard)
+        assert isinstance(card, HeroCard), "card is not a HeroCard: {0}".format(card)
