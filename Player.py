@@ -42,7 +42,7 @@ class Player:
 
     def play(self, card_name):
         # find the card in hand
-        card = self.get_card(card_name, self.hand)
+        card = self.find_card(card_name, self.hand)
         self.spend_gold(card.cost)
         self.inplay.append(card)
         self.hand.remove(card)
@@ -74,7 +74,7 @@ class Player:
             assert False, "Not enough gold to perform action"
         self.gold -= amount
 
-    def get_card(self, card_name, collec):
+    def find_card(self, card_name, collec):
         # returns the first card object that matches card name from collec
         if card_name not in [c.name for c in collec]:
             assert False, "{0} not in {1}".format(card.name, collec)
