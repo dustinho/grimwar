@@ -199,5 +199,12 @@ class Board:
                 return sector
         assert False, "Should have returned a zone for {0}".format(position)
 
-
+    def place_unit(self, card, owner, position):
+        """Places a unit owned by owner based on card name "card" 
+        at position (u,v)"""
+        if self._which_casting_zone_owns_hex(position) != owner.direction:
+            assert False, "Not casting in owner's casting zone"
+        if position in self.grid:
+            assert False, "Unit already exists at {0}".format(position)
+        self.grid[position] = Unit(card, owner)
 

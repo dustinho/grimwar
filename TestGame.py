@@ -3,7 +3,6 @@ from Game import *
 <<<<<<< HEAD
 =======
 from Unit import *
-from HeroCard import *
 import logging
 logging.getLogger().setLevel(logging.DEBUG)
 >>>>>>> cb4f54b... Do move phase and damage things more correctly

@@ -68,6 +68,10 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(footman2.get_curr_hp() + footman.get_damage(), starthp2)
         self.b.grid.clear()
 
+    def test_place_unit(self):
+        self.b.place_unit(self.footman_card, self.p1, (1,0))
+        self.b.assertEqual(self.grid[(1,0)].name == "Footman")
+        self.b.grid.clear()
 
 if __name__ == "__main__":
     unittest.main()
