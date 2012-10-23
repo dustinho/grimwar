@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 
 class Card:
     """
@@ -10,11 +11,33 @@ class Card:
 
     Cards are immutable.
     """
+    @staticmethod
+    def get_card(name):
+        """Factory method that searches all card folders for the named card and
+        returns an instance of the appropriate typed subclass of Card"""
+        card_root = os.path.join(os.path.dirname(__file__), 'Cards')
+        folders_and_types = [ (card_root, Card),
+                              (os.path.join(card_root, "Workers"), WorkerCard),
+                              (os.path.join(card_root, "Heroes"), HeroCard),
+                            ]
+        for (folder, klass) in folders_and_types:
+            json_file_path = os.path.join(folder, name + ".json")
+            logging.debug("trying {0}".format(json_file_path))
+            if os.path.exists(json_file_path):
+                return klass(json_file_path)
+        raise ValueError("Couldn't find a file {0}.json".format(name))
 
-    def __init__(self, name):
-        spec_file = self.get_card_path(name)
-        self.name = self.ammo = self.cost = self.hp = self.speed = self.damage = self.attack_pattern = self.attack_type = self.tier = self.buy_cost = None
-
+    def __init__(self, spec_file):
+        self.name = None
+        self.ammo = None
+        self.cost = None
+        self.hp = None
+        self.speed = None
+        self.damage = None
+        self.attack_pattern = None
+        self.attack_type = None
+        self.tier = None
+        self.buy_cost = None
         data = json.load(open(spec_file))
 
         for key in data:
@@ -25,25 +48,19 @@ class Card:
         """return a string describing the Card"""
         return "<{0} Card>".format(self.name)
 
-    def get_card_path(self, name):
-        return os.path.join(os.path.dirname(__file__), 'Cards', name + ".json")
 
 class WorkerCard(Card):
     """
     WorkerCard is a special card. Its JSON is loaded from the /Cards/Workers
     directory
     """
-    def get_card_path(self, name):
-        return os.path.join(os.path.dirname(__file__), 'Cards', 'Workers', name + ".json")
-    def __init__(self, name):
-        Card.__init__(self, name)
+    def __init__(self, spec_file):
+        Card.__init__(self, spec_file)
 
 class HeroCard(Card):
     """
     HeroCard is a special card.  Its JSON is loaded from the /Cards/Heroes
     directory
     """
-    def get_card_path(self, name):
-        return os.path.join(os.path.dirname(__file__), 'Cards', 'Heroes', name + ".json")
-    def __init__(self, name):
-        Card.__init__(self, name)
+    def __init__(self, spec_file):
+        Card.__init__(self, spec_file)

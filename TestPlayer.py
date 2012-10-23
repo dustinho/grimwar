@@ -7,8 +7,8 @@ class TestPlayer(unittest.TestCase):
         self.player = Player(0)
 
     def test_draw2_disc2(self):
-        footman = Card('Footman')
-        peon = WorkerCard('Peon')
+        footman = Card.get_card('Footman')
+        peon = Card.get_card('Peon')
         self.player.set_deck([footman, peon])
 
         self.player.draw()

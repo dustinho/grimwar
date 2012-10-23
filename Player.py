@@ -32,16 +32,12 @@ class Player:
     def buy(self, card_name):
         self.grimoire.remove_from_grimoire(card_name)
         try:
-            self.spend_gold(Card(card_name).buy_cost)
+            self.spend_gold(Card.get_card(card_name).buy_cost)
         except ValueError:
             # rollback on failure
             self.grimoire.add_to_grimoire(card_name)
             return
-        if card_name == "Peon":
-            # TODO: this is really bad, make this more versatile
-            self.discard_pile.append(WorkerCard(card_name))
-            return
-        self.discard_pile.append(Card(card_name))
+        self.discard_pile.append(Card.get_card(card_name))
 
 
     def play(self, card_name):

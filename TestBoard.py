@@ -15,11 +15,11 @@ class TestBoard(unittest.TestCase):
         self.p1 = Player(0)
         self.p2 = Player(1)
         self.p2.set_direction(Player.FACING_LEFT)
-        self.footman_card = Card("Footman")
-        self.fast_footman_card = Card("Footman")
+        self.footman_card = Card.get_card("Footman")
+        self.fast_footman_card = Card.get_card("Footman")
         self.fast_footman_card.speed = 2
-        self.hero_card = HeroCard("Arius")
-        self.worker_card = WorkerCard("Peon")
+        self.hero_card = HeroCard.get_card("Arius")
+        self.worker_card = WorkerCard.get_card("Peon")
 
     def test_place_footman_and_move_once(self):
         footman = Unit(self.footman_card, self.p1)

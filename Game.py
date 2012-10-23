@@ -9,6 +9,7 @@ import json
 import random
 import sys
 import copy
+import pickle
 
 BOARD_LENGTH = 19
 BOARD_WIDTH = 5
@@ -24,6 +25,7 @@ class Game:
         self.setup_phase()
         self.input_type = input_type
         self.turn = 0
+        self.listeners = []
 
     def setup_phase(self):
         # Set up board
@@ -36,38 +38,38 @@ class Game:
 
         # Initial Decks
         self.players[0].set_deck([
-            Card('Footman'),
-            Card('Footman'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
+            Card.get_card('Footman'),
+            Card.get_card('Footman'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
         ])
         self.players[0].set_hand([
-            Card('Footman'),
-            Card('Footman'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
+            Card.get_card('Footman'),
+            Card.get_card('Footman'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
         ])
         self.players[1].set_deck([
-            Card('Footman'),
-            Card('Footman'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
+            Card.get_card('Footman'),
+            Card.get_card('Footman'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
         ])
         self.players[1].set_hand([
-            Card('Footman'),
-            Card('Footman'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
-            WorkerCard('Peon'),
+            Card.get_card('Footman'),
+            Card.get_card('Footman'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
+            Card.get_card('Peon'),
         ])
 
         # Initial Heroes
         middle = (BOARD_WIDTH - 1) / 2
-        self.put_in_play(HeroCard('Arius'), 0, (-1, middle))
-        self.put_in_play(HeroCard('Arius'), 1, (BOARD_LENGTH-2, middle))
+        self.put_in_play(Card.get_card('Arius'), 0, (-1, middle))
+        self.put_in_play(Card.get_card('Arius'), 1, (BOARD_LENGTH-2, middle))
 
         # Initial Grimoire
         self.players[0].library = {'Peon' : 10, 'Footman' : 10}
@@ -195,10 +197,6 @@ class Game:
                     unit.owner.unit_died(unit)
                 locations_to_delete.append(location)
 
-            # TEST
-            if unit.get_curr_ammo() == 0:
-                sys.exit()
-
         for loc in locations_to_delete:
             del self.board.grid[loc]
 
@@ -236,6 +234,18 @@ class Game:
         """ puts a unit into play without paying the cost """
         self.players[id].inplay.append(card)
         self.board.grid[(position)] = Unit.get_unit(card, self.players[id])
+
+    def register_listener(self, listener):
+        """Add listener to the list of interested objects whenever states change.
+
+        A listener is simply an object that provides a callable state_changed()
+        which takes a single positional argument containing a pickle of the
+        Game."""
+        self.listeners.append(listener)
+
+    def notify_listeners(self):
+        for listener in self.listeners:
+            listener.state_changed(pickle.dumps(self))
 
 ## Debug function to print out current state
 def print_state(players, board):
