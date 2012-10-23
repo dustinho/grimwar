@@ -12,7 +12,7 @@ import copy
 
 BOARD_LENGTH = 19
 BOARD_WIDTH = 5
-
+DRAW_FREQUENCY = 3
 UPKEEP_GOLD = 1
 
 class Game:
@@ -97,6 +97,9 @@ class Game:
             self.turn += 1
 
     def upkeep_phase(self):
+        if self.turn % DRAW_FREQUENCY == 0:
+            for id, player in self.players.iteritems():
+                self.players[id].draw()
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
 
@@ -146,7 +149,10 @@ class Game:
         locations_to_delete = []
         for location, unit in self.board.grid.iteritems():
             if unit.get_curr_hp() <= 0:
-                unit.owner.unit_died(unit)
+                if isinstance(unit, Hero):
+                    unit.owner.hero_died(unit)
+                else:
+                    unit.owner.unit_died(unit)
                 locations_to_delete.append(location)
 
             # TEST

@@ -37,6 +37,8 @@ class Player:
 
     def draw(self):
         if len(self.deck) == 0:
+            if len(self.discard_pile) == 0:
+                return
             self.deck = self.discard_pile[:]
             self.discard_pile = deque()
             random.shuffle(self.deck)
@@ -49,6 +51,10 @@ class Player:
     def unit_died(self, unit):
         self.inplay.remove(unit.card)
         self.discard_pile.append(unit.card)
+
+    def hero_died(self, hero):
+        self.inplay.remove(hero.card)
+        self.deck.appendleft(hero.card)
 
     def spend_gold(self, amount):
         if amount > self.gold:
