@@ -121,7 +121,7 @@ class Game:
 
             if input == '1':
                 while (True):
-                    print "Choose a card to play:"
+                    print "Choose a card to play or Enter for Done:"
                     i = 0
                     available_cards = sorted(list(set(
                         [x.name for x in player.hand]
@@ -129,14 +129,18 @@ class Game:
                     for name in available_cards:
                         print "{0}) {1}".format(i, name)
                         i += 1
-                    card_choice = int(raw_input())
+
+                    card_choice = raw_input()
+                    if card_choice == '':
+                        break
+                    card_choice = int(card_choice)
 
                     if card_choice < 0 or card_choice >= i:
                         print "\nInvalid Choice {0}\n".format(card_choice)
                         continue
 
-                    x = raw_input('x-coor where you want to play: ')
-                    y = raw_input('y-coor where you want to play: ')
+                    x = int(raw_input('x-coor where you want to play: '))
+                    y = int(raw_input('y-coor where you want to play: '))
 
                     self.play_card(available_cards[card_choice], id, (x,y))
                 break
@@ -224,6 +228,8 @@ class Game:
     def play_card(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
         card = self.players[id].play(card_name)
+        print id
+        print position
         self.board.place_unit(card, self.players[id], position)
 
     def put_in_play(self, card, id, position):

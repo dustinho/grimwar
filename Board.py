@@ -204,7 +204,10 @@ class Board:
         """Places a unit owned by owner with  based on card object
         at position (u,v)"""
         if self._which_casting_zone_owns_hex(position) != owner.direction:
-            assert False, "Not casting in owner's casting zone"
+            assert False, "Position {0} not in owner {1}'s castingzone".format(
+                position,
+                owner.id
+            )
         if position in self.grid:
             assert False, "Unit already exists at {0}".format(position)
         self.grid[position] = Unit.get_unit(card, owner)
