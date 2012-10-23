@@ -1,5 +1,5 @@
-from Card import Card
-from Player import Player
+from Card import *
+from Player import *
 
 class Unit:
     """
@@ -10,6 +10,15 @@ class Unit:
     TODO later:
     Modifiers
     """
+
+    @staticmethod
+    def get_unit(card, owner):
+        if isinstance(card, HeroCard):
+            return Hero(card, owner)
+        elif isinstance(card, WorkerCard):
+            return Worker(card, owner)
+        else:
+            return Unit(card, owner)
 
     def __init__(self, card, owner):
         assert isinstance(card, Card), "card is not a Card: {0}".format(card)

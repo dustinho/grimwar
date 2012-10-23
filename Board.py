@@ -201,7 +201,7 @@ class Board:
         assert False, "Should have returned a zone for {0}".format(position)
 
     def place_unit(self, card, owner, position):
-        """Places a unit owned by owner based on card name "card" 
+        """Places a unit owned by owner based on card name "card"
         at position (u,v)"""
         if self._which_casting_zone_owns_hex(position) != owner.direction:
             assert False, "Not casting in owner's casting zone"

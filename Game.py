@@ -34,28 +34,28 @@ class Game:
         self.players[1].set_direction(Player.FACING_LEFT)
 
         # Initial Decks
-        self.players[0].deck = [
+        self.players[0].set_deck = [
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
         ]
-        self.players[0].hand = [
+        self.players[0].set_hand = [
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
         ]
-        self.players[1].deck = [
+        self.players[1].set_deck = [
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
         ]
-        self.players[1].hand = [
+        self.players[1].set_hand = [
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
@@ -65,11 +65,8 @@ class Game:
 
         # Initial Heroes
         middle = (BOARD_WIDTH - 1) / 2
-        self.board.grid[(-1, middle)] = Hero(HeroCard('Arius'), self.players[0])
-        self.board.grid[(BOARD_LENGTH-2, middle)] = Hero(
-            HeroCard('Arius'),
-            self.players[1]
-        )
+        self.put_in_play(HeroCard('Arius'), 0, (-1, middle))
+        self.put_in_play(HeroCard('Arius'), 1, (BOARD_LENGTH-2, middle))
 
     def mainloop(self):
         # Main Loop
@@ -116,11 +113,11 @@ class Game:
         while (True):
             input = raw_input('\nChoose: 1) Play 2) Buy 3) Done\n')
 
-            if input == 1:
+            if input == '1':
                 break
-            elif input == 2:
+            elif input == '2':
                 break
-            elif input == 3:
+            elif input == '3':
                 break
             else:
                 print "Invalid Command"
@@ -184,12 +181,17 @@ class Game:
             self.players[1].take_damage(damage)
         else:
             raise ValueError("Invalid direction")
-    
-    def play_card(self, card, id, position):
+
+    def play_card(self, card_name, id, position):
         """plays a unit for player id based on "card" at position (u,v)"""
-        self.players[id].play(card)
-        self.board.place_unit(Card(card), self.players[id], position)
-        
+        # TODO (chuan): Use get_unit and change to id, card_name, position
+        self.players[id].play(card_name)
+        self.board.place_unit(Card(card_name), self.players[id], position)
+
+    def put_in_play(self, card, id, position):
+        """ puts a unit into play without paying the cost """
+        self.players[id].inplay.append(card)
+        self.board.grid[(position)] = Unit.get_unit(card, self.players[id])
 
 ## Debug function to print out current state
 def print_state(players, board):
