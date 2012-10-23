@@ -119,15 +119,20 @@ class Board:
 
     def do_all_attacks(self):
         for position, unit in self.grid.iteritems():
+            logging.debug("Attempting attacks for {0} at {1}".format(unit, position))
             if unit.get_curr_ammo() <= 0:
                 continue
             valid_targets = self.what_can_unit_at_position_hit(position)
+            if len(valid_targets) == 0:
+                continue
             unit.spend_ammo()
             for target in valid_targets:
                 if target not in self.grid:
                     # Damage player directly
                     player_to_damage_direction = self._which_casting_zone_owns_hex(target)
-                    self.game.damage_player(player_to_damage_direction, unit.get_damage())
+                    if player_to_damage_direction != Player.INVALID_PLAYER:
+                        logging.info("{0} deals {1} damage to player {2}".format(unit, unit.get_damage(), player_to_damage_direction))
+                        self.game.damage_player(player_to_damage_direction, unit.get_damage())
                 else:
                     # Damage enemy unit on that hex
                     enemy = self.grid[target]

@@ -1,13 +1,20 @@
 import unittest
 from Game import *
+<<<<<<< HEAD
+=======
+from Unit import *
+from HeroCard import *
+import logging
+logging.getLogger().setLevel(logging.DEBUG)
+>>>>>>> cb4f54b... Do move phase and damage things more correctly
 
 class TestGame(unittest.TestCase):
     def setUp(self):
         self.game = Game()
-        self.game.players[0] = Player()
-        self.game.players[1] = Player()
+        self.game.players[0] = Player(0)
+        self.game.players[1] = Player(1)
         self.game.players[1].set_direction(Player.FACING_LEFT)
-        self.game.board = Board(3,7)
+        self.game.board = Board(self.game, field_length=7,field_width=3)
 
     def one_hero_kicking_ass(self):
         hero_card = HeroCard('Arius')

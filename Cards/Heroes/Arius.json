@@ -2,11 +2,12 @@
   "name" : "Arius",
   "cost" : 5,
   "hp" : 10,
-  "ammo" : 5,
+  "ammo" : 500,
   "speed" : 1,
   "damage" : 2, 
   "attack_pattern" : [[1,0],[0,1],[1,-1]],
   "attack_type" : "splash",
-  "tier" : 1
+  "tier" : 1,
+  "buy_cost": 100
 }
 

@@ -1,6 +1,8 @@
 from collections import deque
 from Grimoire import Grimoire
+from Card import Card
 import random
+import logging
 
 class Player:
     STARTING_HEALTH = 20
@@ -9,7 +11,8 @@ class Player:
     FACING_RIGHT = 2
     STARTING_GOLD = 10
 
-    def __init__(self):
+    def __init__(self, id):
+        self.id = id
         self.reset()
 
     def __str__(self):
@@ -20,7 +23,9 @@ class Player:
         return "\n".join(lines)
 
     def buy(self, card):
+        self.spend_gold(Card(card).buy_cost)
         self.discard_pile.append(card)
+        self.grimoire.remove_from_grimoire(card)
 
     def draw(self):
         if len(self.deck) == 0:
@@ -36,6 +41,11 @@ class Player:
     def unit_died(self, unit):
         self.inplay.remove(unit.card)
         self.discard_pile.append(unit.card)
+
+    def spend_gold(self, amount):
+        if amount > self.gold:
+            assert False, "Not enough gold to perform action"
+        self.gold -= amount
 
     ## Setters
 
@@ -72,6 +82,10 @@ class Player:
 
     def take_damage(self, damage_amount):
         self._health = self._health - damage_amount
+        logging.info("Player {0} at {1} health".format(
+            self.id,
+            self.get_curr_health()
+        ))
 
 
 

@@ -7,6 +7,7 @@
   "damage" : 1,
   "attack_pattern" : [[1,0]],
   "attack_type" : "single",
-  "tier" : 1
+  "tier" : 1,
+  "buy_cost" : 10
 }
 

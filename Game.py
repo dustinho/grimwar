@@ -3,8 +3,8 @@
 from Player import Player
 from Board import *
 from Card import *
-from HeroCard import *
 
+from Unit import *
 import json
 import random
 import sys
@@ -26,8 +26,8 @@ class Game:
         self.board = Board(self, field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
 
         # Instantiate Players/Decks
-        self.players[0] = Player()
-        self.players[1] = Player()
+        self.players[0] = Player(0)
+        self.players[1] = Player(1)
 
     def mainloop(self):
         # Main Loop
@@ -40,8 +40,8 @@ class Game:
             first = self.calculate_advantage()
             second = (first + 1) % 2
 
-            self.move_phase(first)
-            self.move_phase(second)
+            self.move_phase(self.players[first])
+            self.move_phase(self.players[second])
 
             # Damage happens concurrently
             self.damage_phase()
@@ -50,7 +50,9 @@ class Game:
 
             print_state(self.players, self.board)
 
-            self.cleanup_phase()
+            result = self.cleanup_phase()
+            if result is not None:
+                return result
 
     def upkeep_phase(self):
         for id, player in self.players.iteritems():
@@ -60,7 +62,7 @@ class Game:
         return
 
     def move_phase(self, player):
-        return
+        self.board.do_all_movements(player)
 
     def damage_phase(self):
         self.board.do_all_attacks()
@@ -83,6 +85,11 @@ class Game:
             if unit.get_curr_hp() <= 0:
                 unit.owner.unit_died(unit)
                 locations_to_delete.append(location)
+
+            # TEST
+            if unit.get_curr_ammo() == 0:
+                sys.exit()
+
         for loc in locations_to_delete:
             del self.board.grid[loc]
 
@@ -95,6 +102,8 @@ class Game:
         for id, player in self.players.iteritems():
             if player.get_curr_health() <= 0:
                 return 'Tie' if is_tie else (id + 1) % 2
+
+        return None
 
     def calculate_advantage(self):
         return 0

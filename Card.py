@@ -12,12 +12,34 @@ class Card:
     """
 
     def __init__(self, name):
-        spec_file = os.path.join(os.path.dirname(__file__), 'Cards', name + ".json")
-        self.name = self.ammo = self.cost = self.hp = self.speed = self.damage = self.attack_pattern = self.attack_type = self.tier = None
+        spec_file = self.get_card_path(name)
+        self.name = self.ammo = self.cost = self.hp = self.speed = self.damage = self.attack_pattern = self.attack_type = self.tier = self.buy_cost = None
 
         data = json.load(open(spec_file))
 
         for key in data:
             if hasattr(self, key):
                 setattr(self, key, data[key])
+    
+    def get_card_path(self, name):
+        return os.path.join(os.path.dirname(__file__), 'Cards', name + ".json")
 
+class WorkerCard(Card):
+    """
+    WorkerCard is a special card. Its JSON is loaded from the /Cards/Workers
+    directory
+    """
+    def get_card_path(self, name):
+        return os.path.join(os.path.dirname(__file__), 'Cards', 'Workers', name + ".json")
+    def __init__(self, name):
+        Card.__init__(self, name)
+
+class HeroCard(Card):
+    """
+    HeroCard is a special card.  Its JSON is loaded from the /Cards/Heroes
+    directory
+    """
+    def get_card_path(self, name):
+        return os.path.join(os.path.dirname(__file__), 'Cards', 'Heroes', name + ".json")    
+    def __init__(self, name):
+        Card.__init__(self, name)

@@ -1,8 +1,6 @@
 import unittest
 from Board import Board
-from Card import Card
-from HeroCard import HeroCard
-from WorkerCard import WorkerCard
+from Card import *
 from Player import *
 from Unit import Unit
 import logging
@@ -14,8 +12,8 @@ TEST_FIELD_WIDTH = 3
 class TestBoard(unittest.TestCase):
     def setUp(self):
         self.b = Board(self, field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
-        self.p1 = Player()
-        self.p2 = Player()
+        self.p1 = Player(0)
+        self.p2 = Player(1)
         self.p2.set_direction(Player.FACING_LEFT)
         self.footman_card = Card("Footman")
         self.fast_footman_card = Card("Footman")

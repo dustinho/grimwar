@@ -3,16 +3,14 @@ from Player import *
 from Board import *
 from Unit import *
 from Card import *
-from WorkerCard import *
-from HeroCard import *
 from Game import *
 
 class TestEngine(unittest.TestCase):
     def setUp(self):
         self.game = Game()
         self.game.players = {}
-        self.game.players[0] = Player()
-        self.game.players[1] = Player()
+        self.game.players[0] = Player(0)
+        self.game.players[1] = Player(1)
         self.game.players[1].set_direction(Player.FACING_LEFT)
         self.game.board = Board(self.game, 3,7)
 
