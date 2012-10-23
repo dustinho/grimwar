@@ -14,7 +14,7 @@ class TestEngine(unittest.TestCase):
         self.game.players[0] = Player()
         self.game.players[1] = Player()
         self.game.players[1].set_direction(Player.FACING_LEFT)
-        self.game.board = Board(3,7)
+        self.game.board = Board(self.game, 3,7)
 
     def test_cleanup_death(self):
         live_footman_card = Card('Footman')

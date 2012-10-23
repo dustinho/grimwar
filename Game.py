@@ -23,7 +23,7 @@ class Game:
 
     def setup_phase(self):
         # Set up board
-        self.board = Board(field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
+        self.board = Board(self, field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
 
         # Instantiate Players/Decks
         self.players[0] = Player()
@@ -63,7 +63,7 @@ class Game:
         return
 
     def damage_phase(self):
-        return
+        self.board.do_all_attacks()
 
     def money_phase(self):
         """
@@ -98,6 +98,14 @@ class Game:
 
     def calculate_advantage(self):
         return 0
+
+    def damage_player_facing(self, direction, damage):
+        if direction == Player.FACING_RIGHT:
+            self.players[0].take_damage(damage)
+        elif direction == Player.FACING_LEFT:
+            self.players[1].take_damage(damage)
+        else:
+            raise ValueError("Invalid direction")
 
 ## Debug function to print out current state
 def print_state(players, board):

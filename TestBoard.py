@@ -13,7 +13,7 @@ TEST_FIELD_WIDTH = 3
 
 class TestBoard(unittest.TestCase):
     def setUp(self):
-        self.b = Board(field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
+        self.b = Board(self, field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
         self.p1 = Player()
         self.p2 = Player()
         self.p2.set_direction(Player.FACING_LEFT)

@@ -60,7 +60,8 @@ class Board:
         4 : 3,
     }
 
-    def __init__(self, field_length=17, field_width=5):
+    def __init__(self, game, field_length=17, field_width=5):
+        self.game = game
         self.field_length = field_length
         self.field_width = field_width
         self.grid = {}
@@ -125,9 +126,8 @@ class Board:
             for target in valid_targets:
                 if target not in self.grid:
                     # Damage player directly
-                    # TODO: can't access the players directly, add this functionality to some global Game class
-                    #self._which_casting_zone_owns_hex(target)
-                    pass
+                    player_to_damage_direction = self._which_casting_zone_owns_hex(target)
+                    self.game.damage_player(player_to_damage_direction, unit.get_damage())
                 else:
                     # Damage enemy unit on that hex
                     enemy = self.grid[target]
