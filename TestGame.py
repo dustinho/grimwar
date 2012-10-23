@@ -10,9 +10,6 @@ logging.getLogger().setLevel(logging.DEBUG)
 class TestGame(unittest.TestCase):
     def setUp(self):
         self.game = Game()
-        self.game.players[0] = Player(0)
-        self.game.players[1] = Player(1)
-        self.game.players[1].set_direction(Player.FACING_LEFT)
         self.game.board = Board(self.game, field_length=7,field_width=3)
 
     def one_hero_kicking_ass(self):

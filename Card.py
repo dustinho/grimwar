@@ -20,7 +20,11 @@ class Card:
         for key in data:
             if hasattr(self, key):
                 setattr(self, key, data[key])
-    
+
+    def __str__(self):
+        """return a string describing the Card"""
+        return "<{0} Card>".format(self.name)
+
     def get_card_path(self, name):
         return os.path.join(os.path.dirname(__file__), 'Cards', name + ".json")
 
@@ -40,6 +44,6 @@ class HeroCard(Card):
     directory
     """
     def get_card_path(self, name):
-        return os.path.join(os.path.dirname(__file__), 'Cards', 'Heroes', name + ".json")    
+        return os.path.join(os.path.dirname(__file__), 'Cards', 'Heroes', name + ".json")
     def __init__(self, name):
         Card.__init__(self, name)

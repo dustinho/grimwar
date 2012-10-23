@@ -8,26 +8,68 @@ from Unit import *
 import json
 import random
 import sys
+import copy
 
-BOARD_LENGTH = 31
-BOARD_WIDTH = 4
+BOARD_LENGTH = 19
+BOARD_WIDTH = 5
 
 UPKEEP_GOLD = 1
 
 class Game:
-    def __init__(self):
+    def __init__(self, input_type=''):
         self.players = {}
         self.board = None
         print_startinfo()
         self.setup_phase()
+        self.input_type = input_type
+        self.turn = 0
 
     def setup_phase(self):
         # Set up board
         self.board = Board(self, field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
 
-        # Instantiate Players/Decks
+        # Instantiate Players
         self.players[0] = Player(0)
         self.players[1] = Player(1)
+        self.players[1].set_direction(Player.FACING_LEFT)
+
+        # Initial Decks
+        self.players[0].deck = [
+            Card('Footman'),
+            Card('Footman'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+        ]
+        self.players[0].hand = [
+            Card('Footman'),
+            Card('Footman'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+        ]
+        self.players[1].deck = [
+            Card('Footman'),
+            Card('Footman'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+        ]
+        self.players[1].hand = [
+            Card('Footman'),
+            Card('Footman'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+            WorkerCard('Peon'),
+        ]
+
+        # Initial Heroes
+        middle = (BOARD_WIDTH - 1) / 2
+        self.board.grid[(-1, middle)] = Hero(HeroCard('Arius'), self.players[0])
+        self.board.grid[(BOARD_LENGTH-2, middle)] = Hero(
+            HeroCard('Arius'),
+            self.players[1]
+        )
 
     def mainloop(self):
         # Main Loop
@@ -48,17 +90,38 @@ class Game:
 
             self.money_phase()
 
-            print_state(self.players, self.board)
-
             result = self.cleanup_phase()
             if result is not None:
                 return result
+
+            self.turn += 1
 
     def upkeep_phase(self):
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
 
-    def main_phase(self, player):
+    def main_phase(self, id):
+        if self.input_type != 'Console':
+            return
+
+        player = self.players[id]
+
+        print "=== Turn {0}: Player {1}".format(self.turn, id)
+        print player
+        print "Board: {0}".format(self.board)
+
+        while (True):
+            input = raw_input('\nChoose: 1) Play 2) Buy 3) Done\n')
+
+            if input == 1:
+                break
+            elif input == 2:
+                break
+            elif input == 3:
+                break
+            else:
+                print "Invalid Command"
+
         return
 
     def move_phase(self, player):
