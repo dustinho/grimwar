@@ -178,6 +178,12 @@ class Game:
             self.players[1].take_damage(damage)
         else:
             raise ValueError("Invalid direction")
+    
+    def play_card(self, card, id, position):
+        """plays a unit for player id based on "card" at position (u,v)"""
+        self.players[id].play(card)
+        self.board.place_unit(Card(card), self.players[id], position)
+        
 
 ## Debug function to print out current state
 def print_state(players, board):

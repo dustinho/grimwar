@@ -36,6 +36,13 @@ class TestEngine(unittest.TestCase):
         # TODO
         self.assertEqual(1,1)
 
+    def test_draw_and_play_card(self):
+        self.game.players[0].deck.append("Footman")
+        self.game.players[0].draw()
+        self.game.play_card("Footman", 0, (0,0))
+        self.assertEqual(self.game.board.grid[(0,0)].card.name, "Footman")
+        self.assertEqual(self.game.players[0].gold, 7)
+
 if __name__ == "__main__":
     unittest.main()
 

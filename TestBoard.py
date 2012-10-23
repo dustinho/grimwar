@@ -69,8 +69,8 @@ class TestBoard(unittest.TestCase):
         self.b.grid.clear()
 
     def test_place_unit(self):
-        self.b.place_unit(self.footman_card, self.p1, (1,0))
-        self.b.assertEqual(self.grid[(1,0)].name == "Footman")
+        self.b.place_unit(self.footman_card, self.p1, (0,0))
+        self.assertEqual(self.b.grid[(0,0)].card.name, "Footman")
         self.b.grid.clear()
 
 if __name__ == "__main__":

@@ -29,6 +29,11 @@ class Player:
         self.spend_gold(Card(card).buy_cost)
         self.discard_pile.append(card)
         self.grimoire.remove_from_grimoire(card)
+    
+    def play(self, card):
+        self.spend_gold(Card(card).cost)
+        self.inplay.append(card)
+        self.hand.remove(card)
 
     def draw(self):
         if len(self.deck) == 0:
