@@ -25,15 +25,28 @@ class Player:
         )))
         return "\n".join(lines)
 
-    def buy(self, card):
-        self.spend_gold(Card(card).buy_cost)
-        self.discard_pile.append(card)
-        self.grimoire.remove_from_grimoire(card)
-    
-    def play(self, card):
-        self.spend_gold(Card(card).cost)
+    def buy(self, card_name):
+        self.grimoire.remove_from_grimoire(card_name)
+        try:
+            self.spend_gold(Card(card_name).buy_cost)
+        except ValueError:
+            # rollback on failure
+            self.grimoire.add_to_grimoire(card_name)
+            return
+        if card_name == "Peon":
+            # TODO: this is really bad, make this more versatile
+            self.discard_pile.append(WorkerCard(card_name))
+            return
+        self.discard_pile.append(Card(card_name))
+
+
+    def play(self, card_name):
+        # find the card in hand
+        card = self.get_card(card_name, self.hand)
+        self.spend_gold(card.cost)
         self.inplay.append(card)
         self.hand.remove(card)
+        return card
 
     def draw(self):
         if len(self.deck) == 0:
@@ -61,6 +74,12 @@ class Player:
             assert False, "Not enough gold to perform action"
         self.gold -= amount
 
+    def get_card(self, card_name, collec):
+        # returns the first card object that matches card name from collec
+        if card_name not in [c.name for c in collec]:
+            assert False, "{0} not in {1}".format(card.name, collec)
+        return [c for c in collec if c.name == card_name][0]
+
     ## Setters
 
     def set_discard_pile(self, discard_pile):
@@ -74,6 +93,9 @@ class Player:
 
     def set_inplay(self, inplay):
         self.inplay = deque(inplay)
+
+    def set_library(self, library):
+        self.grimoire.library = library
 
     def reset(self):
         self.deck = deque()

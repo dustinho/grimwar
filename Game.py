@@ -14,6 +14,7 @@ BOARD_LENGTH = 19
 BOARD_WIDTH = 5
 DRAW_FREQUENCY = 3
 UPKEEP_GOLD = 1
+MAX_HAND_SIZE = 5
 
 class Game:
     def __init__(self, input_type=''):
@@ -34,41 +35,45 @@ class Game:
         self.players[1].set_direction(Player.FACING_LEFT)
 
         # Initial Decks
-        self.players[0].set_deck = [
+        self.players[0].set_deck([
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
-        ]
-        self.players[0].set_hand = [
+        ])
+        self.players[0].set_hand([
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
-        ]
-        self.players[1].set_deck = [
+        ])
+        self.players[1].set_deck([
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
-        ]
-        self.players[1].set_hand = [
+        ])
+        self.players[1].set_hand([
             Card('Footman'),
             Card('Footman'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
             WorkerCard('Peon'),
-        ]
+        ])
 
         # Initial Heroes
         middle = (BOARD_WIDTH - 1) / 2
         self.put_in_play(HeroCard('Arius'), 0, (-1, middle))
         self.put_in_play(HeroCard('Arius'), 1, (BOARD_LENGTH-2, middle))
 
-    def mainloop(self):
+        # Initial Grimoire
+        self.players[0].library = {'Peon' : 10, 'Footman' : 10}
+        self.players[1].library = {'Peon' : 10, 'Footman' : 10}
+
+    def main_loop(self):
         # Main Loop
         while (True):
             self.upkeep_phase()
@@ -96,7 +101,8 @@ class Game:
     def upkeep_phase(self):
         if self.turn % DRAW_FREQUENCY == 0:
             for id, player in self.players.iteritems():
-                self.players[id].draw()
+                if len(self.players[id].hand) < MAX_HAND_SIZE:
+                    self.players[id].draw()
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
 
@@ -111,13 +117,46 @@ class Game:
         print "Board: {0}".format(self.board)
 
         while (True):
-            input = raw_input('\nChoose: 1) Play 2) Buy 3) Done\n')
+            input = raw_input('\nChoose: 1) Play 2) Buy. Hit Enter if done\n')
 
             if input == '1':
+                while (True):
+                    print "Choose a card to play:"
+                    i = 0
+                    available_cards = sorted(list(set(
+                        [x.name for x in player.hand]
+                    )))
+                    for name in available_cards:
+                        print "{0}) {1}".format(i, name)
+                        i += 1
+                    card_choice = int(raw_input())
+
+                    if card_choice < 0 or card_choice >= i:
+                        print "\nInvalid Choice {0}\n".format(card_choice)
+                        continue
+
+                    x = raw_input('x-coor where you want to play: ')
+                    y = raw_input('y-coor where you want to play: ')
+
+                    self.play_card(available_cards[card_choice], id, (x,y))
                 break
             elif input == '2':
+                while (True):
+                    print "Choose a card to buy:"
+                    i = 0
+                    available_cards = player.grimoire.get_buyable_card_names()
+                    for name in available_cards:
+                        print "{0}) {1}".format(i, name)
+                        i += 1
+                    card_choice = int(raw_input())
+
+                    if card_choice < 0 or card_choice >= i:
+                        print "\nInvalid Choice {0}\n".format(card_choice)
+                        continue
+
+                    player.buy(available_cards[card_choice])
                 break
-            elif input == '3':
+            elif input == '':
                 break
             else:
                 print "Invalid Command"
@@ -183,10 +222,9 @@ class Game:
             raise ValueError("Invalid direction")
 
     def play_card(self, card_name, id, position):
-        """plays a unit for player id based on "card" at position (u,v)"""
-        # TODO (chuan): Use get_unit and change to id, card_name, position
-        self.players[id].play(card_name)
-        self.board.place_unit(Card(card_name), self.players[id], position)
+        """plays a card for player id from his hand at position (u,v)"""
+        card = self.players[id].play(card_name)
+        self.board.place_unit(card, self.players[id], position)
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """
