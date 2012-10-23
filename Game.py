@@ -34,8 +34,8 @@ class Game:
         while (True):
             self.upkeep_phase()
 
-            self.place_phase(1)
-            self.place_phase(2)
+            self.main_phase(0)
+            self.main_phase(1)
 
             first = self.calculate_advantage()
             second = (first + 1) % 2
@@ -52,15 +52,11 @@ class Game:
 
             self.cleanup_phase()
 
-            # Run one turn
-            sys.exit()
-        sys.exit()
-
     def upkeep_phase(self):
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
 
-    def place_phase(self, player):
+    def main_phase(self, player):
         return
 
     def move_phase(self, player):
@@ -89,7 +85,16 @@ class Game:
                 locations_to_delete.append(location)
         for loc in locations_to_delete:
             del self.board.grid[loc]
-        # TODO Calculate Gameover
+
+        # Calculate Gameover
+        is_tie = True
+        for id, player in self.players.iteritems():
+            if player.get_curr_health() > 0:
+                is_tie = False
+
+        for id, player in self.players.iteritems():
+            if player.get_curr_health() <= 0:
+                return 'Tie' if is_tie else (id + 1) % 2
 
     def calculate_advantage(self):
         return 0

@@ -56,7 +56,7 @@ class Player:
         self.discard_pile = deque()
         self.hand = deque()
         self.inplay = deque()
-        self.health = Player.STARTING_HEALTH
+        self._health = Player.STARTING_HEALTH
         self.set_direction(Player.FACING_RIGHT)
         self.gold = Player.STARTING_GOLD
         self.grimoire = Grimoire()
@@ -67,8 +67,11 @@ class Player:
     def get_direction(self):
         return self.direction
 
+    def get_curr_health:
+        return self._health
+
     def take_damage(self, damage_amount):
-        self.health = self.health - damage_amount
+        self._health = self._health - damage_amount
 
 
 

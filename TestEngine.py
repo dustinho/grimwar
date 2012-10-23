@@ -34,6 +34,9 @@ class TestEngine(unittest.TestCase):
         self.assertEqual(len(self.game.players[0].discard_pile), 1)
         self.assertEqual(len(self.game.players[0].inplay), 1)
 
+    def test_worker_money(self):
+        # TODO
+        self.assertEqual(1,1)
 
 if __name__ == "__main__":
     unittest.main()
