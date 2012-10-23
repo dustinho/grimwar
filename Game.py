@@ -71,8 +71,8 @@ class Game:
 
     def money_phase(self):
         """
-        Workers get money from the sector they end up in, but should only be paid
-        for a sector once per life.
+        Workers get money from the sector they end up in, but should only be
+        paid for a sector once per life.
         """
         for location, unit in self.board.grid.iteritems():
             if isinstance(unit, Worker):

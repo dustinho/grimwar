@@ -40,8 +40,9 @@ class Board:
     """
 
     """
-    SECTOR specifies the first column in which a worker is considered eligible
-    for a payout. Workers are only eligible for one payout from each zone.
+    SECTOR specifies the first column (old style - a is column 0, c is columned
+    2) in which a worker is considered eligible for a payout. Workers are only
+    eligible for one payout from each zone.
     """
     SECTORS = {
         0 : 0,
@@ -187,9 +188,9 @@ class Board:
         else:
             return dist_from_left >= 1 and dist_from_left <= (self.field_length - 1) * 2 - 1
 
-    def get_zone_for_position(self, position):
+    def get_sector_for_position(self, position):
         for sector, col in self.SECTORS:
-            if position[0] >= col:
+            if self._column_distance_from_left(position) >= col:
                 return sector
         assert False, "Should have returned a zone for {0}".format(position)
 
