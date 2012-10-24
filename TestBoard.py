@@ -5,6 +5,8 @@ from HeroCard import HeroCard
 from WorkerCard import WorkerCard
 from Player import *
 from Unit import Unit
+import logging
+logging.getLogger().setLevel(logging.DEBUG)
 
 TEST_FIELD_LENGTH = 9
 TEST_FIELD_WIDTH = 3
@@ -25,35 +27,35 @@ class TestBoard(unittest.TestCase):
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[ (0,0) ] = footman
         self.b.do_all_movements(self.p1)
-        # N.B. a movement speed of 1 means you move two columns per turn, due
-        # to the way we number the grid.  What fun!
-        self.assertEqual(self.b.grid.pop( (2,0) ), footman)
+        self.assertEqual(self.b.grid.pop( (1,0) ), footman)
+        self.b.grid.clear()
 
     def test_moving_wont_go_past_edge(self):
         footman = Unit(self.footman_card, self.p1)
-        self.b.grid[ (TEST_FIELD_LENGTH-3,0) ] = footman
+        self.b.grid[ (TEST_FIELD_LENGTH-2,0) ] = footman
         self.b.do_all_movements(self.p1)
-        self.assertEqual(self.b.grid.pop( (TEST_FIELD_LENGTH-3,0) ), footman)
+        self.assertEqual(self.b.grid.pop( (TEST_FIELD_LENGTH-2,0) ), footman)
+        self.b.grid.clear()
 
     def test_moving_wont_overtake(self):
         fast_footman = Unit(self.fast_footman_card, self.p1)
         footman = Unit(self.footman_card, self.p2)
         self.b.grid[(2,0)] = fast_footman
-        self.b.grid[(4,0)] = footman
+        self.b.grid[(3,0)] = footman
         self.b.do_all_movements(self.p1)
         self.assertEqual(self.b.grid[(2,0)], fast_footman)
         self.b.do_all_movements(self.p2)
-        self.assertEqual(self.b.grid[(4,0)], footman)
+        self.assertEqual(self.b.grid[(3,0)], footman)
         self.b.grid.clear()
 
     def test_moving_slow_will_block_fast(self):
         fast_footman = Unit(self.fast_footman_card, self.p1)
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[(2,0)] = fast_footman
-        self.b.grid[(4,0)] = footman
+        self.b.grid[(3,0)] = footman
         self.b.do_all_movements(self.p1)
-        self.assertEqual(self.b.grid[(4,0)], fast_footman)
-        self.assertEqual(self.b.grid[(6,0)], footman)
+        self.assertEqual(self.b.grid[(3,0)], fast_footman)
+        self.assertEqual(self.b.grid[(4,0)], footman)
         self.b.grid.clear()
 
 if __name__ == "__main__":
