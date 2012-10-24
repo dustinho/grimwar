@@ -1,4 +1,5 @@
 import json
+import os
 
 class Card:
     """
@@ -11,7 +12,7 @@ class Card:
     """
 
     def __init__(self, name):
-        spec_file = 'Cards/' + name + ".json"
+        spec_file = os.path.join(__file__, 'Cards', name + ".json")
         self.name = self.ammo = self.cost = self.hp = None
 
         data = json.load(open(spec_file))
