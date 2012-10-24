@@ -250,8 +250,9 @@ class Game:
         self.listeners.append(listener)
 
     def notify_listeners(self):
+        game_dump = pickle.dumps(self)
         for listener in self.listeners:
-            listener.state_changed(pickle.dumps(self))
+            listener.state_changed(game_dump)
 
 ## Debug function to print out current state
 def print_state(players, board):
