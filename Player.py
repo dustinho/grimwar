@@ -1,6 +1,8 @@
 from collections import deque
 import random
 
+STARTING_HEALTH = 20
+
 class Player:
     def __init__(self):
         self.reset()
@@ -45,6 +47,7 @@ class Player:
         self.discard_pile = deque()
         self.hand = deque()
         self.inplay = deque()
+        self.health = STARTING_HEALTH
 
 
 

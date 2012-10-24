@@ -1,4 +1,5 @@
 import Card
+import Player
 
 class Unit:
     """
@@ -10,11 +11,14 @@ class Unit:
     Modifiers
     """
 
-    def __init__(self, card):
+    def __init__(self, card, owner):
         assert isinstance(card, Card), "card is not a Card: {0}".format(card)
+        assert isinstance(owner, Player), "owner is not a Player: {0}".format(Player)
         self.card = card
         self._hp = self.card.hp
-        self._ammo = self.card.amoo
+        self._ammo = self.card.ammo
+        self._speed = self.card.speed
+        self.owner = owner
 
     def __str__(self):
         return "<{0}, {1} hp, {2} ammo>".format(self.card.name, self.get_curr_hp(), self.get_curr_ammo())
@@ -35,5 +39,7 @@ class Unit:
         # TODO
         return []
 
+    def get_speed(self)
+        return self._speed
 
 

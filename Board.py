@@ -46,3 +46,7 @@ class Board:
             ", ".join(["{0} at ({1},{2})".format(instance, position[0],position[1]) for (position, instance) in self.grid.iteritems()])
                 )
 
+    def do_all_movements(self, player):
+        assert isinstance(player, Player), "player {0} is not a Player".format(player)
+        # do all movements for player
+

@@ -13,7 +13,7 @@ class Card:
 
     def __init__(self, name):
         spec_file = os.path.join(__file__, 'Cards', name + ".json")
-        self.name = self.ammo = self.cost = self.hp = None
+        self.name = self.ammo = self.cost = self.hp = self.speed = None
 
         data = json.load(open(spec_file))
 

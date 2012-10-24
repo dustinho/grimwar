@@ -2,6 +2,7 @@
   "name" : "Footman",
   "cost" : 1,
   "hp" : 5,
-  "ammo" : 5
+  "ammo" : 5,
+  "speed" : 1
 }
 
