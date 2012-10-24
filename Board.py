@@ -55,7 +55,7 @@ class Board:
         many spaces as they can.  So if a speed 2 unit is behind a speed 1 unit,
         both will advance one square each tick.
         """
-        assert isinstance(player, Player), "player {0} is not a Player".format(player)
+        assert isinstance(player, Player.Player), "player {0} is not a Player".format(player)
         direction = player.get_direction()
 
         # Collect all the units that are owned by the specified player
@@ -70,10 +70,12 @@ class Board:
         for position, instance in player_items:
             max_delta = instance.get_speed()
             for possible_delta in reversed(range(instance.get_speed()+1)):
-                possible_destination = position
-                possible_destination[0] += (possible_delta * direction_multiplier)
+                possible_destination = (position[0] + (possible_delta * direction_multiplier), position[1])
+                if possible_destination[0] > self.field_length - 1 or possible_destination[0] < 0:
+                    # This movement would move the unit off the board.
+                    continue
                 if possible_destination not in self.grid:
                     print "moving {0} from {1} to {2}".format(instance, position, possible_destination)
-                    self[possible_destination] = self.grid.pop(position)
+                    self.grid[possible_destination] = self.grid.pop(position)
                     break
 

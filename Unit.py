@@ -1,5 +1,5 @@
-import Card
-import Player
+from Card import Card
+from Player import Player
 
 class Unit:
     """
@@ -39,7 +39,7 @@ class Unit:
         # TODO
         return []
 
-    def get_speed(self)
+    def get_speed(self):
         return self._speed
 
 

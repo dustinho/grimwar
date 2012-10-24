@@ -50,7 +50,7 @@ class Player:
         self.hand = deque()
         self.inplay = deque()
         self.health = STARTING_HEALTH
-        self.set_direction(FACING_LEFT)
+        self.set_direction(FACING_RIGHT)
 
     def set_direction(self, direction):
         self.direction = direction
