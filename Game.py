@@ -78,7 +78,7 @@ class Game:
     def main_loop(self):
         # Main Loop
         while (True):
-            winner = main_loop_once()
+            winner = self.main_loop_once()
             if winner is not None:
                 return winner
 
