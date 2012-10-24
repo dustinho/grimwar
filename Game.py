@@ -78,27 +78,33 @@ class Game:
     def main_loop(self):
         # Main Loop
         while (True):
-            self.upkeep_phase()
+            winner = main_loop_once()
+            if winner is not None:
+                return winner
 
-            self.main_phase(0)
-            self.main_phase(1)
+    def main_loop_once(self):
+        self.upkeep_phase()
 
-            first = self.calculate_advantage()
-            second = (first + 1) % 2
+        self.main_phase(0)
+        self.main_phase(1)
 
-            self.move_phase(self.players[first])
-            self.move_phase(self.players[second])
+        first = self.calculate_advantage()
+        second = (first + 1) % 2
 
-            # Damage happens concurrently
-            self.damage_phase()
+        self.move_phase(self.players[first])
+        self.move_phase(self.players[second])
 
-            self.money_phase()
+        # Damage happens concurrently
+        self.damage_phase()
 
-            result = self.cleanup_phase()
-            if result is not None:
-                return result
+        self.money_phase()
 
-            self.turn += 1
+        result = self.cleanup_phase()
+        if result is not None:
+            return result
+
+        self.turn += 1
+        self.notify_listeners()
 
     def upkeep_phase(self):
         if self.turn % DRAW_FREQUENCY == 0:
