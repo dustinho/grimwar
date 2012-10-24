@@ -1,7 +1,7 @@
 from collections import deque
 import random
 
-class CardManager:
+class Player:
     def __init__(self):
         self.reset()
 

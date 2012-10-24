@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from CardManager import *
+from Player import *
 import json
 import random
 import sys
@@ -10,7 +10,6 @@ BOARD_HEIGHT = 4
 BOARD = {}
 
 PLAYER = {}
-CM = {}
 
 def main():
     print_startinfo()
@@ -42,7 +41,7 @@ def main():
 
 ## Debug function to print out current state
 def print_state():
-    for p, cm in CM.items():
+    for p, cm in PLAYER.items():
         print "%d card state:" % p
         print cm
     print ""
@@ -58,8 +57,8 @@ def setup_phase():
             BOARD[(x,y)] = None
 
     # Instantiate Players/Card Managers
-    CM[0] = CardManager()
-    CM[1] = CardManager()
+    PLAYER[0] = Player()
+    PLAYER[1] = Player()
     return
 
 def place_phase(player):
