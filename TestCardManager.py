@@ -13,10 +13,10 @@ class TestCardManager(unittest.TestCase):
         self.assertEqual(self.cm.hand[0], 1)
         self.assertEqual(self.cm.hand[1], 2)
 
-        self.cm.discardCard(1)
-        self.cm.discardCard(2)
-        self.assertEqual(self.cm.discard[0], 1)
-        self.assertEqual(self.cm.discard[1], 2)
+        self.cm.discard(1)
+        self.cm.discard(2)
+        self.assertEqual(self.cm.discard_pile[0], 1)
+        self.assertEqual(self.cm.discard_pile[1], 2)
 
 if __name__ == '__main__':
     unittest.main()
