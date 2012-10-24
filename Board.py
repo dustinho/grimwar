@@ -126,6 +126,7 @@ class Board:
             valid_targets = self.what_can_unit_at_position_hit(position)
             if len(valid_targets) == 0:
                 continue
+            logging.debug("{0} can hit {1}".format(unit, valid_targets))
             unit.spend_ammo()
             for target in valid_targets:
                 if target not in self.grid:
@@ -155,7 +156,8 @@ class Board:
             if not self._is_hex_on_board(target_hex):
                 # You can't hit something off-board.
                 break
-            if self._which_casting_zone_owns_hex(target_hex) != unit.owner.get_direction():
+            target_hex_owner = self._which_casting_zone_owns_hex(target_hex)
+            if target_hex_owner != unit.owner.get_direction() and target_hex_owner != Player.INVALID_PLAYER:
                 # Casting squares are valid targets and deal damage to the owning player.
                 reachable_targets.append(target_hex)
                 continue
