@@ -1,3 +1,5 @@
+import Card
+
 class Unit:
     """
     A Unit is a representation of what a played card summons to the Board.
@@ -7,6 +9,15 @@ class Unit:
     TODO later:
     Modifiers
     """
+
+    def __init__(self, card):
+        assert isinstance(card, Card), "card is not a Card: {0}".format(card)
+        self.card = card
+        self._hp = self.card.hp
+        self._ammo = self.card.amoo
+
+    def __str__(self):
+        return "<{0}, {1} hp, {2} ammo>".format(self.card.name, self.get_curr_hp(), self.get_curr_ammo())
 
     def get_curr_hp(self):
         return self._hp

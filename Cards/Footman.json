@@ -1,6 +1,7 @@
 {
   "name" : "Footman",
   "cost" : 1,
-  "hp" : 5
+  "hp" : 5,
+  "ammo" : 5
 }
 
