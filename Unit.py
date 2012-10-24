@@ -52,7 +52,10 @@ class Unit:
 
     def get_attack_pattern(self):
         # an array of [x,y] coordinates it can attack if the unit is at [0,0]
-        return self._attack_pattern
+        if self.owner.get_direction() == Player.FACING_RIGHT:
+            return [ (x[0], x[1]) for x in self._attack_pattern ]
+        else:
+            return [ (-x[0], -x[1]) for x in self._attack_pattern ]
 
     def get_attack_type(self):
         # "single" attacks first enemy unit in range, "splash" attacks all in range

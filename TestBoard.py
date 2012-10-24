@@ -58,5 +58,18 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(self.b.grid[(4,0)], footman)
         self.b.grid.clear()
 
+    def test_attacking_should_do_damage(self):
+        footman = Unit(self.footman_card, self.p1)
+        footman2 = Unit(self.footman_card, self.p2)
+        starthp = footman.get_curr_hp()
+        starthp2 = footman.get_curr_hp()
+        self.b.grid[(1,0)] = footman
+        self.b.grid[(2,0)] = footman2
+        self.b.do_all_attacks()
+        self.assertEqual(footman.get_curr_hp() + footman2.get_damage(), starthp)
+        self.assertEqual(footman2.get_curr_hp() + footman.get_damage(), starthp2)
+        self.b.grid.clear()
+
+
 if __name__ == "__main__":
     unittest.main()
