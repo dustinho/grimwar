@@ -165,7 +165,8 @@ class Game:
                     if card_choice < 0 or card_choice >= i:
                         print "\nInvalid Choice {0}\n".format(card_choice)
                         continue
-
+                    elif input == '':
+                        break
                     player.buy(available_cards[card_choice])
                 break
             elif input == '':
