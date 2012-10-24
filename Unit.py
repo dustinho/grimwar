@@ -58,6 +58,12 @@ class Unit:
         # "single" attacks first enemy unit in range, "splash" attacks all in range
         return self._attack_type
 
+    def take_damage(self, damage_amount):
+        self._hp = self._hp - damage_amount
+
+    def spend_ammo(self, ammo_spent=1):
+        self._ammo = self._ammo - ammo_spent
+
 class Worker(Unit):
     def __init__(self, card, owner):
         Unit.__init__(self, card, owner)

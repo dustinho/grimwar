@@ -79,7 +79,7 @@ class Board:
                 if not self._is_hex_on_board(possible_destination):
                     logging.debug("rejected for being off the board")
                     break
-                if self._is_hex_in_casting_zone(possible_destination):
+                if self._which_casting_zone_owns_hex(possible_destination) != Player.INVALID_PLAYER:
                     # The columns at the boards' most extreme points are
                     # reserved for the player to cast new units.
                     logging.debug("rejected for being in casting zone")
@@ -94,6 +94,49 @@ class Board:
                 logging.debug("moving {0} from {1} to {2}".format(instance, position, chosen_destination))
                 self.grid[chosen_destination] = self.grid.pop(position)
 
+    def do_all_attacks(self):
+        for position, unit in self.grid.iteritems():
+            if unit.get_curr_ammo() <= 0:
+                continue
+            valid_targets = self.what_can_unit_at_position_hit(position)
+            unit.spend_ammo()
+            for target in valid_targets:
+                if target not in self.grid:
+                    # Damage player directly
+                    # TODO: can't access the players directly, add this functionality to some global Game class
+                    #self._which_casting_zone_owns_hex(target)
+                    pass
+                else:
+                    # Damage enemy unit on that hex
+                    enemy = self.grid[target]
+                    logging.info("{0} deals {1} damage to {2}".format(unit, unit.get_damage(), enemy))
+                    enemy.take_damage(unit.get_damage())
+                if unit.get_attack_type() == "single":
+                    break
+
+    def what_can_unit_at_position_hit(self, position):
+        """Given a coordinate on the grid which hold a particular unit, return
+        a list of hex coordinates that describe the enemy units that the
+        particular unit could hit."""
+        unit = self.grid[position]
+        if unit.get_curr_ammo() <= 0:
+            return []
+        reachable_targets = []
+        for position_delta in unit.get_attack_pattern():
+            target_hex = (position[0] + position_delta[0], position[1] + position_delta[1])
+            if not self._is_hex_on_board(target_hex):
+                # You can't hit something off-board.
+                break
+            if self._which_casting_zone_owns_hex(target_hex) != unit.owner.get_direction():
+                # Casting squares are valid targets and deal damage to the owning player.
+                reachable_targets.append(target_hex)
+                continue
+            if target_hex in self.grid and self.grid[target_hex].owner != unit.owner:
+                # Enemy units are valid targets too.
+                reachable_targets.append(target_hex)
+                continue
+        return reachable_targets
+
     def _positioned_units_for_player(self, player):
         assert isinstance(player, Player), "player {0} is not a Player".format(player)
         player_items = []
@@ -107,13 +150,14 @@ class Board:
         # columns 1, 3, 5,... and even-numbered rows have columns 0, 2, 4...
         return 2 * position[0] + position[1]
 
-    def _is_hex_in_casting_zone(self, position):
+    def _which_casting_zone_owns_hex(self, position):
         dist_from_left = self._column_distance_from_left(position)
-        if dist_from_left == 0 or dist_from_left == 1 or \
-            dist_from_left == 2 * (self.field_length - 1) or \
+        if dist_from_left == 0 or dist_from_left == 1:
+            return Player.FACING_RIGHT
+        if dist_from_left == 2 * (self.field_length - 1) or \
             dist_from_left == 2 * (self.field_length - 1):
-            return True
-        return False
+            return Player.FACING_LEFT
+        return Player.INVALID_PLAYER
 
     def _is_hex_on_board(self, position):
         dist_from_left = self._column_distance_from_left(position)

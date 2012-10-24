@@ -3,8 +3,9 @@ import random
 
 class Player:
     STARTING_HEALTH = 20
-    FACING_LEFT = 0
-    FACING_RIGHT = 1
+    INVALID_PLAYER = 0
+    FACING_LEFT = 1
+    FACING_RIGHT = 2
 
     def __init__(self):
         self.reset()
@@ -61,6 +62,9 @@ class Player:
 
     def get_direction(self):
         return self.direction
+
+    def take_damage(self, damage_amount):
+        self.health = self.health - damage_amount
 
 
 
