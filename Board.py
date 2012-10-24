@@ -1,3 +1,4 @@
+import Player
 # Right now, Board isn't really a class, but a container data structure.
 class Board:
     r"""A Board is essentially a map from coordinate pairs to Unit objects.
@@ -47,6 +48,32 @@ class Board:
                 )
 
     def do_all_movements(self, player):
+        """Advances all units owned by the specified player.
+
+        Units closest to the opponent move first.
+        Units move their movement speed if possible, but if not, they move as
+        many spaces as they can.  So if a speed 2 unit is behind a speed 1 unit,
+        both will advance one square each tick.
+        """
         assert isinstance(player, Player), "player {0} is not a Player".format(player)
-        # do all movements for player
+        direction = player.get_direction()
+
+        # Collect all the units that are owned by the specified player
+        player_items = []
+        for position, instance in self.grid.iteritems():
+            if instance.owner == player:
+                player_items.append( (position, instance) )
+
+        # sort by position - we want to move the instances closest to the enemy first
+        player_items.sort(key=lambda x: x[0][0], reverse=(direction == Player.FACING_LEFT))
+        direction_multiplier = 1 if direction == Player.FACING_RIGHT else -1
+        for position, instance in player_items:
+            max_delta = instance.get_speed()
+            for possible_delta in reversed(range(instance.get_speed()+1)):
+                possible_destination = position
+                possible_destination[0] += (possible_delta * direction_multiplier)
+                if possible_destination not in self.grid:
+                    print "moving {0} from {1} to {2}".format(instance, position, possible_destination)
+                    self[possible_destination] = self.grid.pop(position)
+                    break
 
