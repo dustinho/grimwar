@@ -1,11 +1,8 @@
 import unittest
 from Game import *
-<<<<<<< HEAD
-=======
 from Unit import *
 import logging
 logging.getLogger().setLevel(logging.DEBUG)
->>>>>>> cb4f54b... Do move phase and damage things more correctly
 
 class TestGame(unittest.TestCase):
     def setUp(self):

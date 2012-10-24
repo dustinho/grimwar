@@ -113,7 +113,7 @@ class Player:
     def get_direction(self):
         return self.direction
 
-    def get_curr_health:
+    def get_curr_health(self):
         return self._health
 
     def take_damage(self, damage_amount):

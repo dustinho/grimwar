@@ -215,7 +215,7 @@ class Game:
     def calculate_advantage(self):
         return 0
 
-    def damage_player_facing(self, direction, damage):
+    def damage_player(self, direction, damage):
         if direction == Player.FACING_RIGHT:
             self.players[0].take_damage(damage)
         elif direction == Player.FACING_LEFT:
