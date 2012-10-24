@@ -147,10 +147,26 @@ class Game:
                         print "\nInvalid Choice {0}\n".format(card_choice)
                         continue
 
-                    x = int(raw_input('x-coor where you want to play: '))
-                    y = int(raw_input('y-coor where you want to play: '))
+                    while (True):
+                        # Pick coordinates to place.
+                        # You get stuck if you don't have anywhere to place.
 
-                    self.play_card(available_cards[card_choice], id, (x,y))
+                        x = raw_input('x-coor where you want to play: ')
+                        y = raw_input('y-coor where you want to play: ')
+
+                        if not x.isdigit() or not y.isdigit():
+                           print "\nInvalid Choice \n"
+                           continue
+
+                        x = int(x)
+                        y = int(y)
+
+                        try:
+                            self.play_card(available_cards[card_choice], id, (x,y))
+                        except:
+                           print "\nInvalid Play \n"
+                           continue
+                        break
                 break
             elif input == '2':
                 while (True):
@@ -235,8 +251,6 @@ class Game:
     def play_card(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
         card = self.players[id].play(card_name)
-        print id
-        print position
         self.board.place_unit(card, self.players[id], position)
 
     def put_in_play(self, card, id, position):
