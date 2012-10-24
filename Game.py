@@ -176,13 +176,14 @@ class Game:
                     for name in available_cards:
                         print "{0}) {1}".format(i, name)
                         i += 1
-                    card_choice = int(raw_input())
-
+                    card_choice = raw_input()
+                    if card_choice == '':
+                        break
+                    card_choice = int(card_choice)
+                    
                     if card_choice < 0 or card_choice >= i:
                         print "\nInvalid Choice {0}\n".format(card_choice)
                         continue
-                    elif input == '':
-                        break
                     player.buy(available_cards[card_choice])
                 break
             elif input == '':
