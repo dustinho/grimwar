@@ -26,13 +26,13 @@ class CardManager:
         self.hand.remove(card)
         self.discard_pile.append(card)
 
-    def setDiscardPile(self, discard_pile):
+    def set_discard_pile(self, discard_pile):
         self.discard_pile = deque(discard_pile)
 
-    def setDeck(self, deck):
+    def set_deck(self, deck):
         self.deck = deque(deck)
 
-    def setHand(self, hand):
+    def set_hand(self, hand):
         self.hand = deque(hand)
 
     def reset(self):

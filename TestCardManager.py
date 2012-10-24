@@ -3,10 +3,10 @@ from CardManager import CardManager
 
 class TestCardManager(unittest.TestCase):
     def setUp(self):
-      self.cm = CardManager()
+        self.cm = CardManager()
 
     def test_draw2_disc2(self):
-        self.cm.setDeck([1,2])
+        self.cm.set_deck([1,2])
 
         self.cm.draw()
         self.cm.draw()
