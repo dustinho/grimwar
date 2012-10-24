@@ -10,6 +10,7 @@ class CLIClient:
         print "=== Turn {0}: Player {1}".format(game.turn, id)
         print player
         print "Board: {0}".format(game.board)
+        print game.board.get_valid_casting_hexes(game.players[id])
 
         while (True):
             input = raw_input('\nChoose: 1) Play 2) Buy. Hit Enter if done\n')
@@ -41,18 +42,17 @@ class CLIClient:
                         x = raw_input('x-coor where you want to play: ')
                         y = raw_input('y-coor where you want to play: ')
 
-                        if not x.isdigit() or not y.isdigit():
-                           print "\nInvalid Choice \n"
-                           continue
-
-                        x = int(x)
-                        y = int(y)
-
+                        try:
+                            x = int(x)
+                            y = int(y)
+                        except ValueError as e:
+                            print "\nInvalid Choice\n"
+                            break
                         try:
                             game.play_card(available_cards[card_choice], id, (x,y))
                         except:
-                           print "\nInvalid Play \n"
-                           continue
+                            print "\nInvalid Play \n"
+                            continue
                         break
                 break
             elif input == '2':

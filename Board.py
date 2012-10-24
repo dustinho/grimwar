@@ -224,3 +224,20 @@ class Board:
             assert False, "Unit already exists at {0}".format(position)
         self.grid[position] = Unit.get_unit(card, owner)
 
+    def get_valid_casting_hexes(self, owner):
+        """returns a list of tuples describing valid plays areas for owner"""
+        hexes = []
+        for i in xrange(self.field_width):
+            if owner.direction == Player.FACING_RIGHT:
+                if i%2 == 0:
+                    hexes.append((-i/2,i))
+                else:
+                    hexes.append((-i/2+1,i))
+            elif owner.direction == Player.FACING_LEFT:
+                if i%2 == 0:
+                    hexes.append((self.field_length -i/2-1,i))
+                else:
+                    hexes.append((self.field_length -i/2,i))
+            else:
+                assert False, "{0} is not a valid Player".format(owner)
+        return hexes
