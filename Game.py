@@ -188,7 +188,10 @@ class Game:
         """
         for location, unit in self.board.grid.iteritems():
             if isinstance(unit, Worker):
-                sector = self.board.get_sector_for_position(location)
+                sector = self.board.get_sector_for_position(
+                    location,
+                    unit.owner.get_direction()
+                )
                 if sector not in unit.visited_sectors:
                     unit.owner.gold += self.board.SECTOR_PAYOUT[sector]
                     unit.visited_sectors.append(sector)

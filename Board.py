@@ -45,13 +45,7 @@ class Board:
     2) in which a worker is considered eligible for a payout. Workers are only
     eligible for one payout from each zone.
     """
-    SECTORS = {
-        0 : 0,
-        1 : 3,
-        2 : 6,
-        3 : 10,
-        4 : 13,
-    }
+    SECTOR_COLS = [0, 6, 12, 20, 26]
 
     SECTOR_PAYOUT = {
         0 : 0,
@@ -196,8 +190,24 @@ class Board:
         else:
             return dist_from_left >= 1 and dist_from_left <= (self.field_length - 1) * 2 - 1
 
-    def get_sector_for_position(self, position):
-        for sector, col in self.SECTORS:
+    def get_sector_for_position(self, position, direction):
+        """
+        Find the largest sector marker (in old-style columns) that position is
+        larger than.
+
+        Sector markers are reversed for the player facing left
+        """
+        column = self._column_distance_from_left(position)
+        if (direction == Player.FACING_LEFT):
+            column = self.field_length * 2 - 1 - column
+
+        for sector in reversed(range(len(self.SECTOR_COLS))):
+            col = self.SECTOR_COLS[sector]
+            logging.debug("position: %s col: %s target_col: %s" % (
+                position,
+                self._column_distance_from_left(position),
+                col
+            ))
             if self._column_distance_from_left(position) >= col:
                 return sector
         assert False, "Should have returned a zone for {0}".format(position)
