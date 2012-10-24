@@ -38,32 +38,32 @@ class Game:
 
         # Initial Decks
         self.players[0].set_deck([
+            Card.get_card('Knight'),
             Card.get_card('Footman'),
-            Card.get_card('Footman'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
         ])
         self.players[0].set_hand([
             Card.get_card('Footman'),
             Card.get_card('Footman'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
         ])
         self.players[1].set_deck([
+            Card.get_card('Knight'),
             Card.get_card('Footman'),
-            Card.get_card('Footman'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
         ])
         self.players[1].set_hand([
             Card.get_card('Footman'),
             Card.get_card('Footman'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
-            Card.get_card('Peon'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
+            Card.get_card('Peasant'),
         ])
 
         # Initial Heroes
@@ -72,8 +72,8 @@ class Game:
         self.put_in_play(Card.get_card('Arius'), 1, (BOARD_LENGTH-2, middle))
 
         # Initial Grimoire
-        self.players[0].library = {'Peon' : 10, 'Footman' : 10}
-        self.players[1].library = {'Peon' : 10, 'Footman' : 10}
+        self.players[0].library = {'Peasant' : 10, 'Footman' : 10}
+        self.players[1].library = {'Peasant' : 10, 'Footman' : 10}
 
     def main_loop(self):
         # Main Loop

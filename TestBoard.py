@@ -19,7 +19,7 @@ class TestBoard(unittest.TestCase):
         self.fast_footman_card = Card.get_card("Footman")
         self.fast_footman_card.speed = 2
         self.hero_card = HeroCard.get_card("Arius")
-        self.worker_card = WorkerCard.get_card("Peon")
+        self.worker_card = WorkerCard.get_card("Peasant")
 
     def test_place_footman_and_move_once(self):
         footman = Unit(self.footman_card, self.p1)

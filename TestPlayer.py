@@ -8,17 +8,17 @@ class TestPlayer(unittest.TestCase):
 
     def test_draw2_disc2(self):
         footman = Card.get_card('Footman')
-        peon = Card.get_card('Peon')
-        self.player.set_deck([footman, peon])
+        peasant = Card.get_card('Peasant')
+        self.player.set_deck([footman, peasant])
 
         self.player.draw()
         self.player.draw()
         self.assertEqual(self.player.hand[0], footman)
-        self.assertEqual(self.player.hand[1], peon)
+        self.assertEqual(self.player.hand[1], peasant)
 
-        self.player.discard(peon)
+        self.player.discard(peasant)
         self.player.discard(footman)
-        self.assertEqual(self.player.discard_pile[0], peon)
+        self.assertEqual(self.player.discard_pile[0], peasant)
         self.assertEqual(self.player.discard_pile[1], footman)
 
     def test_buy(self):

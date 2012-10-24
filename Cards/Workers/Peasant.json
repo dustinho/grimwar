@@ -1,5 +1,5 @@
 {
-  "name" : "Peon",
+  "name" : "Peasant",
   "cost" : 3,
   "hp" : 1,
   "ammo" : 1,
@@ -8,6 +8,8 @@
   "attack_pattern" : [[1,0]],
   "attack_type" : "single",
   "tier" : 1,
-  "buy_cost" : 10
+  "buy_cost" : 10,
+  "faction" : "Human",
+  "archetype" : "Justice"
 }
 

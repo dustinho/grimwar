@@ -8,6 +8,9 @@
   "attack_pattern" : [[1,0],[0,1],[1,-1]],
   "attack_type" : "splash",
   "tier" : 1,
-  "buy_cost": 100
+  "buy_cost" : 100,
+  "level" : 1,
+  "faction" : "Human",
+  "archetype" : "Justice"
 }
 

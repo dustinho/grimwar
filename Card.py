@@ -38,6 +38,8 @@ class Card:
         self.attack_type = None
         self.tier = None
         self.buy_cost = None
+        self.faction = None
+        self.archetype = None
         data = json.load(open(spec_file))
 
         for key in data:
@@ -64,3 +66,4 @@ class HeroCard(Card):
     """
     def __init__(self, spec_file):
         Card.__init__(self, spec_file)
+        self.level = 1
