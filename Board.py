@@ -1,5 +1,5 @@
 from Player import *
-
+import logging
 # Right now, Board isn't really a class, but a container data structure.
 class Board:
     r"""A Board is essentially a map from coordinate pairs to Unit objects.
@@ -60,23 +60,38 @@ class Board:
         direction = player.get_direction()
 
         # Collect all the units that are owned by the specified player
+        player_items = self._positioned_units_for_player(player)
+
+        # sort by position - we want to move the instances closest to the enemy first
+        player_items.sort(key=lambda x: x[0][0], reverse=(direction == Player.FACING_RIGHT))
+
+        direction_multiplier = 2 * (1 if direction == Player.FACING_RIGHT else -1)
+        for position, instance in player_items:
+            logging.debug("trying to move {0} at {1}".format(instance, position))
+            # compute maximum movement
+            max_delta = instance.get_speed()
+            chosen_destination = position
+            for possible_delta in range(1,instance.get_speed()+1):
+                possible_destination = (position[0] + (possible_delta * direction_multiplier), position[1])
+                logging.debug("testing {0}".format(possible_destination))
+                RESERVED_COLS = 2
+                if possible_destination[0] > self.field_length - 1 - RESERVED_COLS or possible_destination[0] < RESERVED_COLS:
+                    # The columns at the boards' most extreme points are
+                    # reserved for the player to cast new units.
+                    break
+                if possible_destination in self.grid:
+                    # You can't move through or onto occupied squares, no
+                    # matter how fast you are.
+                    break
+                chosen_destination = possible_destination
+            if chosen_destination != position:
+                logging.debug("moving {0} from {1} to {2}".format(instance, position, chosen_destination))
+                self.grid[chosen_destination] = self.grid.pop(position)
+
+    def _positioned_units_for_player(self, player):
+        assert isinstance(player, Player), "player {0} is not a Player".format(player)
         player_items = []
         for position, instance in self.grid.iteritems():
             if instance.owner == player:
                 player_items.append( (position, instance) )
-
-        # sort by position - we want to move the instances closest to the enemy first
-        player_items.sort(key=lambda x: x[0][0], reverse=(direction == Player.FACING_LEFT))
-        direction_multiplier = 1 if direction == Player.FACING_RIGHT else -1
-        for position, instance in player_items:
-            max_delta = instance.get_speed()
-            for possible_delta in reversed(range(instance.get_speed()+1)):
-                possible_destination = (position[0] + (possible_delta * direction_multiplier), position[1])
-                if possible_destination[0] > self.field_length - 1 or possible_destination[0] < 0:
-                    # This movement would move the unit off the board.
-                    continue
-                if possible_destination not in self.grid:
-                    print "moving {0} from {1} to {2}".format(instance, position, possible_destination)
-                    self.grid[possible_destination] = self.grid.pop(position)
-                    break
-
+        return player_items
