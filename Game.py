@@ -5,6 +5,7 @@ from Board import *
 from Card import *
 from Unit import *
 from CLIClient import *
+from TK_UI.TKListener import *
 
 import json
 import random
@@ -27,6 +28,9 @@ class Game:
         self.input_type = input_type
         self.turn = 0
         self.listeners = []
+
+        listen = TKListener()
+        self.register_listener(listen)
 
     def setup_phase(self):
         # Set up board
