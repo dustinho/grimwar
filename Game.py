@@ -185,8 +185,9 @@ class Game:
 
     def play_card(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
+        self.board.is_playable(self.players[id], position)
         card = self.players[id].play(card_name)
-        self.board.place_unit(card, self.players[id], position)
+        self.board.place_unit(card, self.players[id], position)        
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """

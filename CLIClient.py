@@ -10,7 +10,7 @@ class CLIClient:
         print "=== Turn {0}: Player {1}".format(game.turn, id)
         print player
         print "Board: {0}".format(game.board)
-        print game.board.get_valid_casting_hexes(game.players[id])
+
 
         while (True):
             input = raw_input('\nChoose: 1) Play 2) Buy. Hit Enter if done\n')
@@ -36,20 +36,18 @@ class CLIClient:
                         continue
 
                     while (True):
+                        # Pick which casting zone to play to
+                        valid_zones = game.board.get_valid_casting_hexes(game.players[id])
+                        zone = raw_input('zone to cast to (0 for first zone from bottom, etc): ')
                         # Pick coordinates to place.
                         # You get stuck if you don't have anywhere to place.
-
-                        x = raw_input('x-coor where you want to play: ')
-                        y = raw_input('y-coor where you want to play: ')
-
                         try:
-                            x = int(x)
-                            y = int(y)
+                            zone = int(zone)
                         except ValueError as e:
-                            print "\nInvalid Choice\n"
+                            print "\nInvalid Choice - input not an int\n"
                             break
                         try:
-                            game.play_card(available_cards[card_choice], id, (x,y))
+                            game.play_card(available_cards[card_choice], id, valid_zones[zone])
                         except:
                             print "\nInvalid Play \n"
                             continue
