@@ -108,8 +108,10 @@ class Game:
         if result is not None:
             return result
 
+        self.increment_turn()
+
+    def increment_turn(self):
         self.turn += 1
-        self.notify_listeners()
 
     def upkeep_phase(self):
         if self.turn % DRAW_FREQUENCY == 0:

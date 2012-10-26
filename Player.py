@@ -77,7 +77,7 @@ class Player:
     def find_card(self, card_name, collec):
         # returns the first card object that matches card name from collec
         if card_name not in [c.name for c in collec]:
-            assert False, "{0} not in {1}".format(card.name, collec)
+            assert False, "{0} not in {1}".format(card_name, collec)
         return [c for c in collec if c.name == card_name][0]
 
     ## Setters

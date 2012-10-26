@@ -1,5 +1,6 @@
 import math
 from Tkinter import *
+from Controller import *
 import sys
 sys.path.append('../')
 from Game import *
@@ -8,15 +9,14 @@ import socket
 import pickle
 
 class UI:
-  INIT_WIN_HEIGHT = 500
+  INIT_WIN_HEIGHT = 900
   INIT_WIN_WIDTH = 1200
 
   CANVAS_OPTIONS = { "height": INIT_WIN_HEIGHT, "width": INIT_WIN_WIDTH } 
   HEX_RADIUS = 32
-  
 
-  def __init__(self, major_size, minor_size):
-    self.major = major_size * 2 + 1
+  def __init__(self, major_size, minor_size, controller):
+    self.major = major_size * 2 - 1
     self.minor = minor_size  / 2 + 1
 
     self.hex_radius = UI.HEX_RADIUS
@@ -24,14 +24,19 @@ class UI:
     self.y_pad = self.hex_radius + 3
  
     self.window = Tk()
+
     self.canvas = Canvas(self.window, **UI.CANVAS_OPTIONS)
     self.canvas.bind("<Button-1>", self.on_click)
-    self.canvas.grid(column = 0, row = 0, sticky=(N, W, E, S))
+    self.canvas.grid(column = 0, row = 0, sticky=(N, W))
+
     self.drawn = []
 
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.socket.bind(('', 50001))
     self.socket.listen(1)
+    self.controller = controller
+    self.pc = []
+    self.pos_btns = []
 
     self.window.createfilehandler(self.socket, tkinter.READABLE, self.outside)
 
@@ -52,10 +57,74 @@ class UI:
       vis_pos = self.backend_position_to_visual_position(position[0], position[1])
       self.drawn.extend(self.draw_char_on_visual_position(vis_pos[0], vis_pos[1], \
           unit.card.name, unit.get_curr_hp(), unit.get_curr_ammo(), unit.owner))
-      print position, unit
     
   def paintWindow(self):
     self.paintCanvas()
+    self.paint_player()
+
+  def paint_player(self):
+    for placed in self.pc:
+      self.canvas.delete(placed)
+    self.pc = []
+
+    for btn in self.pos_btns:
+      self.canvas.delete(btn)
+    self.pos_btns = []
+
+    label_text = ''.join(["Player ", str(self.controller.current_player_id)])
+    label_opts = { "window": Label(text=label_text) }
+    self.pc.append(self.canvas.create_window(50, 300, **label_opts)) 
+      
+    next_opts = { "window": Button(text=">", command=self.go_next) }
+    self.pc.append(self.canvas.create_window(100, 300, **next_opts))
+    
+    self.paint_player_hand(self.controller.get_hand(self.controller.current_player_id))
+
+  def go_next(self):
+    self.controller.next_step()
+    self.paint_player()
+
+  def paint_player_hand(self, hand):
+    x =  100
+    y = 350
+    width = 150
+    height = 250
+    xoffset = 100
+    for card in hand:
+      btn_text = card.name
+      card_opts = { "window": Button(text=btn_text, \
+          background="red", \
+          foreground="red", \
+          command=self.create_card_clicked_function(card)) }
+
+      self.pc.append(self.canvas.create_window(x, y, **card_opts))
+      x += xoffset
+      
+  def card_clicked(self, card):
+    for btn in self.pos_btns:
+      self.canvas.delete(btn)
+    self.pos_btns = []
+
+    pid = self.controller.current_player_id
+    be_loc_list = self.controller.get_playable_locations(pid)
+
+    for i, loc in enumerate(be_loc_list):
+      btn = Button(text=str(i), command=self.create_place_card_function(card,pid,loc))
+      btn_opts = { "window": btn }
+      pixel = self.backend_position_to_center_pixel(loc[0], loc[1])
+      
+      self.pos_btns.append(self.canvas.create_window(pixel[0], pixel[1], **btn_opts))
+      
+
+  def create_place_card_function(self, card, pid, loc):
+    return lambda: self.place_card(card, pid, loc)
+
+  def place_card(self, card, player_id, location):
+    self.controller.play_card(card.name, player_id, location)
+    self.paint_player()
+
+  def create_card_clicked_function(self, card):
+    return lambda: self.card_clicked(card)  
 
   def paintCanvas(self):
     self.paintBoard()
@@ -263,5 +332,6 @@ class UI:
 
 
 if __name__ == "__main__":
-  ui = UI(BOARD_LENGTH, BOARD_WIDTH)
+  con = Controller(None, Game(input_type=''))
+  ui = UI(BOARD_LENGTH, BOARD_WIDTH, con)
   ui.loop()

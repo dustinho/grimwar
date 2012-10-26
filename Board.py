@@ -237,7 +237,7 @@ class Board:
                 if i%2 == 0:
                     hexes.append((self.field_length -i/2-1,i))
                 else:
-                    hexes.append((self.field_length -i/2,i))
+                    hexes.append((self.field_length -i/2-2,i))
             else:
                 assert False, "{0} is not a valid Player".format(owner)
         return hexes
