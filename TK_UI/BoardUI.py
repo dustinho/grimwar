@@ -37,6 +37,7 @@ class UI:
     self.controller = controller
     self.pc = []
     self.pos_btns = []
+    self.status_lbls = []
 
     self.window.createfilehandler(self.socket, tkinter.READABLE, self.outside)
 
@@ -62,6 +63,17 @@ class UI:
     self.paintCanvas()
     self.paint_player()
 
+  def paint_status(self):
+    y = 400
+    x = 50
+    line_height = 120
+
+    for i, p in self.controller.game.players.iteritems():
+      lbl = Label(text=''.join(['Player: ', str(i), '\n', str(p)]), justify=LEFT)
+      lbl_opts = { "window": lbl, "anchor": NW}
+      self.status_lbls.append(self.canvas.create_window(x, y+(i*line_height), **lbl_opts))
+    
+
   def paint_player(self):
     for placed in self.pc:
       self.canvas.delete(placed)
@@ -71,6 +83,10 @@ class UI:
       self.canvas.delete(btn)
     self.pos_btns = []
 
+    for lbl in self.status_lbls:
+      self.canvas.delete(lbl)
+    self.status_lbls = []
+
     label_text = ''.join(["Player ", str(self.controller.current_player_id)])
     label_opts = { "window": Label(text=label_text) }
     self.pc.append(self.canvas.create_window(50, 300, **label_opts)) 
@@ -79,6 +95,7 @@ class UI:
     self.pc.append(self.canvas.create_window(100, 300, **next_opts))
     
     self.paint_player_hand(self.controller.get_hand(self.controller.current_player_id))
+    self.paint_status()
 
   def go_next(self):
     self.controller.next_step()
