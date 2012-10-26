@@ -66,7 +66,7 @@ class UI:
 
   def paint_status(self):
     y = 400
-    x = 50
+    x = 30
     line_height = 120
 
     for i, p in self.controller.game.players.iteritems():
@@ -92,12 +92,16 @@ class UI:
       self.canvas.delete(btn)
     self.grim = []
 
+    turn_text = ''.join(["Turn ", str(self.controller.game.turn)])
+    turn_opts = { "window": Label(text=turn_text), "anchor":W }
+    self.pc.append(self.canvas.create_window(30, 280, **turn_opts))
+
     label_text = ''.join(["Player ", str(self.controller.current_player_id)])
-    label_opts = { "window": Label(text=label_text) }
-    self.pc.append(self.canvas.create_window(50, 300, **label_opts)) 
+    label_opts = { "window": Label(text=label_text), "anchor": W }
+    self.pc.append(self.canvas.create_window(30, 300, **label_opts)) 
       
-    next_opts = { "window": Button(text=">", command=self.go_next) }
-    self.pc.append(self.canvas.create_window(100, 300, **next_opts))
+    next_opts = { "window": Button(text=">", command=self.go_next), "anchor": W }
+    self.pc.append(self.canvas.create_window(125, 300, **next_opts))
     
     self.paint_player_hand(self.controller.get_hand(self.controller.current_player_id))
     self.paint_status()
@@ -130,7 +134,7 @@ class UI:
     return lambda: self.buy_card(self.controller.current_player_id, name)
 
   def paint_player_hand(self, hand):
-    x =  100
+    x = 30
     y = 350
     width = 150
     height = 250
@@ -138,9 +142,7 @@ class UI:
     for card in hand:
       btn_text = card.name
       card_opts = { "window": Button(text=btn_text, \
-          background="red", \
-          foreground="red", \
-          command=self.create_card_clicked_function(card)) }
+          command=self.create_card_clicked_function(card)), "anchor":W }
 
       self.pc.append(self.canvas.create_window(x, y, **card_opts))
       x += xoffset
