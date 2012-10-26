@@ -17,8 +17,8 @@ class TestEngine(unittest.TestCase):
     def test_cleanup_death(self):
         live_footman_card = Card.get_card('Footman')
         dead_footman_card = Card.get_card('Footman')
-        live_footman = Unit(live_footman_card, self.game.players[0])
-        dead_footman = Unit(dead_footman_card, self.game.players[0])
+        live_footman = Unit.get_unit(live_footman_card, self.game.players[0])
+        dead_footman = Unit.get_unit(dead_footman_card, self.game.players[0])
         self.game.players[0].inplay.append(live_footman_card)
         self.game.players[0].inplay.append(dead_footman_card)
         dead_footman._hp = 0
@@ -33,8 +33,32 @@ class TestEngine(unittest.TestCase):
         self.assertEqual(len(self.game.players[0].inplay), 1)
 
     def test_worker_money(self):
-        # TODO
-        self.assertEqual(1,1)
+        self.game.board = Board(self.game, 19,5)
+        peasant_card = Card.get_card("Peasant")
+        peasant = Unit.get_unit(peasant_card, self.game.players[0])
+        self.game.players[0].inplay.append(peasant_card)
+        self.game.board.grid[(0,0)] = peasant
+        self.assertEqual(self.game.players[0].gold,10)
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.assertEqual(self.game.players[0].gold,15)
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.assertEqual(self.game.board.grid[(6,0)], peasant)
+        self.assertEqual(self.game.players[0].gold,20)
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.assertEqual(self.game.board.grid[(10,0)], peasant)
+        self.assertEqual(self.game.players[0].gold,27)
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.assertEqual(self.game.board.grid[(13,0)], peasant)
+        self.assertEqual(self.game.players[0].gold,33)
 
     def test_draw_and_play_card(self):
         self.game.players[0].deck.append(Card.get_card("Footman"))
@@ -46,8 +70,8 @@ class TestEngine(unittest.TestCase):
     def test_hero_death(self):
         live_hero_card = Card.get_card('Arius')
         dead_hero_card = Card.get_card('Arius')
-        live_hero = Hero(live_hero_card, self.game.players[0])
-        dead_hero = Hero(dead_hero_card, self.game.players[0])
+        live_hero = Unit.get_unit(live_hero_card, self.game.players[0])
+        dead_hero = Unit.get_unit(dead_hero_card, self.game.players[0])
         self.game.players[0].inplay.append(live_hero_card)
         self.game.players[0].inplay.append(dead_hero_card)
         dead_hero._hp = 0
