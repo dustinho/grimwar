@@ -38,6 +38,7 @@ class UI:
     self.pc = []
     self.pos_btns = []
     self.status_lbls = []
+    self.grim = []
 
     self.window.createfilehandler(self.socket, tkinter.READABLE, self.outside)
 
@@ -87,6 +88,10 @@ class UI:
       self.canvas.delete(lbl)
     self.status_lbls = []
 
+    for btn in self.grim:
+      self.canvas.delete(btn)
+    self.grim = []
+
     label_text = ''.join(["Player ", str(self.controller.current_player_id)])
     label_opts = { "window": Label(text=label_text) }
     self.pc.append(self.canvas.create_window(50, 300, **label_opts)) 
@@ -96,10 +101,33 @@ class UI:
     
     self.paint_player_hand(self.controller.get_hand(self.controller.current_player_id))
     self.paint_status()
+    self.paint_player_grimoire(self.controller.get_grimoire(self.controller.current_player_id))
 
   def go_next(self):
     self.controller.next_step()
     self.paint_player()
+
+  def paint_player_grimoire(self, grim_list):
+    x = 700
+    y = 350
+
+    height = 40
+
+    for amount, name, cost in grim_list:
+      btn_text = ''.join([str(amount), 'x ', name, ' $', str(cost)])
+      buy_opts = { "window": Button(text=btn_text, \
+          command=self.create_grim_buy_function(name)), \
+          "anchor": W}
+
+      self.grim.append(self.canvas.create_window(x, y, **buy_opts))
+      y += height
+
+  def buy_card(self, player_id, name):
+    self.controller.buy_card(player_id, name)
+    self.paint_player()
+
+  def create_grim_buy_function(self, name):
+    return lambda: self.buy_card(self.controller.current_player_id, name)
 
   def paint_player_hand(self, hand):
     x =  100

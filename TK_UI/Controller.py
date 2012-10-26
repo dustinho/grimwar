@@ -1,4 +1,6 @@
-
+import sys
+sys.path.append('../')
+from Card import Card
 
 class Controller:
   def __init__(self, UI, game):
@@ -47,6 +49,21 @@ class Controller:
 
   def get_hand(self, player_id):
     return self.game.players[player_id].hand
+
+  def get_grimoire(self, player_id):
+    #Amount, Cost, Name
+    l = []
+    for name, count in self.game.players[player_id].grimoire.library.iteritems():
+      amount = count
+      card = Card.get_card(name)
+      cost = card.buy_cost
+      name = card.name
+      l.append((amount, name, cost))
+    return l
+
+  def buy_card(self, player_id, card_name):
+    player = self.game.players[player_id]
+    player.buy(card_name) 
 
   def play_card(self, card, player_id, position):
     self.game.play_card(card, player_id, position)
