@@ -50,9 +50,9 @@ class UI:
     pickled_game  = conn.recv(1024 * 16)
     
     game = pickle.loads(pickled_game)
-    self.updateState(game)
+    self.update_state(game)
 
-  def updateState(self, game):
+  def update_state(self, game):
     for d in self.drawn:
       self.canvas.delete(d)
     for position, unit in game.board.grid.iteritems():
@@ -379,6 +379,5 @@ class UI:
 
 
 if __name__ == "__main__":
-  con = Controller(None, Game(input_type=''))
-  ui = UI(BOARD_LENGTH, BOARD_WIDTH, con)
-  ui.loop()
+  con = Controller()
+  con.start()

@@ -1,20 +1,25 @@
 import sys
+from BoardUI import UI
 sys.path.append('../')
 from Card import Card
+from Game import *
 
 class Controller:
-  def __init__(self, UI, game):
-    self.UI = UI  
-    self.game = game
+  def __init__(self):
+    self.game = Game(input_type='')
     self.current_player_id = 0
+    self.UI = UI(BOARD_LENGTH, BOARD_WIDTH, self) 
     self.phase = 0
 
     self.next_step()
 
+  def start(self):
+    self.UI.loop()
+
   def next_step(self):
     if self.phase == 0:
       self.game.upkeep_phase()
-      self.game.notify_listeners()
+      self.UI.update_state(self.game)
       self.phase += 1 
       self.next_step()
     elif self.phase == 1:

@@ -29,9 +29,6 @@ class Game:
         self.turn = 0
         self.listeners = []
 
-        listen = TKListener()
-        self.register_listener(listen)
-
     def setup_phase(self):
         # Set up board
         self.board = Board(self, field_length=BOARD_LENGTH, field_width=BOARD_WIDTH)
