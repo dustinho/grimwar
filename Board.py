@@ -179,7 +179,7 @@ class Board:
         if dist_from_left == 0 or dist_from_left == 1:
             return Player.FACING_RIGHT
         if dist_from_left == 2 * (self.field_length - 1) or \
-            dist_from_left == 2 * (self.field_length - 1):
+            dist_from_left == 2 * (self.field_length - 1) - 1:
             return Player.FACING_LEFT
         return Player.INVALID_PLAYER
 
