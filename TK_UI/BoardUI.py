@@ -9,15 +9,15 @@ import socket
 import pickle
 
 class UI:
-  INIT_WIN_HEIGHT = 900
+  INIT_WIN_HEIGHT = 600
   INIT_WIN_WIDTH = 1200
 
   CANVAS_OPTIONS = { "height": INIT_WIN_HEIGHT, "width": INIT_WIN_WIDTH } 
   HEX_RADIUS = 32
 
   def __init__(self, major_size, minor_size, controller):
-    self.major = major_size * 2 - 1
-    self.minor = minor_size  / 2 + 1
+    self.major = major_size 
+    self.minor = minor_size
 
     self.hex_radius = UI.HEX_RADIUS
     self.x_pad = self.hex_radius + 2
@@ -31,37 +31,16 @@ class UI:
 
     self.drawn = []
 
-    self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    self.socket.bind(('', 50001))
-    self.socket.listen(1)
     self.controller = controller
     self.pc = []
     self.pos_btns = []
     self.status_lbls = []
     self.grim = []
 
-    self.window.createfilehandler(self.socket, tkinter.READABLE, self.outside)
+    self.paint_window()
 
-    self.paintWindow()
-    
-
-  def outside(self, f, mask):
-    conn, addr  = f.accept()
-    pickled_game  = conn.recv(1024 * 16)
-    
-    game = pickle.loads(pickled_game)
-    self.update_state(game)
-
-  def update_state(self, game):
-    for d in self.drawn:
-      self.canvas.delete(d)
-    for position, unit in game.board.grid.iteritems():
-      vis_pos = self.backend_position_to_visual_position(position[0], position[1])
-      self.drawn.extend(self.draw_char_on_visual_position(vis_pos[0], vis_pos[1], \
-          unit.card.name, unit.get_curr_hp(), unit.get_curr_ammo(), unit.owner))
-    
-  def paintWindow(self):
-    self.paintCanvas()
+  def paint_window(self):
+    self.paint_gameboard()
     self.paint_player()
 
   def paint_status(self):
@@ -107,6 +86,14 @@ class UI:
     self.paint_status()
     self.paint_player_grimoire(self.controller.get_grimoire(self.controller.current_player_id))
 
+  def update_state(self, game):
+    for d in self.drawn:
+      self.canvas.delete(d)
+    for position, unit in game.board.grid.iteritems():
+      vis_pos = self.backend_position_to_visual_position(position[0], position[1])
+      self.drawn.extend(self.draw_char_on_visual_position(vis_pos[0], vis_pos[1], \
+          unit.card.name, unit.get_curr_hp(), unit.get_curr_ammo(), unit.owner))
+    
   def go_next(self):
     self.controller.next_step()
     self.paint_player()
@@ -173,10 +160,7 @@ class UI:
   def create_card_clicked_function(self, card):
     return lambda: self.card_clicked(card)  
 
-  def paintCanvas(self):
-    self.paintBoard()
-
-  def paintBoard(self):
+  def paint_gameboard(self):
     def drawHexVerticalBoard(canvas, width, height, radius):
       def drawVerticalHexagon(canvas, centerx, centery, radius):
         yoffset = radius / 2
@@ -193,26 +177,29 @@ class UI:
        
         return canvas.create_polygon(*coords, **options)
 
-      rowYOffset = radius * 3 
-      colXOffset = radius * math.sqrt(3) / 2
-      
+      rowYOffset = radius * 3 / 2
+      colXOffset = radius * math.sqrt(3) 
+
+      print width
       
       for i in xrange(width):
         for j in xrange(height):
           oddOffset = 0
-          if i % 2 == 1:
-            oddOffset = rowYOffset / 2
-          if i % 2 == 1 and j == height - 1:
+          if j % 2 == 1:
+            oddOffset =  colXOffset / 2
+          if j % 2 == 1 and i == width - 1:
             continue
-          drawVerticalHexagon(canvas, self.x_pad + (i * colXOffset), \
-              self.y_pad + oddOffset + (j * rowYOffset), radius) 
+          drawVerticalHexagon(canvas, self.x_pad + oddOffset + (i * colXOffset), \
+              self.y_pad + (j * rowYOffset), radius)
+      
       return 
+
     drawHexVerticalBoard(self.canvas, self.major, self.minor, self.hex_radius)
     #self.drawSquareCoords(self.canvas, self.major, self.minor, self.hex_radius)
 
-    for ii in xrange(int(math.ceil(self.major / 2.0))):
-      for jj in xrange(self.minor * 2 -1):
-        if ii == int(math.ceil(self.major / 2.0)) - 1 and jj % 2 == 1:
+    for ii in xrange(self.major):
+      for jj in xrange(self.minor):
+        if jj % 2 == 1 and ii == self.major - 1:
           continue
         self.draw_coord_on_visual_position(ii, jj) 
          
@@ -290,12 +277,12 @@ class UI:
     return (visual_col, visual_row)
 
   def backend_position_to_visual_position(self, x, y):
-    new_y = (self.minor - 1) * 2 - y 
+    new_y = self.minor - y - 1
     new_x = int(x + math.floor(y/2))
     return (new_x, new_y)
 
   def visual_position_to_backend_position(self, x, y):
-    new_y = (self.minor - 1) * 2 - y
+    new_y = self.minor - y - 1
     new_x = int(x - math.floor(new_y/2))
     return (new_x, new_y)
 
@@ -316,12 +303,6 @@ class UI:
     pixel = self.visual_position_to_center_pixel(visual_position[0], visual_position[1])
   
     return pixel
-    
-
-  def translateToBackendPosition(self, x_from_left, y_from_top):
-    x = x_from_left
-    y = ((self.minor - 1) * 2) - y_from_top
-    return (x, y)
   
   def loop(self):
     self.window.mainloop()
@@ -344,17 +325,16 @@ class UI:
     yside = hex_radius * 3 / 2
     xside = hex_radius * math.sqrt(3)
 
-    rowYOffset = hex_radius * 3 
-    colXOffset = hex_radius * math.sqrt(3) / 2
+    rowYOffset = hex_radius * 3 / 2
+    colXOffset = hex_radius * math.sqrt(3) 
 
-    for i in xrange(width + 1):
-      for j in xrange(height):
+    for i in xrange(width):
+      for j in xrange(height + 1):
         oddOffset = 0
-        if i % 2 == 1:
-          oddOffset = rowYOffset / 2
-        drawRect(canvas, self.x_pad + (i * colXOffset), \
-            self.y_pad - (self.hex_radius / 4) + \
-            oddOffset + (j * rowYOffset), xside, yside) 
+        if j % 2 == 1:
+          oddOffset = colXOffset / 2
+        drawRect(canvas, self.x_pad + oddOffset + (i * colXOffset), \
+            self.y_pad - (self.hex_radius / 4) + (j * rowYOffset), xside, yside) 
          
 
   def fillHex(self, x, y):
