@@ -21,6 +21,8 @@ class TKTestPlayer:
         self.player_screen = None
         self.player_id = player_id
 
+        self.data_string = ""
+
         point = TCP4ClientEndpoint(reactor, ip, 1079)
         d = point.connect(PlayerProtocolFactory(self.update_game))
         d.addCallback(self.got_protocol)
@@ -33,8 +35,13 @@ class TKTestPlayer:
 
     def update_game(self, pickled_game):
         print "updated"
-        game = pickle.loads(pickled_game)
+        try:
+            self.data_string += pickled_game
+            game = pickle.loads(self.data_string)
+        except:
+            return
 
+        self.data_string = ""
         casting_hexes = game.board.get_valid_casting_hexes(game.players[self.player_id])
 
         self.update_board(game.board)
