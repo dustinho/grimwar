@@ -1,5 +1,6 @@
 import json
 import os
+from Card import Card
 
 class Grimoire:
     # keeps track of a player's Grimoire,
@@ -9,6 +10,8 @@ class Grimoire:
                                  my_grimoire + ".json")
         self.library = {}
         self.library = json.load(open(spec_file))
+        self.cards = {}
+        self._create_card_examples()
 
     def get_buyable_card_names(self):
         return [x for x in self.library.iterkeys() if self.library[x] >= 1]
@@ -21,3 +24,8 @@ class Grimoire:
     def add_to_grimoire(self, card_name):
         self.library[card_name] += 1
 
+    def _create_card_examples(self):
+        # access example cards with grimoire["cardname"]
+        for i in self.library.keys():
+            self.cards[i] = Card.get_card(i)
+    
