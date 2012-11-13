@@ -28,5 +28,8 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(self.player.discard_pile[0].name, test_card)
         self.assertEqual(self.player.grimoire.library[test_card], 3)
 
+    def test_grimoire_properties(self):
+        self.assertEqual(self.player.grimoire.cards["Footman"].name, "Footman")
+        self.assertEqual(self.player.grimoire.cards["Peasant"].buy_cost, 10)
 if __name__ == '__main__':
     unittest.main()
