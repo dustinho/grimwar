@@ -5,7 +5,6 @@ from Board import *
 from Card import *
 from Unit import *
 from CLIClient import *
-from TK_UI.TKListener import *
 
 import json
 import random
@@ -27,7 +26,6 @@ class Game:
         self.setup_phase()
         self.input_type = input_type
         self.turn = 0
-        self.listeners = []
 
     def setup_phase(self):
         # Set up board
@@ -90,12 +88,7 @@ class Game:
         self.main_phase(0)
         self.main_phase(1)
 
-        first = self.calculate_advantage()
-        second = (first + 1) % 2
-
-        self.move_phase(self.players[first])
-        self.move_phase(self.players[second])
-
+        self.move_phase()
         # Damage happens concurrently
         self.damage_phase()
 
@@ -125,7 +118,14 @@ class Game:
         CLIClient.main_phase(id, self)
         return
 
-    def move_phase(self, player):
+    def move_phase(self):
+        first = self.calculate_advantage()
+        second = (first + 1) % 2
+
+        self.move_player(self.players[first])
+        self.move_player(self.players[second])
+
+    def move_player(self, player):
         self.board.do_all_movements(player)
 
     def damage_phase(self):
@@ -193,18 +193,6 @@ class Game:
         self.players[id].inplay.append(card)
         self.board.grid[(position)] = Unit.get_unit(card, self.players[id])
 
-    def register_listener(self, listener):
-        """Add listener to the list of interested objects whenever states change.
-
-        A listener is simply an object that provides a callable state_changed()
-        which takes a single positional argument containing a pickle of the
-        Game."""
-        self.listeners.append(listener)
-
-    def notify_listeners(self):
-        game_dump = pickle.dumps(self)
-        for listener in self.listeners:
-            listener.state_changed(game_dump)
 
 ## Debug function to print out current state
 def print_state(players, board):

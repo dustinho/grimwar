@@ -9,17 +9,19 @@ import sys
 sys.path.append('../')
 from Game import *
 
+from optparse import OptionParser
+
 class TKTestPlayer:
-    def __init__(self):
+    def __init__(self, ip, player_id):
         self.window = Tk()
         self.canvas = Canvas(self.window, { "height": 700, "width": 1200 })
         self.canvas.grid(column = 0, row = 0, sticky=(N, W))
         self.game_board = None
         self.input_protocol = None
         self.player_screen = None
-        self.player_id = 1
+        self.player_id = player_id
 
-        point = TCP4ClientEndpoint(reactor, "localhost", 1079)
+        point = TCP4ClientEndpoint(reactor, ip, 1079)
         d = point.connect(PlayerProtocolFactory(self.update_game))
         d.addCallback(self.got_protocol)
 
@@ -46,7 +48,11 @@ class TKTestPlayer:
         else:
             self.game_board.clear_units_from_board()
         for position, unit in board.grid.iteritems():
-            tku = TKUnit(unit.card.name)
+            direction = ">"
+            if unit.owner.direction == unit.owner.FACING_LEFT:
+                direction = "<"
+            tku = TKUnit(unit.card.name, unit.get_curr_ammo(), unit.get_curr_hp(), 
+                    direction)
             self.game_board.paint_unit_on_backend_position(position[0], position[1], tku)
 
     def update_player(self, player, casting_hexes):
@@ -67,6 +73,13 @@ class TKTestPlayer:
                 3, 3 + self.game_board.get_pixel_height())
 
 if __name__ == "__main__":
-    tktp = TKTestPlayer()
+    #bad code
+    #hack
+    parser = OptionParser()
+    parser.add_option("-n", "--player_id", dest="player_id")
+    parser.add_option("-i", "--ip", dest="ip")
+    (options, args) = parser.parse_args()
+
+    tktp = TKTestPlayer(options.ip, int(options.player_id))
     
         
