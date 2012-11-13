@@ -49,7 +49,7 @@ class Player:
         if len(self.deck) == 0:
             if len(self.discard_pile) == 0:
                 return
-            self.deck = self.discard_pile[:]
+            self.deck = self.discard_pile
             self.discard_pile = deque()
             random.shuffle(self.deck)
         self.hand.append(self.deck.popleft())
