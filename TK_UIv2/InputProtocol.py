@@ -9,10 +9,10 @@ class InputProtocol:
     def play_card(self, player_id, card, location):
         pc = PlayCard(player_id, card, location)
         ppc = pickle.dumps(pc)
-        self.protocol.sendMessage(ppc)
+        self.protocol.sendString(ppc)
         
     def buy_card(self, player_id, card_name):
         bc = BuyCard(player_id, card_name)
         pbc = pickle.dumps(bc)
-        self.protocol.sendMessage(pbc)
+        self.protocol.sendString(pbc)
     

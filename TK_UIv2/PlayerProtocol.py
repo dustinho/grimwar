@@ -1,19 +1,17 @@
 
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory, Protocol
+from twisted.protocols.basic import NetstringReceiver
 from twisted.internet.endpoints import TCP4ClientEndpoint
 
 from PlayerInputs import PlayCard 
 
-class PlayerProtocol(Protocol):
+class PlayerProtocol(NetstringReceiver):
     def __init__(self, factory):
         self.factory = factory
 
-    def sendMessage(self, msg):
-        self.transport.write(msg)
-
-    def dataReceived(self, data):
-        self.factory.callback(data)
+    def stringReceived(self, string):
+        self.factory.callback(string)
         
 
 class PlayerProtocolFactory(Factory):
@@ -27,7 +25,7 @@ class PlayerProtocolFactory(Factory):
 if __name__ == "__main__":
     def connectionCallback(p):
         pass
-        p.sendMessage("Hello")
+        p.sendString("Hello")
 
     def printCallback(data):
         print data

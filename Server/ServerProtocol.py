@@ -1,6 +1,7 @@
 from twisted.internet import protocol
+from twisted.protocols.basic import NetstringReceiver
 
-class ServerProtocol(protocol.Protocol):
+class ServerProtocol(NetstringReceiver):
     def __init__(self, factory):
         self.factory = factory
 
@@ -10,10 +11,7 @@ class ServerProtocol(protocol.Protocol):
     def connectionLost(self, reason):
         self.factory.onLost(self, reason)
 
-    def sendData(self, data):
-        self.transport.write(data)
-
-    def dataReceived(self, data):
+    def stringReceived(self, data):
         self.factory.onReceived(data)
 
 
@@ -24,7 +22,6 @@ class ServerProtocolFactory(protocol.ServerFactory):
         self.connections = []
 
     def buildProtocol(self, addr):
-        print addr
         protocol = ServerProtocol(self)
         self.connections.append(protocol)
         return protocol
@@ -37,7 +34,7 @@ class ServerProtocolFactory(protocol.ServerFactory):
 
     def broadcast(self, msg):
         for conn in self.connections:
-            conn.sendData(msg)
+            conn.sendString(msg)
 
 
 

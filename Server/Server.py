@@ -9,7 +9,6 @@ from PlayerInputs import PlayCard, BuyCard
 import pickle
 
 class Server:
-
     def __init__(self):
         self.TIME = 2
         self.controller = BaseController()
@@ -25,20 +24,24 @@ class Server:
         reactor.run()
 
     def loop(self):
-        if self.server_factory.getConnectionCount() == 2:
+        if self.server_factory.getConnectionCount() >= 2:
             if self.go:
                 self.controller.advance()
                 self.broadcast_game()
             else:
                 self.go = True
-            
+        else:
+            if self.go == True:
+                print "Active Connections:"
+                for conn in self.server_factory.connections:
+                    print conn.transport.getPeer() 
 
-        print "Loopin"
         reactor.callLater(self.TIME, self.loop)
 
     def on_connection(self, connection):
+        print "New Connection", connection.transport.getPeer() 
         game_data = self._get_game_data()
-        connection.sendData(game_data)
+        connection.sendString(game_data)
 
     def on_received(self, data):
         data = pickle.loads(data)
