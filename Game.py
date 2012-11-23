@@ -15,7 +15,7 @@ import pickle
 BOARD_LENGTH = 19
 BOARD_WIDTH = 5
 DRAW_FREQUENCY = 3
-UPKEEP_GOLD = 1
+UPKEEP_GOLD = 5
 MAX_HAND_SIZE = 5
 
 class Game:
@@ -186,7 +186,7 @@ class Game:
         """plays a card for player id from his hand at position (u,v)"""
         self.board.is_playable(self.players[id], position)
         card = self.players[id].play(card_name)
-        self.board.place_unit(card, self.players[id], position)        
+        self.board.place_unit(card, self.players[id], position)
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """
