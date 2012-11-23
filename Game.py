@@ -38,7 +38,7 @@ class Game:
 
         # Initial Decks
         self.players[0].set_deck([
-            Card.get_card('Knight'),
+            Card.get_card('Rifleman'),
             Card.get_card('Footman'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
@@ -52,7 +52,7 @@ class Game:
             Card.get_card('Peasant'),
         ])
         self.players[1].set_deck([
-            Card.get_card('Knight'),
+            Card.get_card('Rifleman'),
             Card.get_card('Footman'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
