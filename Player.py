@@ -27,15 +27,9 @@ class Player:
         return "\n".join(lines)
 
     def buy(self, card_name):
-        self.grimoire.remove_from_grimoire(card_name)
-        try:
-            self.spend_gold(Card.get_card(card_name).buy_cost)
-        except ValueError:
-            # rollback on failure
-            self.grimoire.add_to_grimoire(card_name)
-            return
-        self.discard_pile.append(Card.get_card(card_name))
-
+        if (self.spend_gold(Card.get_card(card_name).buy_cost)):
+            self.grimoire.remove_from_grimoire(card_name)
+            self.discard_pile.append(Card.get_card(card_name))
 
     def play(self, card_name):
         # find the card in hand
@@ -67,9 +61,14 @@ class Player:
         self.deck.appendleft(hero.card)
 
     def spend_gold(self, amount):
+        """
+        Attempts to spend gold. Returns false if there is not enough gold to
+        spend.
+        """
         if amount > self.gold:
-            assert False, "Not enough gold to perform action"
+            return False
         self.gold -= amount
+        return True
 
     def find_card(self, card_name, collec):
         # returns the first card object that matches card name from collec
@@ -93,6 +92,9 @@ class Player:
 
     def set_library(self, library):
         self.grimoire.library = library
+
+    def set_gold(self, amount):
+        self.gold = amount
 
     def reset(self):
         self.deck = deque()

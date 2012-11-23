@@ -23,6 +23,7 @@ class TestPlayer(unittest.TestCase):
 
     def test_buy(self):
         test_card = "Footman"
+        self.player.set_gold(Card.get_card(test_card).buy_cost)
         self.player.buy(test_card)
         self.assertEqual(self.player.gold, 0)
         self.assertEqual(self.player.discard_pile[0].name, test_card)
@@ -30,7 +31,7 @@ class TestPlayer(unittest.TestCase):
 
     def test_grimoire_properties(self):
         self.assertEqual(self.player.grimoire.cards["Footman"].name, "Footman")
-        self.assertEqual(self.player.grimoire.cards["Peasant"].buy_cost, 10)
+        self.assertEqual(self.player.grimoire.cards["Peasant"].buy_cost, 25)
 
     def test_draw_and_recycle_deck(self):
         footman = Card.get_card('Footman')
