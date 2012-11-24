@@ -44,15 +44,18 @@ class Board:
     SECTOR specifies the first column (old style - a is column 0, c is columned
     2) in which a worker is considered eligible for a payout. Workers are only
     eligible for one payout from each zone.
+
+    Sectors "face" the middle. This is best represented with old-style columns.
+    Note that past the middle, sectors cols are odd.
     """
-    SECTOR_COLS = [0, 6, 12, 20, 26]
+    SECTOR_COLS = [0, 6, 14, 21, 29]
 
     SECTOR_PAYOUT = {
         0 : 0,
-        1 : 2,
-        2 : 2,
-        3 : 3,
-        4 : 3,
+        1 : 10,
+        2 : 20,
+        3 : 30,
+        4 : 40,
     }
 
     def __init__(self, game, field_length=17, field_width=5):
@@ -195,7 +198,9 @@ class Board:
         Find the largest sector marker (in old-style columns) that position is
         larger than.
 
-        Sector markers are reversed for the player facing left
+        Sector markers are reversed for the player facing left.
+
+        Sectors "face" towards the middle. This gets weird.
         """
         column = self._column_distance_from_left(position)
         if (direction == Player.FACING_LEFT):
