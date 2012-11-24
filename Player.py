@@ -9,7 +9,7 @@ class Player:
     INVALID_PLAYER = 0
     FACING_LEFT = 1
     FACING_RIGHT = 2
-    STARTING_GOLD = 10
+    STARTING_GOLD = 20
 
     def __init__(self, id):
         self.id = id

@@ -10,7 +10,7 @@ import pickle
 
 class Server:
     def __init__(self):
-        self.TIME = 2
+        self.TIME = 2.5
         self.controller = BaseController()
         self.server_factory = ServerProtocolFactory(self.on_connection,
                 self.on_received)

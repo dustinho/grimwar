@@ -48,7 +48,7 @@ class Board:
     Sectors "face" the middle. This is best represented with old-style columns.
     Note that past the middle, sectors cols are odd.
     """
-    SECTOR_COLS = [0, 8, 16, 21, 29]
+    SECTOR_COLS = [0, 6, 14, 23, 31]
 
     SECTOR_PAYOUT = {
         0 : 0,
