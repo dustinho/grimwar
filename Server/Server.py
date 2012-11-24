@@ -26,7 +26,10 @@ class Server:
     def loop(self):
         if self.server_factory.getConnectionCount() >= 2:
             if self.go:
-                self.controller.advance()
+                result = self.controller.advance()
+                if result != None:
+                    self.go = False
+                    print result
                 self.broadcast_game()
             else:
                 self.go = True

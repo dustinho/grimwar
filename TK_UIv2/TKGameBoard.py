@@ -19,13 +19,19 @@ class TKGameBoard:
         self.hex_radius = radius
         self.units = []
 
-    def paint_board(self):
-        hex_options = self.get_hexagon_options()
+    def paint_board(self, sector_function):
 
         for i in xrange(self.major):
             for j in xrange(self.minor):
                 if j % 2 == 1 and i == self.major - 1:
                     continue
+
+                bp = BoardTools.get_backend_position_from_visual_position(
+                        i, j, self.minor)
+
+                sector = sector_function((bp[0], bp[1]))
+                hex_options = self.get_hexagon_options(sector)
+
                 pixel = self.get_center_pixel_from_visual_position(i, j)
                 BoardTools.draw_vertical_hexagon(self.canvas, pixel[0], pixel[1], \
                         self.hex_radius, hex_options, self.get_offsets)
@@ -78,8 +84,19 @@ class TKGameBoard:
         yoffset = self.hex_radius / 2.0
         return (xoffset, yoffset)
 
-    def get_hexagon_options(self):
+    def get_hexagon_options(self, sector):
         options = {"fill": "grey", "outline": "black"}
+        if sector == 0:
+            options["fill"] = "#666666"
+        elif sector == 1:
+            options["fill"] = "#555555"
+        elif sector == 2:
+            options["fill"] = "#444444"
+        elif sector == 3:
+            options["fill"] = "#555555"
+        elif sector == 4:
+            options["fill"] = "#666666"
+            
         return options
 
     def get_pixel_height(self):

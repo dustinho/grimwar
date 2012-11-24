@@ -51,15 +51,17 @@ class TKTestPlayer:
         if self.game_board == None:
             print "created gameboard"
             self.game_board = self.create_game_board(board.field_length, board.field_width)
-            self.game_board.paint_board()
+            self.game_board.paint_board(board.get_sector_for_position)
         else:
             self.game_board.clear_units_from_board()
         for position, unit in board.grid.iteritems():
             direction = ">"
+            color = "RED"
             if unit.owner.direction == unit.owner.FACING_LEFT:
                 direction = "<"
+                color = "BLUE"
             tku = TKUnit(unit.card.name, unit.get_curr_ammo(), unit.get_curr_hp(), 
-                    direction)
+                    direction, color)
             self.game_board.paint_unit_on_backend_position(position[0], position[1], tku)
 
     def update_player(self, player, casting_hexes):

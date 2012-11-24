@@ -48,7 +48,7 @@ class Board:
     Sectors "face" the middle. This is best represented with old-style columns.
     Note that past the middle, sectors cols are odd.
     """
-    SECTOR_COLS = [0, 6, 14, 21, 29]
+    SECTOR_COLS = [0, 8, 16, 21, 29]
 
     SECTOR_PAYOUT = {
         0 : 0,
@@ -193,7 +193,7 @@ class Board:
         else:
             return dist_from_left >= 1 and dist_from_left <= (self.field_length - 1) * 2 - 1
 
-    def get_sector_for_position(self, position, direction):
+    def get_sector_for_position(self, position, direction = Player.FACING_RIGHT):
         """
         Find the largest sector marker (in old-style columns) that position is
         larger than.
