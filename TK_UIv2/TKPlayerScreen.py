@@ -5,7 +5,7 @@ sys.path.append('../')
 from Card import *
 
 GRIMOIRE_XOFFSET = 700
-STATUS_YOFFSET = 100
+STATUS_YOFFSET = 150
 
 class TKPlayerScreen:
 
@@ -83,7 +83,7 @@ class TKPlayerScreen:
         x = self.xoffset + GRIMOIRE_XOFFSET
         y = self.yoffset
 
-        y_change = 40
+        y_change = 25
 
         for name, count in grimoire.library.iteritems():
             amount = count

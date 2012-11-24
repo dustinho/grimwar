@@ -18,6 +18,7 @@ class Server:
         reactor.listenTCP(1079, self.server_factory)
 
         self.go = False
+        self.end = False
 
     def start(self):
         reactor.callLater(self.TIME, self.loop)
@@ -29,9 +30,10 @@ class Server:
                 result = self.controller.advance()
                 if result != None:
                     self.go = False
+                    self.end = True
                     print result
                 self.broadcast_game()
-            else:
+            elif not self.end:
                 self.go = True
         else:
             if self.go == True:

@@ -5,7 +5,7 @@ import random
 import logging
 
 class Player:
-    STARTING_HEALTH = 20
+    STARTING_HEALTH = 55
     INVALID_PLAYER = 0
     FACING_LEFT = 1
     FACING_RIGHT = 2
