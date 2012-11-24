@@ -220,17 +220,21 @@ class Board:
     def is_playable(self, owner, position):
         """returns True if position (u,v) is playable by owner"""
         if self._which_casting_zone_owns_hex(position) != owner.direction:
-            assert False, "Position {0} not in owner {1}'s castingzone".format(
+            logging.debug("Position {0} not in owner {1}'s castingzone".format(
                 position,
                 owner.id
-            )
+            ))
+            return False
         if position in self.grid:
-            assert False, "Unit already exists at {0}".format(position)
+            logging.debug("Unit already exists at {0}".format(position))
+            return False
+        return True
 
     def place_unit(self, card, owner, position):
         """Places a unit owned by owner with  based on card object
         at position (u,v)"""
-        self.is_playable(owner, position)
+        if (not self.is_playable(owner, position)):
+            return
         self.grid[position] = Unit.get_unit(card, owner)
 
     def get_valid_casting_hexes(self, owner):

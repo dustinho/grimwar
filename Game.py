@@ -184,7 +184,8 @@ class Game:
 
     def play_card(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
-        self.board.is_playable(self.players[id], position)
+        if (not self.board.is_playable(self.players[id], position)):
+            return
         card = self.players[id].play(card_name)
         self.board.place_unit(card, self.players[id], position)
 
