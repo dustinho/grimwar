@@ -11,10 +11,11 @@ import random
 import sys
 import copy
 import pickle
+import random
 
 BOARD_LENGTH = 19
 BOARD_WIDTH = 5
-DRAW_FREQUENCY = 3
+DRAW_FREQUENCY = 2
 UPKEEP_GOLD = 2
 MAX_HAND_SIZE = 5
 
@@ -26,6 +27,9 @@ class Game:
         self.setup_phase()
         self.input_type = input_type
         self.turn = 0
+
+    def reset(self):
+        self.board.clear()
 
     def setup_phase(self):
         # Set up board
@@ -172,7 +176,7 @@ class Game:
         return None
 
     def calculate_advantage(self):
-        return 0
+        return random.randint(0, 1)
 
     def damage_player(self, direction, damage):
         if direction == Player.FACING_RIGHT:
@@ -190,6 +194,7 @@ class Game:
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """
+        self.board.is_playable(self.players[id], position)
         self.players[id].inplay.append(card)
         self.board.grid[(position)] = Unit.get_unit(card, self.players[id])
 

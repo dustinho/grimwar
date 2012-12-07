@@ -4,8 +4,6 @@ from twisted.internet.protocol import Factory, Protocol
 from twisted.protocols.basic import NetstringReceiver
 from twisted.internet.endpoints import TCP4ClientEndpoint
 
-from PlayerInputs import PlayCard 
-
 class PlayerProtocol(NetstringReceiver):
     def __init__(self, factory):
         self.factory = factory

@@ -9,8 +9,8 @@ STATUS_YOFFSET = 150
 
 class TKPlayerScreen:
 
-    def __init__(self, input_protocol, player_id, canvas, game_board, xoffset, yoffset):
-        self.input_protocol = input_protocol
+    def __init__(self, player_actions, player_id, canvas, game_board, xoffset, yoffset):
+        self.player_actions = player_actions
         self.player_id = player_id
         self.canvas = canvas
         self.game_board = game_board
@@ -69,7 +69,7 @@ class TKPlayerScreen:
     def play_card(self, card, location):
         print card, location
         self.clear_casting_buttons()
-        self.input_protocol.play_card(self.player_id, card, location)
+        self.player_actions.play_card(self.player_id, card, location)
         pass
 
     def clear_casting_buttons(self):
@@ -102,7 +102,7 @@ class TKPlayerScreen:
 
     def buy_card(self, card_name):
         print card_name
-        self.input_protocol.buy_card(self.player_id, card_name)
+        self.player_actions.buy_card(self.player_id, card_name)
 
     def paint_status(self, player):
         x = self.xoffset

@@ -4,7 +4,7 @@ from ServerProtocol import ServerProtocolFactory
 import sys
 sys.path.append('../')
 sys.path.append('../TK_UIv2')
-from PlayerInputs import PlayCard, BuyCard
+from UserInputTypes import PlayCard, BuyCard
 
 import pickle
 

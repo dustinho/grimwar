@@ -1,8 +1,8 @@
-from PlayerInputs import PlayCard, BuyCard
+from UserInputTypes import PlayCard, BuyCard
 
 import pickle
 
-class InputProtocol:
+class PlayerActions:
     def __init__(self, protocol):
         self.protocol = protocol
 

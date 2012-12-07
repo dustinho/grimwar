@@ -63,7 +63,9 @@ class Board:
         self.field_length = field_length
         self.field_width = field_width
         self.grid = {}
-        pass
+
+    def clear(self):
+        self.grid = {}
 
     def __str__(self):
         """return a string describing all of the objects on the board"""

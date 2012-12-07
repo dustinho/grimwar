@@ -27,6 +27,19 @@ class Card:
                 return klass(json_file_path)
         raise ValueError("Couldn't find a file {0}.json".format(name))
 
+    @staticmethod
+    def get_all_cards_list():
+        """Returns a list of Card objects, one for each type of card in the game"""
+        #TODO: clean this up
+        card_suffix = ".json"
+        suf_len = len(card_suffix)
+        card_root = os.path.join(os.path.dirname(__file__), 'Cards')
+        raw_dir_list = os.listdir(card_root) 
+        raw_dir_list.extend(os.listdir(os.path.join(card_root, "Workers")))
+        raw_dir_list.extend(os.listdir(os.path.join(card_root, "Heroes")))
+        return [Card.get_card(dir_entry[:-suf_len]) for dir_entry in raw_dir_list \
+                if dir_entry.endswith(".json")]
+
     def __init__(self, spec_file):
         self.name = None
         self.ammo = None

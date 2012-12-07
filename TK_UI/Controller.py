@@ -81,7 +81,7 @@ class Controller:
             self.phase += 1
             return
         elif self.phase == 3:
-            self.do_move()
+            self.game.move_phase()
             self.game.damage_phase()
             self.game.money_phase()
             result = self.game.cleanup_phase()
@@ -92,11 +92,6 @@ class Controller:
             self.phase = 0
             self.next_step()
      
-    def do_move(self):
-        first = self.game.calculate_advantage()
-        second = (first + 1) % 2
-        self.game.move_phase(self.game.players[first])
-        self.game.move_phase(self.game.players[second])
 
     def get_playable_locations(self, player_id):
         player = self.game.players[player_id]
