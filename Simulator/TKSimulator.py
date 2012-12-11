@@ -42,9 +42,29 @@ class TKSimulator:
             print "error unpickling game"
             return
 
+        sector_dict = {}
+        for x in xrange(game.board.field_length):
+            for y in xrange(game.board.field_width):
+                pos = BoardTools.get_backend_position_from_visual_position(x, y, game.board.field_width)
+                sector = game.board.get_sector_for_position(pos)
+                if sector in sector_dict:
+                    sector_dict[sector].append(pos)
+                else:
+                    sector_dict[sector] = [pos]
+
         casting_hexes_dict = {}
-        for p_id in game.players.iterkeys():
-            casting_hexes_dict[p_id] = game.board.get_valid_casting_hexes(game.players[p_id])
+        casting_hexes_dict[0] = []
+        casting_hexes_dict[0].extend(sector_dict[0])
+        casting_hexes_dict[0].extend(sector_dict[1])
+
+        casting_hexes_dict[1] = []
+        casting_hexes_dict[1].extend(sector_dict[3])
+        casting_hexes_dict[1].extend(sector_dict[4])
+
+ #       casting_hexes_dict = {}
+  #      for p_id in game.players.iterkeys():
+   #         casting_hexes_dict[p_id] = game.board.get_valid_casting_hexes(game.players[p_id])
+    #    print casting_hexes_dict
         
         self.update_board(game.board)
         self.update_simulator(Card.get_all_cards_list(), casting_hexes_dict)
