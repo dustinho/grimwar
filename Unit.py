@@ -30,6 +30,8 @@ class Unit:
         self._damage = self.card.damage
         self._attack_pattern = self.card.attack_pattern
         self._attack_type = self.card.attack_type
+        self._remaining_moves = self._speed
+        self._ready = True
         self.owner = owner
 
     def __str__(self):
@@ -69,6 +71,30 @@ class Unit:
     def get_attack_type(self):
         # "single" attacks first enemy unit in range, "splash" attacks all in range
         return self._attack_type
+
+    def is_ready(self):
+        return self._ready
+
+    def ready(self):
+        self._ready = True
+    
+    def exhaust(self):
+        self._ready = False
+
+    def get_used_moves(self):
+        return self._speed - self._remaining_moves
+
+    def get_remaining_moves(self):
+        return self._remaining_moves
+
+    def use_move(self):
+        self._remaining_moves -= 1
+
+    def use_all_moves(self):
+        self._remaining_moves = 0
+
+    def refresh_moves(self):
+        self._remaining_moves = self._speed
 
     def take_damage(self, damage_amount):
         self._hp = self._hp - damage_amount

@@ -9,6 +9,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 TEST_FIELD_LENGTH = 9
 TEST_FIELD_WIDTH = 3
 
+#TODO: Clean up tests to reflect the fact that the movement-damage paradigm has changed
 class TestBoard(unittest.TestCase):
     def setUp(self):
         self.b = Board(self, field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
@@ -16,43 +17,52 @@ class TestBoard(unittest.TestCase):
         self.p2 = Player(1)
         self.p2.set_direction(Player.FACING_LEFT)
         self.footman_card = Card.get_card("Footman")
-        self.fast_footman_card = Card.get_card("Footman")
-        self.fast_footman_card.speed = 2
+        self.scout_card = Card.get_card("Scout")
         self.hero_card = HeroCard.get_card("Arius")
         self.worker_card = WorkerCard.get_card("Peasant")
 
     def test_place_footman_and_move_once(self):
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[ (0,0) ] = footman
-        self.b.do_all_movements(self.p1)
+        p1_items = self.b._positioned_units_for_player(self.p1)
+        while(self.b.do_player_movement(self.p1, p1_items)):
+            pass 
         self.assertEqual(self.b.grid.pop( (1,0) ), footman)
         self.b.grid.clear()
 
     def test_moving_wont_go_past_edge(self):
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[ (TEST_FIELD_LENGTH-2,0) ] = footman
-        self.b.do_all_movements(self.p1)
+        p1_items = self.b._positioned_units_for_player(self.p1)
+        while(self.b.do_player_movement(self.p1, p1_items)):
+            pass 
         self.assertEqual(self.b.grid.pop( (TEST_FIELD_LENGTH-2,0) ), footman)
         self.b.grid.clear()
 
     def test_moving_wont_overtake(self):
-        fast_footman = Unit(self.fast_footman_card, self.p1)
+        scout = Unit(self.scout_card, self.p1)
         footman = Unit(self.footman_card, self.p2)
-        self.b.grid[(2,0)] = fast_footman
+        self.b.grid[(2,0)] = scout
         self.b.grid[(3,0)] = footman
-        self.b.do_all_movements(self.p1)
-        self.assertEqual(self.b.grid[(2,0)], fast_footman)
-        self.b.do_all_movements(self.p2)
+        p1_items = self.b._positioned_units_for_player(self.p1)
+        while(self.b.do_player_movement(self.p1, p1_items)):
+            pass 
+        self.assertEqual(self.b.grid[(2,0)], scout)
+        p2_items = self.b._positioned_units_for_player(self.p2)
+        while(self.b.do_player_movement(self.p2, p2_items)):
+            pass 
         self.assertEqual(self.b.grid[(3,0)], footman)
         self.b.grid.clear()
 
     def test_moving_slow_will_block_fast(self):
-        fast_footman = Unit(self.fast_footman_card, self.p1)
+        scout = Unit(self.scout_card, self.p1)
         footman = Unit(self.footman_card, self.p1)
-        self.b.grid[(2,0)] = fast_footman
+        self.b.grid[(2,0)] = scout
         self.b.grid[(3,0)] = footman
-        self.b.do_all_movements(self.p1)
-        self.assertEqual(self.b.grid[(3,0)], fast_footman)
+        p1_items = self.b._positioned_units_for_player(self.p1)
+        while(self.b.do_player_movement(self.p1, p1_items)):
+            pass 
+        self.assertEqual(self.b.grid[(3,0)], scout)
         self.assertEqual(self.b.grid[(4,0)], footman)
         self.b.grid.clear()
 

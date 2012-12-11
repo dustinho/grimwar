@@ -10,8 +10,7 @@ class BaseController:
 
     #up to controller to decide what exactly this advances
     def advance(self):
-        self.game.move_phase()
-        self.game.damage_phase()
+        self.game.move_and_damage_phase()
         self.game.money_phase()
         result = self.game.cleanup_phase()
         if result is not None:

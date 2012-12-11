@@ -73,74 +73,126 @@ class Board:
             ", ".join(["{0} at ({1},{2})".format(instance, position[0],position[1]) for (position, instance) in self.grid.iteritems()])
                 )
 
-    def do_all_movements(self, player):
-        """Advances all units owned by the specified player.
+    def refresh_units(self):
+        for unit in self.grid.itervalues():
+            unit.ready()
+            unit.refresh_moves()
 
+    def do_all_movements_and_combat(self, player1, player2):
+        """Performs the movement and combat phases for both players
+
+        Player1's units move, then a combat phase happens.
+        Next, player2's units move, and then a second combat phase happens.
+        """
+
+        assert isinstance(player1, Player), "player {0} is not a Player".format(player1)
+        assert isinstance(player2, Player), "player {0} is not a Player".format(player2)
+
+        # Collect all the units that are owned by the specified player
+        player1_items = self._positioned_units_for_player(player1)
+        player2_items = self._positioned_units_for_player(player2)
+
+        p1_moving = True
+        while(p1_moving):
+            p1_moving = self.do_player_movement(player1, player1_items)
+            self.do_all_attacks()
+
+        p2_moving = True
+        while(p2_moving):
+            p2_moving = self.do_player_movement(player2, player2_items)
+            self.do_all_attacks()
+
+
+    def do_player_movement(self, player, items):
+        """
         Units closest to the opponent move first.
         Units move their movement speed if possible, but if not, they move as
         many spaces as they can.  So if a speed 2 unit is behind a speed 1 unit,
         both will advance one square each tick.
         """
-        assert isinstance(player, Player), "player {0} is not a Player".format(player)
+
         direction = player.get_direction()
-
-        # Collect all the units that are owned by the specified player
-        player_items = self._positioned_units_for_player(player)
-
-        # sort by position - we want to move the instances closest to the enemy first
-        player_items.sort(key=lambda x: x[0][0], reverse=(direction == Player.FACING_RIGHT))
+        items.sort(key=lambda x: x[0][0], reverse=(direction == Player.FACING_RIGHT))
 
         direction_multiplier = (1 if direction == Player.FACING_RIGHT else -1)
-        for position, instance in player_items:
-            logging.debug("trying to move {0} at {1}".format(instance, position))
-            # compute maximum movement
-            max_delta = instance.get_speed()
-            chosen_destination = position
-            for possible_delta in range(1,instance.get_speed()+1):
-                possible_destination = (position[0] + (possible_delta * direction_multiplier), position[1])
-                logging.debug("testing {0}".format(possible_destination))
-                if not self._is_hex_on_board(possible_destination):
-                    logging.debug("rejected for being off the board")
-                    break
-                if self._which_casting_zone_owns_hex(possible_destination) != Player.INVALID_PLAYER:
-                    # The columns at the boards' most extreme points are
-                    # reserved for the player to cast new units.
-                    logging.debug("rejected for being in casting zone")
-                    break
-                if possible_destination in self.grid:
-                    # You can't move through or onto occupied squares, no
-                    # matter how fast you are.
-                    logging.debug("rejected for being occupied")
-                    break
-                chosen_destination = possible_destination
-            if chosen_destination != position:
-                logging.debug("moving {0} from {1} to {2}".format(instance, position, chosen_destination))
-                self.grid[chosen_destination] = self.grid.pop(position)
+        moved = False
+        logging.debug("\nitems {0}".format(items))
+        logging.debug("trying to move {0} items".format(len(items)))
+        for position, instance in items:
+            logging.debug("--{0} {1} {2}++".format(position, instance.is_ready(), instance.get_remaining_moves()))
+            if instance.is_ready() and instance.get_remaining_moves() > 0:
+                moved = self.move_instance_one_space(instance, position, direction_multiplier) \
+                        or moved
+        return moved
+
+    def move_instance_one_space(self, instance, position, direction_multiplier):
+        print instance.card.name, instance._speed
+        used_moves = instance.get_used_moves()
+        print used_moves
+        current_position = (position[0] + (direction_multiplier * used_moves),
+                position[1]) 
+
+        delta = 1
+        logging.debug("trying to move {0} at {1}".format(instance, current_position))
+
+        possible_destination = (current_position[0] + (delta * direction_multiplier), \
+                current_position[1])
+        logging.debug("testing {0}".format(possible_destination))
+
+        if not self._is_hex_on_board(possible_destination):
+            print "off board"
+            logging.debug("rejected for being off the board")
+            instance.use_all_moves()
+            return False
+        if self._which_casting_zone_owns_hex(possible_destination) != Player.INVALID_PLAYER:
+            # The columns at the boards' most extreme points are
+            # reserved for the player to cast new units.
+            print "casting zone"
+            logging.debug("rejected for being in casting zone")
+            instance.use_all_moves()
+            return False
+        if possible_destination in self.grid:
+            # You can't move through or onto occupied squares, no
+            # matter how fast you are.
+            print "in grid"
+            logging.debug("rejected for being occupied")
+            instance.use_all_moves()
+            return False
+
+        destination = possible_destination
+        logging.debug("moving {0} from {1} to {2}".format(instance, current_position, destination))
+        self.grid[destination] = self.grid.pop(current_position)
+        instance.use_move()
+        return True
+            
 
     def do_all_attacks(self):
-        for position, unit in self.grid.iteritems():
-            logging.debug("Attempting attacks for {0} at {1}".format(unit, position))
-            if unit.get_curr_ammo() <= 0:
+        for position, instance in self.grid.iteritems():
+            if not instance.is_ready():
+                continue
+            logging.debug("Attempting attacks for {0} at {1}".format(instance, position))
+            if instance.get_curr_ammo() <= 0:
                 continue
             valid_targets = self.what_can_unit_at_position_hit(position)
             if len(valid_targets) == 0:
                 continue
-            logging.debug("{0} can hit {1}".format(unit, valid_targets))
-            unit.spend_ammo()
+            logging.debug("{0} can hit {1}".format(instance, valid_targets))
+            instance.spend_ammo()
             for target in valid_targets:
                 if target not in self.grid:
                     # Damage player directly
                     player_to_damage_direction = self._which_casting_zone_owns_hex(target)
                     if player_to_damage_direction != Player.INVALID_PLAYER:
-                        logging.info("{0} deals {1} damage to player {2}".format(unit, unit.get_damage(), player_to_damage_direction))
-                        self.game.damage_player(player_to_damage_direction, unit.get_damage())
+                        logging.info("{0} deals {1} damage to player {2}".format(instance, instance.get_damage(), player_to_damage_direction))
+                        self.game.damage_player(player_to_damage_direction, instance.get_damage())
                 else:
                     # Damage enemy unit on that hex
                     enemy = self.grid[target]
-                    logging.info("{0} deals {1} damage to {2}".format(unit, unit.get_damage(), enemy))
-                    enemy.take_damage(unit.get_damage())
-                if unit.get_attack_type() == "single":
+                    logging.info("{0} deals {1} damage to {2}".format(instance, instance.get_damage(), enemy))
+                    enemy.take_damage(instance.get_damage())
+                if instance.get_attack_type() == "single":
                     break
+            instance.exhaust()
 
     def what_can_unit_at_position_hit(self, position):
         """Given a coordinate on the grid which hold a particular unit, return
@@ -195,18 +247,14 @@ class Board:
         else:
             return dist_from_left >= 1 and dist_from_left <= (self.field_length - 1) * 2 - 1
 
-    def get_sector_for_position(self, position, direction = Player.FACING_RIGHT):
+    def get_sector_for_position(self, position):
         """
         Find the largest sector marker (in old-style columns) that position is
         larger than.
 
-        Sector markers are reversed for the player facing left.
-
-        Sectors "face" towards the middle. This gets weird.
+        Sector index increases from left to right, starting at sector 0
         """
         column = self._column_distance_from_left(position)
-        if (direction == Player.FACING_LEFT):
-            column = self.field_length * 2 - 1 - column
 
         for sector in reversed(range(len(self.SECTOR_COLS))):
             col = self.SECTOR_COLS[sector]
@@ -217,7 +265,7 @@ class Board:
             ))
             if self._column_distance_from_left(position) >= col:
                 return sector
-        assert False, "Should have returned a zone for {0}".format(position)
+        assert False, "Should have returned a sector for {0}".format(position)
 
     def is_playable(self, owner, position):
         """returns True if position (u,v) is playable by owner"""
@@ -235,7 +283,8 @@ class Board:
     def place_unit(self, card, owner, position):
         """Places a unit owned by owner with  based on card object
         at position (u,v)"""
-        if (not self.is_playable(owner, position)):
+        if (position in self.grid): 
+            logging.debug("Unit already exists at {0}".format(position))
             return
         self.grid[position] = Unit.get_unit(card, owner)
 

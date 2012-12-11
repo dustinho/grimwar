@@ -92,9 +92,7 @@ class Game:
         self.main_phase(0)
         self.main_phase(1)
 
-        self.move_phase()
-        # Damage happens concurrently
-        self.damage_phase()
+        self.move_and_damage_phase()
 
         self.money_phase()
 
@@ -108,6 +106,7 @@ class Game:
         self.turn += 1
 
     def upkeep_phase(self):
+        self.board.refresh_units()
         if self.turn % DRAW_FREQUENCY == 0:
             for id, player in self.players.iteritems():
                 if len(self.players[id].hand) < MAX_HAND_SIZE:
@@ -122,18 +121,11 @@ class Game:
         CLIClient.main_phase(id, self)
         return
 
-    def move_phase(self):
+    def move_and_damage_phase(self):
         first = self.calculate_advantage()
         second = (first + 1) % 2
 
-        self.move_player(self.players[first])
-        self.move_player(self.players[second])
-
-    def move_player(self, player):
-        self.board.do_all_movements(player)
-
-    def damage_phase(self):
-        self.board.do_all_attacks()
+        self.board.do_all_movements_and_combat(self.players[first], self.players[second])
 
     def money_phase(self):
         """
@@ -142,12 +134,9 @@ class Game:
         """
         for location, unit in self.board.grid.iteritems():
             if isinstance(unit, Worker):
-                sector = self.board.get_sector_for_position(
-                    location,
-                    unit.owner.get_direction()
-                )
+                sector = self.board.get_sector_for_position(location)
                 if sector not in unit.visited_sectors:
-                    unit.owner.gold += self.board.SECTOR_PAYOUT[sector]
+                    unit.owner.gold += self.board.SECTOR_PAYOUT[len(unit.visited_sectors)]
                     unit.visited_sectors.append(sector)
 
     def cleanup_phase(self):
