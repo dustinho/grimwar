@@ -60,6 +60,10 @@ class Player:
         self.inplay.remove(hero.card)
         self.deck.appendleft(hero.card)
 
+    def spell_remove(self, spell):
+        self.inplay.remove(spell.card)
+        self.discard_pile.append(spell.card)
+
     def spend_gold(self, amount):
         """
         Attempts to spend gold. Returns false if there is not enough gold to

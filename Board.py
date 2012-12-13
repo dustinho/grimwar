@@ -1,5 +1,6 @@
 from Player import *
 from Unit import *
+from Spell import *
 import logging
 
 # Right now, Board isn't really a class, but a container data structure.
@@ -127,7 +128,7 @@ class Board:
     def move_instance_one_space(self, instance, position, direction_multiplier):
         used_moves = instance.get_used_moves()
         current_position = (position[0] + (direction_multiplier * used_moves),
-                position[1]) 
+                position[1])
 
         delta = 1
         logging.debug("trying to move {0} at {1}".format(instance, current_position))
@@ -161,7 +162,7 @@ class Board:
         self.grid[destination] = self.grid.pop(current_position)
         instance.use_move()
         return True
-            
+
 
     def do_all_attacks(self):
         for position, instance in self.grid.iteritems():
@@ -280,10 +281,16 @@ class Board:
     def place_unit(self, card, owner, position):
         """Places a unit owned by owner with  based on card object
         at position (u,v)"""
-        if (position in self.grid): 
+        if (position in self.grid):
             logging.debug("Unit already exists at {0}".format(position))
             return
         self.grid[position] = Unit.get_unit(card, owner)
+
+    def place_spell(self, card, owner, position):
+        if (self.spells[owner.id][position] or position < 0 or position > 4):
+            logging.debug("Spell cant be placed at {0}".format(position))
+            return
+        self.spells[owner.id][position] = Spell.get_spell(card, owner)
 
     def get_valid_casting_hexes(self, owner):
         """returns a list of tuples describing valid plays areas for owner"""

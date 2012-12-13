@@ -4,6 +4,7 @@ from Player import *
 from Board import *
 from Card import *
 from Unit import *
+from Effect import *
 from CLIClient import *
 
 import json
@@ -114,6 +115,43 @@ class Game:
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
 
+        # Spell logic
+        first = self.calculate_advantage()
+        second = (first + 1) % 2
+
+        for i in xrange(len(self.board.spells[first])):
+            spell = self.board.spells[first][i]
+            if spell:
+                spell.cast_time_remaining -= 1
+                if spell.cast_time_remaining <= 0:
+                    Effect.applyEffect(
+                        spell.cast_effect,
+                        self.players[first],
+                        self.players[second],
+                        spell,
+                        self.board,
+                        spell.cast_args
+                    )
+                    self.players[first].spell_remove(spell)
+                    self.board.spells[first][i] = None
+
+        for i in xrange(len(self.board.spells[second])):
+            spell = self.board.spells[second][i]
+            if spell:
+                spell.cast_time_remaining -= 1
+                if spell.cast_time_remaining <= 0:
+                    Effect.applyEffect(
+                        spell.cast_effect,
+                        self.players[second],
+                        self.players[first],
+                        spell,
+                        self.board,
+                        spell.cast_args
+                    )
+                    self.players[second].spell_remove(spell)
+                    self.board.spells[second][i] = Nonegg
+
+
     def main_phase(self, id):
         if self.input_type != 'Console':
             return
@@ -181,6 +219,13 @@ class Game:
             return
         card = self.players[id].play(card_name)
         self.board.place_unit(card, self.players[id], position)
+
+    def play_spell(self, spell_name, id, position):
+        """ Plays a spell at a given position (0-4 inclusive) for id"""
+        if (self.board.spells[id][position]):
+            return
+        card = self.players[id].play(spell_name)
+        self.board.place_spell(card, self.players[id], position)
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """
