@@ -19,6 +19,8 @@ class Card:
         folders_and_types = [ (card_root, Card),
                               (os.path.join(card_root, "Workers"), WorkerCard),
                               (os.path.join(card_root, "Heroes"), HeroCard),
+                              (os.path.join(card_root, "Spells"), SpellCard),
+                              (os.path.join(card_root, "Building"), BuildingCard),
                             ]
         for (folder, klass) in folders_and_types:
             json_file_path = os.path.join(folder, name + ".json")
@@ -53,6 +55,11 @@ class Card:
         self.buy_cost = None
         self.faction = None
         self.archetype = None
+
+        self.cast_time = None
+        self.cast_effect = None
+        self.cast_args = None
+
         data = json.load(open(spec_file))
 
         for key in data:
@@ -74,9 +81,24 @@ class WorkerCard(Card):
 
 class HeroCard(Card):
     """
-    HeroCard is a special card.  Its JSON is loaded from the /Cards/Heroes
+    WorkerCard is a special card. Its JSON is loaded from the /Cards/Workers
     directory
     """
     def __init__(self, spec_file):
         Card.__init__(self, spec_file)
-        self.level = 1
+
+class SpellCard(Card):
+    """
+    SpellCard is a special card. Its JSON is loaded from the /Cards/Workers
+    directory
+    """
+    def __init__(self, spec_file):
+        Card.__init__(self, spec_file)
+
+class BuildingCard(Card):
+    """
+    BuildingCard is a special card.  Its JSON is loaded from the /Cards/Heroes
+    directory
+    """
+    def __init__(self, spec_file):
+        Card.__init__(self, spec_file)

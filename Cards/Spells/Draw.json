@@ -3,8 +3,8 @@
 	"cost": 50,
 	"buy_cost": 50,
 	"cast_time": 6,
-	"effect": "draw",
-	"args": [3],
+	"cast_effect": "draw",
+	"cast_args": [3],
 	"tier": 1,
 	"type": "neutral"
 }
