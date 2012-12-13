@@ -63,6 +63,8 @@ class Board:
         self.field_length = field_length
         self.field_width = field_width
         self.grid = {}
+        self.spells = { 0: [None] * 5, 1: [None] * 5 }
+        self.buildings = { 0: [None] * 5, 1: [None] * 5 }
 
     def clear(self):
         self.grid = {}
@@ -116,19 +118,14 @@ class Board:
 
         direction_multiplier = (1 if direction == Player.FACING_RIGHT else -1)
         moved = False
-        logging.debug("\nitems {0}".format(items))
-        logging.debug("trying to move {0} items".format(len(items)))
         for position, instance in items:
-            logging.debug("--{0} {1} {2}++".format(position, instance.is_ready(), instance.get_remaining_moves()))
             if instance.is_ready() and instance.get_remaining_moves() > 0:
                 moved = self.move_instance_one_space(instance, position, direction_multiplier) \
                         or moved
         return moved
 
     def move_instance_one_space(self, instance, position, direction_multiplier):
-        print instance.card.name, instance._speed
         used_moves = instance.get_used_moves()
-        print used_moves
         current_position = (position[0] + (direction_multiplier * used_moves),
                 position[1]) 
 
