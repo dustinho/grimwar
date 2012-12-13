@@ -22,7 +22,7 @@ class Card:
                             ]
         for (folder, klass) in folders_and_types:
             json_file_path = os.path.join(folder, name + ".json")
-            logging.debug("trying {0}".format(json_file_path))
+            #logging.debug("trying {0}".format(json_file_path))
             if os.path.exists(json_file_path):
                 return klass(json_file_path)
         raise ValueError("Couldn't find a file {0}.json".format(name))
@@ -34,7 +34,7 @@ class Card:
         card_suffix = ".json"
         suf_len = len(card_suffix)
         card_root = os.path.join(os.path.dirname(__file__), 'Cards')
-        raw_dir_list = os.listdir(card_root) 
+        raw_dir_list = os.listdir(card_root)
         raw_dir_list.extend(os.listdir(os.path.join(card_root, "Workers")))
         raw_dir_list.extend(os.listdir(os.path.join(card_root, "Heroes")))
         return [Card.get_card(dir_entry[:-suf_len]) for dir_entry in raw_dir_list \
