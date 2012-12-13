@@ -1,0 +1,15 @@
+{
+  "name" : "Scout",
+  "cost" : 20,
+  "hp" : 10,
+  "ammo" : 5,
+  "speed" : 2,
+  "damage" : 5,
+  "attack_pattern" : [[1,0]],
+  "attack_type" : "single",
+  "tier" : 1,
+  "buy_cost" : 50,
+  "faction" : "Human",
+  "archetype" : "Justice"
+}
+

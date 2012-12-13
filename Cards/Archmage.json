@@ -1,0 +1,16 @@
+{
+  "name" : "Archmage",
+  "cost" : 70,
+  "hp" : 10,
+  "ammo" : 20,
+  "speed" : 1,
+  "damage" : 5, 
+  "attack_pattern" : [[2,0],[1,1],[2,-1],[3,0],[2,1],[3,-1]],
+  "attack_type" : "splash",
+  "tier" : 1,
+  "buy_cost" : 0,
+  "level" : 1,
+  "faction" : "Human",
+  "archetype" : "Justice"
+}
+
