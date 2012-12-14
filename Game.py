@@ -28,6 +28,7 @@ class Game:
         self.setup_phase()
         self.input_type = input_type
         self.turn = 0
+        self.turn_advantage = None
 
     def reset(self):
         self.board.clear()
@@ -93,6 +94,8 @@ class Game:
         self.main_phase(0)
         self.main_phase(1)
 
+        self.spell_phase()
+
         self.move_and_damage_phase()
 
         self.money_phase()
@@ -107,6 +110,7 @@ class Game:
         self.turn += 1
 
     def upkeep_phase(self):
+        self.turn_advantage = self.calculate_advantage()
         self.board.refresh_units()
         if self.turn % DRAW_FREQUENCY == 0:
             for id, player in self.players.iteritems():
@@ -115,8 +119,37 @@ class Game:
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
 
+
+
+
+    def main_phase(self, id):
+        if self.input_type != 'Console':
+            return
+
+        CLIClient.main_phase(id, self)
+        return
+
+    def move_and_damage_phase(self):
+        first = self.get_turn_advantage()
+        second = (first + 1) % 2
+
+        self.board.do_all_movements_and_combat(self.players[first], self.players[second])
+
+    def money_phase(self):
+        """
+        Workers get money from the sector they end up in, but should only be
+        paid for a sector once per life.
+        """
+        for location, unit in self.board.grid.iteritems():
+            if isinstance(unit, Worker):
+                sector = self.board.get_sector_for_position(location)
+                if sector not in unit.visited_sectors:
+                    unit.owner.gold += self.board.SECTOR_PAYOUT[len(unit.visited_sectors)]
+                    unit.visited_sectors.append(sector)
+
+    def spell_phase(self):
         # Spell logic
-        first = self.calculate_advantage()
+        first = self.get_turn_advantage()
         second = (first + 1) % 2
 
         for i in xrange(len(self.board.spells[first])):
@@ -149,33 +182,8 @@ class Game:
                         spell.cast_args
                     )
                     self.players[second].spell_remove(spell)
-                    self.board.spells[second][i] = Nonegg
+                    self.board.spells[second][i] = None
 
-
-    def main_phase(self, id):
-        if self.input_type != 'Console':
-            return
-
-        CLIClient.main_phase(id, self)
-        return
-
-    def move_and_damage_phase(self):
-        first = self.calculate_advantage()
-        second = (first + 1) % 2
-
-        self.board.do_all_movements_and_combat(self.players[first], self.players[second])
-
-    def money_phase(self):
-        """
-        Workers get money from the sector they end up in, but should only be
-        paid for a sector once per life.
-        """
-        for location, unit in self.board.grid.iteritems():
-            if isinstance(unit, Worker):
-                sector = self.board.get_sector_for_position(location)
-                if sector not in unit.visited_sectors:
-                    unit.owner.gold += self.board.SECTOR_PAYOUT[len(unit.visited_sectors)]
-                    unit.visited_sectors.append(sector)
 
     def cleanup_phase(self):
         locations_to_delete = []
@@ -201,6 +209,9 @@ class Game:
                 return 'Tie' if is_tie else (id + 1) % 2
 
         return None
+
+    def get_turn_advantage(self):
+        return self.turn_advantage
 
     def calculate_advantage(self):
         return random.randint(0, 1)
