@@ -119,9 +119,6 @@ class Game:
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
 
-
-
-
     def main_phase(self, id):
         if self.input_type != 'Console':
             return
@@ -224,19 +221,19 @@ class Game:
         else:
             raise ValueError("Invalid direction")
 
-    def play_card(self, card_name, id, position):
+    def play_unit(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
         if (not self.board.is_playable(self.players[id], position)):
             return
         card = self.players[id].play(card_name)
         self.board.place_unit(card, self.players[id], position)
 
-    def play_spell(self, spell_name, id, position):
+    def play_spell(self, spell_name, id, slot):
         """ Plays a spell at a given position (0-4 inclusive) for id"""
-        if (self.board.spells[id][position]):
+        if (self.board.spells[id][slot]):
             return
         card = self.players[id].play(spell_name)
-        self.board.place_spell(card, self.players[id], position)
+        self.board.place_spell(card, self.players[id], slot)
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """

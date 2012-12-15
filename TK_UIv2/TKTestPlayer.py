@@ -1,4 +1,6 @@
 from TKGameBoard import *
+from TKUnit import *
+from TKCardInstance import *
 from Tkinter import *
 
 from TKPlayerScreen import *
@@ -64,6 +66,18 @@ class TKTestPlayer:
                     direction, color)
             self.game_board.paint_unit_on_backend_position(position[0], position[1], tku)
 
+        for player_id, spell_list in board.spells.iteritems():
+            for slot_num, spell in enumerate(spell_list):
+                if spell:
+                    tkci = TKCardInstance(spell.card.name)
+                    self.game_board.paint_spell_on_slot(player_id, slot_num, tkci)
+
+        for player_id, building_list in board.buildings.iteritems():
+            for slot_num, building in enumerate(building_list):
+                if building:
+                    tkci = TKCardInstance(building.card.name)
+                    self.game_board.paint_spell_on_slot(player_id, slot_num, tkci)
+    
     def update_player(self, player, casting_hexes):
         if self.player_screen == None:
             self.player_screen = self.create_player_screen()

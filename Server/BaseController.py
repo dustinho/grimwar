@@ -23,6 +23,13 @@ class BaseController:
         player = self.game.players[player_id]
         player.buy(card_name)
         
-    def play_card(self, card, player_id, location):
-        self.game.play_card(card, player_id, location)
+    def play_unit_card(self, card, player_id, location):
+        self.game.play_unit(card, player_id, location)
+
+    def play_spell_card(self, card, player_id, slot):
+        self.game.play_spell(card, player_id, slot)
+
+    def play_building_card(self, card, player_id, slot):
+        #self.game.play_buidling(card, player_id, slot)
+        pass
 

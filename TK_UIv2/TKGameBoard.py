@@ -5,6 +5,8 @@ from UITools import BoardTools, BoardTestTools
 from TKUnit import *
 
 RADIUS = 32
+SPELL_SLOT_ROW = 1
+BUILDING_SLOT_ROW = 0
 
 class TKGameBoard:
     def __init__(self, canvas, width, height, xoffset, yoffset, radius = RADIUS):
@@ -61,6 +63,16 @@ class TKGameBoard:
         pixel = self.get_center_pixel_from_visual_position(x, y)
         unit.paint(self.canvas, pixel[0], pixel[1] )  
         self.units.append(unit)
+
+    def paint_spell_on_slot(self, player_id, slot, spell):
+        pixel = self.get_center_pixel_for_slot(player_id, slot, SPELL_SLOT_ROW)
+        spell.paint(self.canvas, pixel[0], pixel[1] )
+        self.units.append(spell)
+
+    def paint_building_on_slot(self, player_id, slot, building):
+        pixel = self.get_center_pixel_for_slot(player_id, slot, BUILDING_SLOT_ROW)
+        building.paint(self.canvas, pixel[0], pixel[1])
+        self.units.append(building)
 
     def get_center_pixel_from_visual_position(self, x, y):
         offsets = self.get_hex_offsets()

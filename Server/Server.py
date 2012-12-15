@@ -4,7 +4,7 @@ from ServerProtocol import ServerProtocolFactory
 import sys
 sys.path.append('../')
 sys.path.append('../TK_UIv2')
-from UserInputTypes import PlayCard, BuyCard
+from UserInputTypes import PlayBuildingCard, PlaySpellCard, PlayUnitCard, BuyCard
 
 import pickle
 
@@ -50,8 +50,12 @@ class Server:
 
     def on_received(self, data):
         data = pickle.loads(data)
-        if isinstance(data, PlayCard):
-            self.controller.play_card(data.card.name, data.player_id, data.location)
+        if isinstance(data, PlayBuildingCard):
+            self.controller.play_building_card(data.card.name, data.player_id, data.slot)
+        elif isinstance(data, PlaySpellCard):
+            self.controller.play_spell_card(data.card.name, data.player_id, data.slot)
+        elif isinstance(data, PlayUnitCard):
+            self.controller.play_unit_card(data.card.name, data.player_id, data.location)
         elif isinstance(data, BuyCard):
             self.controller.buy_card(data.player_id, data.card_name)
 
