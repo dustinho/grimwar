@@ -56,6 +56,9 @@ class TKPlayerScreen:
         def play_card_command(c, l):
             return lambda: self.play_card(c, l) 
 
+        def slot_clicked():
+            return lambda: self.slot_clicked()
+
         self.clear_casting_buttons()
         for i, loc in enumerate(self.casting_hexes):
             vp = BoardTools.get_visual_position_from_backend_position(loc[0], loc[1],
@@ -66,11 +69,22 @@ class TKPlayerScreen:
             btn_opts = { "window": btn }
             self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
 
+        for p in xrange(2):
+            for c in xrange(self.game_board.minor):
+                for y in xrange(2):
+                    pix = self.game_board.get_center_pixel_for_slot(p, c, y)
+                    btn = Button(text=str(i), command=slot_clicked())
+                    btn_opts = { "window": btn }
+                    self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
+             
+
     def play_card(self, card, location):
         print card, location
         self.clear_casting_buttons()
         self.player_actions.play_card(self.player_id, card, location)
-        pass
+
+    def slot_clicked(self):
+        print "CLICKED"
 
     def clear_casting_buttons(self):
         for casting_button in self.casting_buttons:

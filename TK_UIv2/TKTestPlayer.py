@@ -17,7 +17,7 @@ from optparse import OptionParser
 class TKTestPlayer:
     def __init__(self, ip, player_id):
         self.window = Tk()
-        self.canvas = Canvas(self.window, { "height": 700, "width": 1200 })
+        self.canvas = Canvas(self.window, { "height": 900, "width": 1200 })
         self.canvas.grid(column = 0, row = 0, sticky=(N, W))
         self.game_board = None
         self.player_actions = None

@@ -13,6 +13,18 @@ def draw_vertical_hexagon(canvas, centerx, centery, radius, options, offsetFunct
 
     return canvas.create_polygon(*coords, **options)
 
+def draw_rect(canvas, centerx, centery, options, offsetFunction):
+    offsets = offsetFunction()
+    xoffset = offsets[0]
+    yoffset = offsets[1]
+
+    coords = [centerx + xoffset, centery + yoffset, \
+            centerx + xoffset, centery - yoffset, \
+            centerx - xoffset, centery - yoffset, \
+            centerx - xoffset, centery + yoffset]
+
+    return canvas.create_polygon(*coords, **options)
+
 def draw_text(canvas, x, y, options):
     return canvas.create_text(x, y, **options)
 

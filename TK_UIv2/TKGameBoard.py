@@ -34,10 +34,19 @@ class TKGameBoard:
 
                 pixel = self.get_center_pixel_from_visual_position(i, j)
                 BoardTools.draw_vertical_hexagon(self.canvas, pixel[0], pixel[1], \
-                        self.hex_radius, hex_options, self.get_offsets)
+                        self.hex_radius, hex_options, self.get_hex_offsets)
 
                 BoardTestTools.draw_backend_coordinates(self.canvas, i, j, pixel[0], pixel[1], \
                         self.hex_radius, self.minor)
+
+        
+        for p in xrange(2):
+            for x in xrange(self.minor):
+                for y in xrange(2):
+                    pixel = self.get_center_pixel_for_slot(p, x, y)
+                    BoardTools.draw_rect(self.canvas, pixel[0], pixel[1], \
+                            hex_options, self.get_rect_offsets)
+
 
     def clear_units_from_board(self):
         for u in self.units:
@@ -54,11 +63,11 @@ class TKGameBoard:
         self.units.append(unit)
 
     def get_center_pixel_from_visual_position(self, x, y):
-        offsets = self.get_offsets()
+        offsets = self.get_hex_offsets()
         xoffset = offsets[0]
         yoffset = offsets[1]
 
-        shifts = self.get_shifts()
+        shifts = self.get_hex_shifts()
         xshift = shifts[0]
         yshift = shifts[1]
 
@@ -70,8 +79,18 @@ class TKGameBoard:
         y_pixel = self.yoffset + self.hex_radius + (y * yshift)
         return (x_pixel, y_pixel)
 
-    def get_shifts(self):
-        offsets = self.get_offsets()
+    def get_center_pixel_for_slot(self, player, x, y):
+        rect_offsets = self.get_rect_offsets()
+        x_offset = rect_offsets[0]
+        y_offset = rect_offsets[1]
+
+        x_pix = self.xoffset + x_offset + (x + (player * (1 + self.minor))) * 2 * x_offset 
+        y_pix = self.get_main_board_height() + y_offset + y * 2 * y_offset
+        return (x_pix, y_pix)
+
+
+    def get_hex_shifts(self):
+        offsets = self.get_hex_offsets()
         xoffset = offsets[0]
         yoffset = offsets[1]
 
@@ -79,7 +98,7 @@ class TKGameBoard:
         yshift = yoffset * 3
         return (xshift, yshift)
 
-    def get_offsets(self):
+    def get_hex_offsets(self):
         xoffset = self.hex_radius * math.sqrt(3) / 2.0
         yoffset = self.hex_radius / 2.0
         return (xoffset, yoffset)
@@ -99,18 +118,31 @@ class TKGameBoard:
             
         return options
 
-    def get_pixel_height(self):
-        yshift = self.get_shifts()[1]
+    def get_rect_offsets(self):
+        xoffset = self.hex_radius * math.sqrt(3) / 2.0
+        yoffset = xoffset
+        return (xoffset, yoffset)
+
+    def get_main_board_height(self):
+        yshift = self.get_hex_shifts()[1]
         height = (2 * self.hex_radius) + self.minor * yshift
+        #height = self.y_offset + (2 * self.hex_radius) + self.minor * yshift
         return height
+
+    def get_slots_height(self):
+        yshift = self.get_rect_offsets()[1]
+        return 3 * (2 * yshift)
+
+    def get_pixel_height(self):
+        return self.get_main_board_height() + self.get_slots_height() 
 
 if __name__ == "__main__":
     window = Tk()
     canvas = Canvas(window, { "height": 900, "width": 1200 })
     canvas.grid(column = 0, row = 0, sticky=(N, W))
     gb = TKGameBoard(canvas, 12, 3, 3, 3, RADIUS)
-    gb.paint_board() 
-    tku = TKUnit("Eric")
+    gb.paint_board(lambda x: 1) 
+    tku = TKUnit("Eric", 1, 1, "^", "RED")
     gb.paint_unit_on_visual_position(0,0, tku)
     def clicked(event):
         gb.clear_units_from_board()
