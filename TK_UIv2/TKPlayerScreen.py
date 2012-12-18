@@ -56,58 +56,62 @@ class TKPlayerScreen:
         self.clear_casting_buttons()
 
         if isinstance(card, SpellCard):
-            self.paint_spell_casting_hexes(card)
+            self.paint_spell_casting_buttons(card)
         elif isinstance(card, BuildingCard):
-            self.paint_building_casting_hexes(card)
+            self.paint_building_casting_buttons(card)
         else:
-            self.paint_unit_casting_hexes(card)
+            self.paint_unit_casting_buttons(card)
 
-    def paint_unit_casting_hexes(self, card):
-        def play_unit_command(c, l):
-            return lambda: self.play_unit_card(c, l) 
+    def paint_unit_casting_buttons(self, card):
+        def play_unit_command(pid, c, l):
+            return lambda: self.play_unit_card(pid, c, l) 
 
         for i, loc in enumerate(self.casting_hexes):
             vp = BoardTools.get_visual_position_from_backend_position(loc[0], loc[1],
                     self.game_board.minor)
             pix = self.game_board.get_center_pixel_from_visual_position(vp[0], vp[1])
 
-            btn = Button(text=str(i), command=play_unit_command(card, loc))
+            btn = Button(text=str(i),
+                    command=play_unit_command(self.player_id, card, loc))
             btn_opts = { "window": btn }
             self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
              
-    def paint_spell_casting_hexes(self, card):
-        def play_spell_command(c, s):
-            return lambda: self.play_spell_card(c, s)
+    def paint_spell_casting_buttons(self, card):
+        def play_spell_command(pid, c, s):
+            return lambda: self.play_spell_card(pid, c, s)
 
         for i in xrange(self.game_board.minor):
             pix = self.game_board.get_center_pixel_for_slot(self.player_id, i, 1)
-            btn = Button(text=str(i), command=play_spell_command(card, i))
+            btn = Button(text=str(i),
+                    command=play_spell_command(self.player_id, card, i))
             btn_opts = { "window": btn }
             self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
 
-    def paint_building_casting_hexes(self, card):
-        def play_building_command(c, s):
-            return lambda: self.play_building_card(c, s)
+    def paint_building_casting_buttons(self, card):
+        def play_building_command(pid, c, s):
+            return lambda: self.play_building_card(pid, c, s)
 
-        for p in xrange(2):
-            for i in xrange(self.game_board.minor):
-                pix = self.game_board.get_center_pixel_for_slot(self.player_id, i, 1)
-                btn = Button(text=str(i), command=play_building_command(card, i))
-                btn_opts = { "window": btn }
-                self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
+        for i in xrange(self.game_board.minor):
+            pix = self.game_board.get_center_pixel_for_slot(self.player_id, i, 1)
+            btn = Button(text=str(i),
+                    command= play_building_command(self.player_id, card, i))
+            btn_opts = { "window": btn }
+            self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
 
-    def play_unit_card(self, card, location):
-        print card, location
+    #this indirection is necessary due to the way closure works
+    #in other words, removing the middle step sets these variables equal to
+    #last value of the iteration
+    def play_unit_card(self, player_id, card, location):
         self.clear_casting_buttons()
-        self.player_actions.play_unit_card(self.player_id, card, location)
+        self.player_actions.play_unit_card(player_id, card, location)
 
-    def play_spell_card(self, card, slot):
+    def play_spell_card(self, player_id, card, slot):
         self.clear_casting_buttons()
-        self.player_actions.play_spell_card(self.player_id, card, slot)
+        self.player_actions.play_spell_card(player_id, card, slot)
 
-    def player_building_card(self, card, slot):
+    def player_building_card(self, player_id, card, slot):
         self.clear_casting_buttons()
-        self.player_actions.play_building_card(self.player_id, card, slot)
+        self.player_actions.play_building_card(player_id, card, slot)
 
     def clear_casting_buttons(self):
         for casting_button in self.casting_buttons:
