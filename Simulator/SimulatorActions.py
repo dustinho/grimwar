@@ -2,18 +2,14 @@ import sys
 sys.path.append('../')
 sys.path.append('../TK_UIv2/')
 
-from UserInputTypes import PutCard, Reset, Next
+from Actions import Actions
+from UserInputTypes import Reset, Next
 
 import pickle
 
-class SimulatorActions:
+class SimulatorActions(Actions):
     def __init__(self, protocol):
         self.protocol = protocol
-
-    def put_card_in_play(self, player_id, card, location):
-        pc = PutCard(player_id, card, location)
-        ppc = pickle.dumps(pc)
-        self.protocol.sendString(ppc)
 
     def reset(self):
         r = Reset()
