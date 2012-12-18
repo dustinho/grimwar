@@ -98,6 +98,8 @@ class Unit:
 
     def take_damage(self, damage_amount):
         self._hp = self._hp - damage_amount
+        if self._hp > self.get_max_hp():
+            self._hp = self.card.hp
 
     def spend_ammo(self, ammo_spent=1):
         self._ammo = self._ammo - ammo_spent

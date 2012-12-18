@@ -1,6 +1,7 @@
 from Player import *
 from Board import *
 from Unit import *
+from Preds import preds
 
 class Effect:
 	"""
@@ -24,3 +25,13 @@ class Effect:
 		for x in xrange(cards_to_draw):
 			player.draw()
 		return
+        
+        @staticmethod
+        def heal_row(player, opponent, instance, board, args):
+                row = instance.row
+                amount = args[0]
+                units = board.get_units_with_preds(preds["row"](row), 
+                                                   preds["owner"](player))
+                for unit in units:
+                        unit.take_damage(-amount)
+                return

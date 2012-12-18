@@ -286,11 +286,13 @@ class Board:
             return
         self.grid[position] = Unit.get_unit(card, owner)
 
-    def place_spell(self, card, owner, position):
-        if (self.spells[owner.id][position] or position < 0 or position > 4):
-            logging.debug("Spell cant be placed at {0}".format(position))
+    def place_spell(self, card, owner, row):
+        """Places spell for owner in row row"""
+        if (self.spells[owner.id][row] or row < 0 or row > 4):
+            logging.debug("Spell cant be placed at {0}".format(row))
             return
-        self.spells[owner.id][position] = Spell.get_spell(card, owner)
+        self.spells[owner.id][row] = Spell.get_spell(card, owner)
+        self.spells[owner.id][row].row = row
 
     def get_valid_casting_hexes(self, owner):
         """returns a list of tuples describing valid plays areas for owner"""
@@ -309,3 +311,11 @@ class Board:
             else:
                 assert False, "{0} is not a valid Player".format(owner)
         return hexes
+
+    def get_units_with_preds(self, *preds):
+        """returns all units that match the all predicates in *preds
+        preds take 2 arguments in the form pred(position, unit_object)"""
+        items = self.grid.items()
+        for pred in preds:
+            items = [item for item in items if pred(item[0], item[1])]
+        return [item[1] for item in items] # just return the unit objects

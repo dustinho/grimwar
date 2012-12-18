@@ -36,5 +36,38 @@ class TestGame(unittest.TestCase):
             else:
                 self.assertEquals(
                     len(self.game.players[0].hand), cards_in_hand+3)
-
-
+    
+    def test_heal_row(self):
+        """
+        Tests that the heal_row spell heals correctly after cast_time turns
+        """
+        footman_card1 = Card.get_card('Footman')
+        footman1 = Unit.get_unit(footman_card1, self.game.players[0])
+        self.game.players[0].inplay.append(footman_card1)
+        self.game.board.grid[(4,0)] = footman1
+        footman_card2 = Card.get_card('Footman')
+        footman2 = Unit.get_unit(footman_card2, self.game.players[0])
+        self.game.players[0].inplay.append(footman_card2)
+        self.game.board.grid[(1,1)] = footman2
+        footman_card3 = Card.get_card('Footman')
+        footman3 = Unit.get_unit(footman_card3, self.game.players[1])
+        self.game.players[1].inplay.append(footman_card3)
+        self.game.board.grid[(3,0)] = footman3
+        heal_row = Card.get_card('Heal Row')
+        self.game.players[0].hand.append(heal_row)
+        self.game.play_spell('heal row', 0, 0)
+        footmen = [footman1, footman2, footman3]
+        footmen_health = [unit.get_curr_hp() for unit in footmen]
+        self.assertEquals(footmen_health, [15, 15, 15])
+        for footman in footmen:
+            footman.take_damage(3)
+        footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
+        self.assertEquals(footmen_health, [12, 12, 12])
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+        footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
+        self.assertEquals(footmen_health, [15, 12, 12])
+        
