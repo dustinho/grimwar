@@ -76,7 +76,7 @@ class TKTestPlayer:
             for slot_num, building in enumerate(building_list):
                 if building:
                     tkci = TKCardInstance(building.card.name)
-                    self.game_board.paint_spell_on_slot(player_id, slot_num, tkci)
+                    self.game_board.paint_building_on_slot(player_id, slot_num, tkci)
     
     def update_player(self, player, casting_hexes):
         if self.player_screen == None:
