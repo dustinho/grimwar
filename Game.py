@@ -30,6 +30,9 @@ class Game:
         self.turn = 0
         self.turn_advantage = None
 
+        self.config_flags = { 'Use_Hands': True,
+                              'Use_Gold': True }
+
     def reset(self):
         self.board.clear()
 
@@ -223,17 +226,33 @@ class Game:
 
     def play_unit(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
-        if (not self.board.is_playable(self.players[id], position)):
-            return
-        card = self.players[id].play(card_name)
+        if not self.board.is_playable(self.players[id], position):
+            return False
+        if self.config_flags['Use_Hands']:
+            card = self.players[id].play(card_name, self.config_flags['Use_Gold'])
+        else:
+            card = Card.get_card(card_name)
+            if self.config_flags['Use_Gold']:
+                if not self.players[id].spend_gold(card.cost):
+                    return False
         self.board.place_unit(card, self.players[id], position)
+        return True
 
     def play_spell(self, spell_name, id, slot):
         """ Plays a spell at a given position (0-4 inclusive) for id"""
         if (self.board.spells[id][slot]):
-            return
-        card = self.players[id].play(spell_name)
+            return False
+
+        if self.config_flags['Use_Hands']:
+            card = self.players[id].play(spell_name, self.config_flags['Use_Gold'])
+        else:
+            card = Card.get_card(spell_name)
+            if self.config_flags['Use_Gold']:
+                if not self.players[id].spend_gold(card.cost):
+                    return False
         self.board.place_spell(card, self.players[id], slot)
+
+        return True
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """

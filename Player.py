@@ -31,10 +31,12 @@ class Player:
             self.grimoire.remove_from_grimoire(card_name)
             self.discard_pile.append(Card.get_card(card_name))
 
-    def play(self, card_name):
+    def play(self, card_name, spend_gold=True):
         # find the card in hand
         card = self.find_card(card_name, self.hand)
-        self.spend_gold(card.cost)
+        if spend_gold:
+            if not self.spend_gold(card.cost):
+                return None
         self.inplay.append(card)
         self.hand.remove(card)
         return card
