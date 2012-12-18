@@ -14,6 +14,9 @@ from TKGameBoard import *
 from PlayerProtocol import *
 from Card import Card
 
+from TKUnit import *
+from TKCardInstance import *
+
 
 class TKSimulator:
     def __init__(self):
@@ -42,29 +45,9 @@ class TKSimulator:
             print "error unpickling game"
             return
 
-        sector_dict = {}
-        for x in xrange(game.board.field_length):
-            for y in xrange(game.board.field_width):
-                pos = BoardTools.get_backend_position_from_visual_position(x, y, game.board.field_width)
-                sector = game.board.get_sector_for_position(pos)
-                if sector in sector_dict:
-                    sector_dict[sector].append(pos)
-                else:
-                    sector_dict[sector] = [pos]
-
         casting_hexes_dict = {}
-        casting_hexes_dict[0] = []
-        casting_hexes_dict[0].extend(sector_dict[0])
-        casting_hexes_dict[0].extend(sector_dict[1])
-
-        casting_hexes_dict[1] = []
-        casting_hexes_dict[1].extend(sector_dict[3])
-        casting_hexes_dict[1].extend(sector_dict[4])
-
- #       casting_hexes_dict = {}
-  #      for p_id in game.players.iterkeys():
-   #         casting_hexes_dict[p_id] = game.board.get_valid_casting_hexes(game.players[p_id])
-    #    print casting_hexes_dict
+        for p_id in game.players.iterkeys():
+            casting_hexes_dict[p_id] = game.board.get_valid_casting_hexes(game.players[p_id])
         
         self.update_board(game.board)
         self.update_simulator(Card.get_all_cards_list(), casting_hexes_dict)
@@ -86,6 +69,18 @@ class TKSimulator:
             tku = TKUnit(unit.card.name, unit.get_curr_ammo(), unit.get_curr_hp(),
                     direction, color)
             self.game_board.paint_unit_on_backend_position(position[0], position[1], tku)
+
+        for player_id, spell_list in board.spells.iteritems():
+            for slot_num, spell in enumerate(spell_list):
+                if spell:
+                    tkci = TKCardInstance(spell.card.name)
+                    self.game_board.paint_spell_on_slot(player_id, slot_num, tkci)
+
+        for player_id, building_list in board.buildings.iteritems():
+            for slot_num, building in enumerate(building_list):
+                if building:
+                    tkci = TKCardInstance(building.card.name)
+                    self.game_board.paint_building_on_slot(player_id, slot_num, tkci)
 
     def update_simulator(self, cards, casting_hexes_dict):
         if self.simulator_screen == None:
