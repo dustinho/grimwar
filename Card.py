@@ -20,7 +20,7 @@ class Card:
                               (os.path.join(card_root, "Workers"), WorkerCard),
                               (os.path.join(card_root, "Heroes"), HeroCard),
                               (os.path.join(card_root, "Spells"), SpellCard),
-                              (os.path.join(card_root, "Building"), BuildingCard),
+                              (os.path.join(card_root, "Buildings"), BuildingCard),
                             ]
         for (folder, klass) in folders_and_types:
             json_file_path = os.path.join(folder, name + ".json")
@@ -39,6 +39,9 @@ class Card:
         raw_dir_list = os.listdir(card_root)
         raw_dir_list.extend(os.listdir(os.path.join(card_root, "Workers")))
         raw_dir_list.extend(os.listdir(os.path.join(card_root, "Heroes")))
+        raw_dir_list.extend(os.listdir(os.path.join(card_root, "Spells")))
+        raw_dir_list.extend(os.listdir(os.path.join(card_root, "Buildings")))
+
         return [Card.get_card(dir_entry[:-suf_len]) for dir_entry in raw_dir_list \
                 if dir_entry.endswith(".json")]
 
