@@ -3,7 +3,6 @@ from Unit import *
 from Spell import *
 import logging
 
-# Right now, Board isn't really a class, but a container data structure.
 class Board:
     r"""A Board is essentially a map from coordinate pairs to Unit objects.
 
@@ -66,9 +65,15 @@ class Board:
         self.grid = {}
         self.spells = { 0: [None] * 5, 1: [None] * 5 }
         self.buildings = { 0: [None] * 5, 1: [None] * 5 }
+        self.left_facing_casting_zones = self._get_default_casting_zones_for_direction(
+                Player.FACING_LEFT)
+        self.right_facing_casting_zones = self._get_default_casting_zones_for_direction(
+                Player.FACING_RIGHT)
 
     def clear(self):
         self.grid = {}
+        self.spells = { 0: [None] * 5, 1: [None] * 5 }
+        self.buildings = { 0: [None] * 5, 1: [None] * 5 }
 
     def __str__(self):
         """return a string describing all of the objects on the board"""
@@ -138,21 +143,19 @@ class Board:
         logging.debug("testing {0}".format(possible_destination))
 
         if not self._is_hex_on_board(possible_destination):
-            print "off board"
             logging.debug("rejected for being off the board")
             instance.use_all_moves()
             return False
-        if self._which_casting_zone_owns_hex(possible_destination) != Player.INVALID_PLAYER:
+        if self._which_player_owns_hex(possible_destination) != Player.INVALID_PLAYER:
             # The columns at the boards' most extreme points are
-            # reserved for the player to cast new units.
-            print "casting zone"
-            logging.debug("rejected for being in casting zone")
+            # reserved for the player to cast new units, and considered part of
+            # the player's base.
+            logging.debug("rejected for being inside a player's base")
             instance.use_all_moves()
             return False
         if possible_destination in self.grid:
             # You can't move through or onto occupied squares, no
             # matter how fast you are.
-            print "in grid"
             logging.debug("rejected for being occupied")
             instance.use_all_moves()
             return False
@@ -162,7 +165,6 @@ class Board:
         self.grid[destination] = self.grid.pop(current_position)
         instance.use_move()
         return True
-
 
     def do_all_attacks(self):
         for position, instance in self.grid.iteritems():
@@ -179,7 +181,7 @@ class Board:
             for target in valid_targets:
                 if target not in self.grid:
                     # Damage player directly
-                    player_to_damage_direction = self._which_casting_zone_owns_hex(target)
+                    player_to_damage_direction = self._which_player_owns_hex(target)
                     if player_to_damage_direction != Player.INVALID_PLAYER:
                         logging.info("{0} deals {1} damage to player {2}".format(instance, instance.get_damage(), player_to_damage_direction))
                         self.game.damage_player(player_to_damage_direction, instance.get_damage())
@@ -205,7 +207,7 @@ class Board:
             if not self._is_hex_on_board(target_hex):
                 # You can't hit something off-board.
                 break
-            target_hex_owner = self._which_casting_zone_owns_hex(target_hex)
+            target_hex_owner = self._which_player_owns_hex(target_hex)
             if target_hex_owner != unit.owner.get_direction() and target_hex_owner != Player.INVALID_PLAYER:
                 # Casting squares are valid targets and deal damage to the owning player.
                 reachable_targets.append(target_hex)
@@ -229,7 +231,7 @@ class Board:
         # columns 1, 3, 5,... and even-numbered rows have columns 0, 2, 4...
         return 2 * position[0] + position[1]
 
-    def _which_casting_zone_owns_hex(self, position):
+    def _which_player_owns_hex(self, position):
         dist_from_left = self._column_distance_from_left(position)
         if dist_from_left == 0 or dist_from_left == 1:
             return Player.FACING_RIGHT
@@ -267,12 +269,19 @@ class Board:
 
     def is_playable(self, owner, position):
         """returns True if position (u,v) is playable by owner"""
-        if self._which_casting_zone_owns_hex(position) != owner.direction:
+        casting_zones = []
+        if owner.direction == Player.FACING_LEFT:
+            casting_zones = self.left_facing_casting_zones
+        elif owner.direction == Player.FACING_RIGHT:
+            casting_zones = self.right_facing_casting_zones
+
+        if position not in casting_zones:
             logging.debug("Position {0} not in owner {1}'s castingzone".format(
                 position,
                 owner.id
             ))
             return False
+
         if position in self.grid:
             logging.debug("Unit already exists at {0}".format(position))
             return False
@@ -294,18 +303,33 @@ class Board:
 
     def get_valid_casting_hexes(self, owner):
         """returns a list of tuples describing valid plays areas for owner"""
+        assert owner.direction == Player.FACING_RIGHT or \
+                owner.direction == Player.FACING_LEFT, \
+                "{0} is not a valid player".format(owner)
+        return self.get_casting_hexes_for_direction(owner.direction)
+
+    def get_casting_hexes_for_direction(self, direction):
+        if direction == Player.FACING_LEFT:
+            return self.left_facing_casting_zones
+        elif direction == Player.FACING_RIGHT:
+            return self.right_facing_casting_zones
+        else:
+            logging.debug("Tried to get casting hexes of an invalid direction")
+            return []
+
+    def _get_default_casting_zones_for_direction(self, direction):
         hexes = []
         for i in xrange(self.field_width):
-            if owner.direction == Player.FACING_RIGHT:
+            if direction == Player.FACING_RIGHT:
                 if i%2 == 0:
                     hexes.append((-i/2,i))
                 else:
                     hexes.append((-i/2+1,i))
-            elif owner.direction == Player.FACING_LEFT:
+            elif direction == Player.FACING_LEFT:
                 if i%2 == 0:
                     hexes.append((self.field_length -i/2-1,i))
                 else:
                     hexes.append((self.field_length -i/2-2,i))
-            else:
-                assert False, "{0} is not a valid Player".format(owner)
         return hexes
+
+
