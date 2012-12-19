@@ -36,6 +36,7 @@ class Player:
         card = self.find_card(card_name, self.hand)
         if spend_gold:
             if not self.spend_gold(card.cost):
+                logging.debug("Attempted to play {0} without sufficient funds".format(card_name))
                 return None
         self.inplay.append(card)
         self.hand.remove(card)

@@ -235,6 +235,10 @@ class Game:
             if self.config_flags['Use_Gold']:
                 if not self.players[id].spend_gold(card.cost):
                     return False
+
+        if card == None:
+            return False
+
         self.board.place_unit(card, self.players[id], position)
         return True
 
@@ -250,8 +254,11 @@ class Game:
             if self.config_flags['Use_Gold']:
                 if not self.players[id].spend_gold(card.cost):
                     return False
-        self.board.place_spell(card, self.players[id], slot)
 
+        if card == None:
+            return False
+
+        self.board.place_spell(card, self.players[id], slot)
         return True
 
     def put_in_play(self, card, id, position):

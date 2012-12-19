@@ -22,6 +22,7 @@ class TestGame(unittest.TestCase):
         """
         Tests that draw 3 spell correctly draws after cast_time turns
         """
+        self.game.config_flags['Use_Gold'] = False
         draw_card = Card.get_card('Draw')
         self.game.players[0].hand.append(draw_card)
         self.game.play_spell('draw', 0, 0)
@@ -41,6 +42,7 @@ class TestGame(unittest.TestCase):
         """
         Tests that the heal_row spell heals correctly after cast_time turns
         """
+        self.game.config_flags['Use_Gold'] = False
         footman_card1 = Card.get_card('Footman')
         footman1 = Unit.get_unit(footman_card1, self.game.players[0])
         self.game.players[0].inplay.append(footman_card1)
