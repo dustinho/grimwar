@@ -1,0 +1,9 @@
+{
+	"name": "Econ",
+	"cost": 100,
+	"buy_cost": 300,
+	"upkeep_effect": "upgrade_economy",
+	"upkeep_effect_args": [1],
+	"tier": 1,
+	"type": "neutral"
+}

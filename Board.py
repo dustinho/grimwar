@@ -1,6 +1,7 @@
 from Player import *
 from Unit import *
 from Spell import *
+from Building import *
 import logging
 
 class Board:
@@ -302,6 +303,13 @@ class Board:
             return
         self.spells[owner.id][row] = Spell.get_spell(card, owner)
         self.spells[owner.id][row].row = row
+
+    def place_building(self, card, owner, row):
+        if (self.buildings[owner.id][row] or row < 0 or row > 4):
+            logging.debug("Building cant be placed at {0}".format(row))
+            return
+        self.buildings[owner.id][row] = Building.get_building(card, owner)
+        self.buildings[owner.id][row].row = row
 
     def get_valid_casting_hexes(self, owner):
         """returns a list of tuples describing valid plays areas for owner"""

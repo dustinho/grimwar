@@ -93,6 +93,7 @@ class Game:
 
     def main_loop_once(self):
         self.upkeep_phase()
+        self.draw_phase()
 
         self.main_phase(0)
         self.main_phase(1)
@@ -115,12 +116,16 @@ class Game:
     def upkeep_phase(self):
         self.turn_advantage = self.calculate_advantage()
         self.board.refresh_units()
+        for id, player in self.players.iteritems():
+            player.gold += UPKEEP_GOLD
+        self.apply_phase_effects()
+
+
+    def draw_phase(self):
         if self.turn % DRAW_FREQUENCY == 0:
             for id, player in self.players.iteritems():
                 if len(self.players[id].hand) < MAX_HAND_SIZE:
                     self.players[id].draw()
-        for id, player in self.players.iteritems():
-            player.gold += UPKEEP_GOLD
 
     def main_phase(self, id):
         if self.input_type != 'Console':
@@ -261,11 +266,41 @@ class Game:
         self.board.place_spell(card, self.players[id], slot)
         return True
 
+    def play_building(self, building_name, id, slot):
+        """ Plays a buidling at a given position (0-4 inclusive) for id"""
+        if (self.board.buildings[id][slot]):
+            return
+        card = self.players[id].play(building_name)
+        self.board.place_building(card, self.players[id], slot)
+
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """
         self.board.is_playable(self.players[id], position)
         self.players[id].inplay.append(card)
         self.board.grid[(position)] = Unit.get_unit(card, self.players[id])
+
+    def apply_phase_effects(self):
+        """
+        Go through each building and apply its Effect
+        TODO: Should go through everything on the board and apply effects.
+        TODO: Make this phase independent
+        """
+        first = self.get_turn_advantage()
+        second = (first + 1) % 2
+        self.apply_phase_effects_for_player(first, second)
+        self.apply_phase_effects_for_player(second, first)
+
+    def apply_phase_effects_for_player(self, player_id, opponent_id):
+        for (index, object) in enumerate(self.board.buildings[player_id]):
+            if object and object.upkeep_effect:
+                Effect.applyEffect(
+                    object.upkeep_effect,
+                    self.players[player_id],
+                    self.players[opponent_id],
+                    object,
+                    self.board,
+                    object.upkeep_effect_args
+                )
 
 
 ## Debug function to print out current state

@@ -1,0 +1,15 @@
+{
+  "name" : "UPeasant",
+  "cost" : 10,
+  "hp" : 5,
+  "ammo" : 1,
+  "speed" : 1,
+  "damage" : 5,
+  "attack_pattern" : [[1,0]],
+  "attack_type" : "single",
+  "tier" : 1,
+  "buy_cost" : 25,
+  "faction" : "Human",
+  "archetype" : "Justice"
+}
+

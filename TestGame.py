@@ -25,7 +25,7 @@ class TestGame(unittest.TestCase):
         self.game.config_flags['Use_Gold'] = False
         draw_card = Card.get_card('Draw')
         self.game.players[0].hand.append(draw_card)
-        self.game.play_spell('draw', 0, 0)
+        self.game.play_spell('Draw', 0, 0)
         cards_in_hand = len(self.game.players[0].hand)
         cast_time = draw_card.cast_time
         for x in reversed(range(cast_time)):
@@ -37,7 +37,7 @@ class TestGame(unittest.TestCase):
             else:
                 self.assertEquals(
                     len(self.game.players[0].hand), cards_in_hand+3)
-    
+
     def test_heal_row(self):
         """
         Tests that the heal_row spell heals correctly after cast_time turns
@@ -72,4 +72,32 @@ class TestGame(unittest.TestCase):
         self.game.main_loop_once()
         footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
         self.assertEquals(footmen_health, [15, 12, 12])
-        
+
+    def test_econ_build(self):
+        """
+        Tests that having the econ building will upgrade peasants correctly.
+        """
+        self.game.players[0].gold = 9999
+
+        discard = self.game.players[0].discard_pile
+        discard.append(Card.get_card('Peasant'))
+        discard.append(Card.get_card('Peasant'))
+        self.assertEquals(len(discard), 2)
+
+        self.game.players[0].hand.append(Card.get_card('Econ'))
+        self.game.play_building('Econ', 0, 0)
+        self.game.main_loop_once()
+
+        discard = self.game.players[0].discard_pile
+        n_peasants = len([x for x in discard if x.name == 'Peasant'])
+        n_speasants = len([x for x in discard if x.name == 'SPeasant'])
+
+        self.assertEquals(n_peasants, 0)
+        self.assertEquals(n_speasants, 2)
+
+
+
+
+
+
+

@@ -63,6 +63,9 @@ class Card:
         self.cast_effect = None
         self.cast_args = None
 
+        self.upkeep_effect = None
+        self.upkeep_effect_args = None
+
         data = json.load(open(spec_file))
 
         for key in data:

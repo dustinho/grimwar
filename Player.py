@@ -15,6 +15,16 @@ class Player:
         self.id = id
         self.reset()
 
+    def reset(self):
+        self.deck = deque()
+        self.discard_pile = deque()
+        self.hand = deque()
+        self.inplay = deque()
+        self._health = Player.STARTING_HEALTH
+        self.set_direction(Player.FACING_RIGHT)
+        self.gold = Player.STARTING_GOLD
+        self.grimoire = Grimoire()
+
     def __str__(self):
         lines = []
         lines.append("Health: {0}".format(self.get_curr_health()))
@@ -102,16 +112,6 @@ class Player:
 
     def set_gold(self, amount):
         self.gold = amount
-
-    def reset(self):
-        self.deck = deque()
-        self.discard_pile = deque()
-        self.hand = deque()
-        self.inplay = deque()
-        self._health = Player.STARTING_HEALTH
-        self.set_direction(Player.FACING_RIGHT)
-        self.gold = Player.STARTING_GOLD
-        self.grimoire = Grimoire()
 
     def set_direction(self, direction):
         self.direction = direction
