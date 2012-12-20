@@ -57,7 +57,7 @@ class TKSimulatorScreen:
 
         button_offset = 130
 
-        for card in cards:
+        for i, card in enumerate(cards):
             btn_text = ''.join( [card.name, " $", str(card.cost)] )
             card_opts = { "anchor":W, "window": Button(text=btn_text, \
                     command=card_button_command(card)) }
@@ -65,7 +65,11 @@ class TKSimulatorScreen:
             button = self.canvas.create_window(x, y, **card_opts)
             self.screen_items.append(button) 
 
-            x += button_offset
+            if i % 7 == 6:
+                y += 25
+                x = self.xoffset
+            else:
+                x += button_offset
 
     def card_clicked(self, card):
         def play_card_command(c, l):
