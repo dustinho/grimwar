@@ -34,7 +34,7 @@ class Effect:
 		"""
 		@param Heal amount
 		"""
-		row = instance.row
+                row = board.get_row_for_spell(player,instance)
 		amount = args[0]
 		units = board.get_units_with_preds(preds["row"](row),
 			preds["owner"](player))

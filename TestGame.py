@@ -65,13 +65,15 @@ class TestGame(unittest.TestCase):
             footman.take_damage(3)
         footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
         self.assertEquals(footmen_health, [12, 12, 12])
-        self.game.main_loop_once()
-        self.game.main_loop_once()
-        self.game.main_loop_once()
-        self.game.main_loop_once()
-        self.game.main_loop_once()
-        footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
-        self.assertEquals(footmen_health, [15, 12, 12])
+        cast_time = heal_row.cast_time
+        for x in reversed(range(cast_time)):
+            self.game.main_loop_once()
+            if x != 0:        
+                footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
+                self.assertEquals(footmen_health, [12, 12, 12])
+            else:
+                footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
+                self.assertEquals(footmen_health, [15, 12, 12])
 
     def test_econ_build(self):
         """

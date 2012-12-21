@@ -302,7 +302,12 @@ class Board:
             logging.debug("Spell cant be placed at {0}".format(row))
             return
         self.spells[owner.id][row] = Spell.get_spell(card, owner)
-        self.spells[owner.id][row].row = row
+
+    def get_row_for_spell(self, owner, spell):
+        """returns row number of a given spell instance for owner"""
+        for i in range(5):
+            if self.spells[owner.id][i] == spell:
+                return i
 
     def place_building(self, card, owner, row):
         if (self.buildings[owner.id][row] or row < 0 or row > 4):
