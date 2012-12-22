@@ -30,9 +30,6 @@ class Game:
         self.turn = 0
         self.turn_advantage = None
 
-        self.config_flags = { 'Use_Hands': True,
-                              'Use_Gold': True }
-
     def reset(self):
         self.board.clear()
 
@@ -233,14 +230,8 @@ class Game:
         """plays a card for player id from his hand at position (u,v)"""
         if not self.board.is_playable(self.players[id], position):
             return False
-        if self.config_flags['Use_Hands']:
-            card = self.players[id].play(card_name, self.config_flags['Use_Gold'])
-        else:
-            card = Card.get_card(card_name)
-            if self.config_flags['Use_Gold']:
-                if not self.players[id].spend_gold(card.cost):
-                    return False
 
+        card = self.players[id].play(card_name)
         if card == None:
             return False
 
@@ -252,14 +243,7 @@ class Game:
         if (self.board.spells[id][slot]):
             return False
 
-        if self.config_flags['Use_Hands']:
-            card = self.players[id].play(spell_name, self.config_flags['Use_Gold'])
-        else:
-            card = Card.get_card(spell_name)
-            if self.config_flags['Use_Gold']:
-                if not self.players[id].spend_gold(card.cost):
-                    return False
-
+        card = self.players[id].play(spell_name)
         if card == None:
             return False
 

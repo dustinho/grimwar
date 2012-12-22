@@ -22,9 +22,9 @@ class TestGame(unittest.TestCase):
         """
         Tests that draw 3 spell correctly draws after cast_time turns
         """
-        self.game.config_flags['Use_Gold'] = False
         draw_card = Card.get_card('Draw')
         self.game.players[0].hand.append(draw_card)
+        self.game.players[0].gold += draw_card.cost
         self.game.play_spell('Draw', 0, 0)
         cards_in_hand = len(self.game.players[0].hand)
         cast_time = draw_card.cast_time
@@ -42,7 +42,6 @@ class TestGame(unittest.TestCase):
         """
         Tests that the heal_row spell heals correctly after cast_time turns
         """
-        self.game.config_flags['Use_Gold'] = False
         footman_card1 = Card.get_card('Footman')
         footman1 = Unit.get_unit(footman_card1, self.game.players[0])
         self.game.players[0].inplay.append(footman_card1)
@@ -57,6 +56,7 @@ class TestGame(unittest.TestCase):
         self.game.board.grid[(3,0)] = footman3
         heal_row = Card.get_card('Heal Row')
         self.game.players[0].hand.append(heal_row)
+        self.game.players[0].gold += heal_row.cost
         self.game.play_spell('heal row', 0, 0)
         footmen = [footman1, footman2, footman3]
         footmen_health = [unit.get_curr_hp() for unit in footmen]

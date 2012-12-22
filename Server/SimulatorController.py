@@ -1,31 +1,51 @@
-from BaseController import BaseController
 import sys
 sys.path.append('../')
 sys.path.append('../TK_UIv2/')
 sys.path.append('../TK_UIv2/UITools')
 from Game import Game
+from Card import Card
 from UITools import BoardTools
 
-class SimulatorController(BaseController):
+class SimulatorController:
     def __init__(self):
         self.game = Game(input_type='')
 
         self.game.upkeep_phase()
 
-        self.game.config_flags['Use_Hands'] = False
-        self.game.config_flags['Use_Gold'] = False
-
         self._init_simulator_casting_hexes()
 
-    def put_card(self, card, player_id, location):
-        print card
-        self.game.put_in_play(card, player_id, location)
+    def advance(self):
+        self.game.move_and_damage_phase()
+        self.game.money_phase()
+        result = self.game.cleanup_phase()
+        if result is not None:
+            return result
+
+        self.game.increment_turn()
+        self.game.upkeep_phase()
+
+    def play_unit_card(self, card_name, player_id, location):
+        self.add_card_and_gold(card_name, player_id)
+        self.game.play_unit(card_name, player_id, location)
+
+    def play_spell_card(self, card_name, player_id, slot):
+        self.add_card_and_gold(card_name, player_id)
+        self.game.play_spell(card_name, player_id, slot)
+
+    def play_building_card(self, card_name, player_id, slot):
+        self.add_card_and_gold(card_name, player_id)
+        self.game.play_buidling(card_name, player_id, slot)
 
     def clear(self):
         self.game.reset()
 
     def next(self):
         self.advance()
+
+    def add_card_and_gold(self, card_name, player_id):
+        card = Card.get_card(card_name)
+        self.game.players[player_id].hand.append(card)
+        self.game.players[player_id].gold += card.cost
 
     def _init_simulator_casting_hexes(self):
         sector_dict = {}
