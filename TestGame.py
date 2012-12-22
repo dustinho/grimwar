@@ -54,18 +54,20 @@ class TestGame(unittest.TestCase):
         footman3 = Unit.get_unit(footman_card3, self.game.players[1])
         self.game.players[1].inplay.append(footman_card3)
         self.game.board.grid[(3,0)] = footman3
+
         heal_row = Card.get_card('Heal Row')
         self.game.players[0].hand.append(heal_row)
         self.game.players[0].gold += heal_row.cost
         self.game.play_spell('heal row', 0, 0)
+        cast_time = heal_row.cast_time
+
         footmen = [footman1, footman2, footman3]
         footmen_health = [unit.get_curr_hp() for unit in footmen]
         self.assertEquals(footmen_health, [15, 15, 15])
+
         for footman in footmen:
             footman.take_damage(3)
-        footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
-        self.assertEquals(footmen_health, [12, 12, 12])
-        cast_time = heal_row.cast_time
+
         for x in reversed(range(cast_time)):
             self.game.main_loop_once()
             if x != 0:        
