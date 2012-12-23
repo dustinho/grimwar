@@ -58,7 +58,7 @@ class TestGame(unittest.TestCase):
         heal_row = Card.get_card('Heal Row')
         self.game.players[0].hand.append(heal_row)
         self.game.players[0].gold += heal_row.cost
-        self.game.play_spell('heal row', 0, 0)
+        self.game.play_spell('Heal Row', 0, 0)
         cast_time = heal_row.cast_time
 
         footmen = [footman1, footman2, footman3]
@@ -70,7 +70,7 @@ class TestGame(unittest.TestCase):
 
         for x in reversed(range(cast_time)):
             self.game.main_loop_once()
-            if x != 0:        
+            if x != 0:
                 footmen_health = [unit.get_curr_hp() for unit in [footman1, footman2, footman3]]
                 self.assertEquals(footmen_health, [12, 12, 12])
             else:
@@ -98,6 +98,40 @@ class TestGame(unittest.TestCase):
 
         self.assertEquals(n_peasants, 0)
         self.assertEquals(n_speasants, 2)
+
+    def test_buff_row(self):
+        self.game.players[0].gold = 9999
+        self.game.players[0].hand.append(Card.get_card('Buff Row'))
+
+        footman_card1 = Card.get_card('Footman')
+        footman1 = Unit.get_unit(footman_card1, self.game.players[0])
+        self.game.players[0].inplay.append(footman_card1)
+        self.game.board.grid[(4,0)] = footman1
+
+        self.assertEquals(footman1.get_damage(), 5)
+        self.game.play_spell('Buff Row', 0, 0)
+
+        self.game.main_loop_once()
+        self.game.main_loop_once()
+
+        # Spell should take effect on the third turn after play
+        self.assertEquals(footman1.get_damage(), 5)
+        self.game.main_loop_once()
+        self.assertEquals(footman1.get_damage(), 6)
+
+        # Modifier should last a total of 3 turns
+        self.game.main_loop_once()
+        self.assertEquals(footman1.get_damage(), 6)
+        self.game.main_loop_once()
+        # At the end of the third turn, the unit reverts back to 5 attack.
+        self.assertEquals(footman1.get_damage(), 5)
+
+
+
+
+
+
+
 
 
 

@@ -23,6 +23,7 @@ class Spell:
         self.cast_time_remaining = self.cast_time
 
         self.owner = owner
+        self.modifiers = []
 
     def __str__(self):
         return "<{0}, {1} cast_time_remaining>".format(

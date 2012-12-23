@@ -20,6 +20,7 @@ class Building:
         self.upkeep_effect_args = card.upkeep_effect_args
 
         self.owner = owner
+        self.modifiers = []
 
     def __str__(self):
         return "<{0}>".format(

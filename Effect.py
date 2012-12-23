@@ -2,6 +2,7 @@ from Player import *
 from Board import *
 from Unit import *
 from Preds import preds
+from Modifier import *
 
 class Effect:
     """
@@ -72,4 +73,39 @@ class Effect:
                 if not card.name == "Peasant"])
             for x in xrange(workers_to_upgrade):
                 player.discard_pile.append(Card.get_card("SPeasant"))
+
+    @staticmethod
+    def pump_row_attack(player, opponent, instance, board, args):
+        """
+        Increases a row's attack by some amount for some number of turns.
+
+        @param How much attack to increase by
+        @param How many turns this buff lasts
+        """
+        plus_attack = args[0]
+        duration = args[1]
+
+        row = board.get_row_for_spell(player,instance)
+        units = board.get_units_with_preds(preds["row"](row),
+            preds["owner"](player))
+        for unit in units:
+            attack_modifier = AttackModifier(plus_attack, duration)
+            attack_modifier.attach(unit)
+        return
+
+    @staticmethod
+    def tech_level(player, opponent, instance, board, args):
+        """
+        Attaches a modifier to the current player that grants it the ability
+        to buy cards equal to or below a given tech level for a turn.
+
+        @param Tech level (2 or 3)
+        """
+        tech_level = args[0]
+        tech_modifier = TechLevelModifier(tech_level)
+        tech_modifier.attach(player)
+
+
+
+
 

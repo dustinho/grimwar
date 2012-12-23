@@ -117,6 +117,15 @@ class Game:
             player.gold += UPKEEP_GOLD
         self.apply_phase_effects()
 
+        # Let modifiers do updates.
+        # TODO: Building modifiers? Spell modifiers?
+        for location, unit in self.board.grid.iteritems():
+            for modifier in unit.modifiers:
+                modifier.upkeepLogic(self.board)
+        for id, player in self.players.iteritems():
+            for modifier in player.modifiers:
+                modifier.upkeepLogic(self.board)
+
 
     def draw_phase(self):
         if self.turn % DRAW_FREQUENCY == 0:
@@ -199,6 +208,17 @@ class Game:
 
         for loc in locations_to_delete:
             del self.board.grid[loc]
+
+        # Let modifiers remove themselves if necesssary.
+        # TODO: We need to loop over removal for the case where unit dies
+        # results in removal of a modifier that causes another unit to die.
+        # TODO: Building modifiers? Spell modifiers?
+        for location, unit in self.board.grid.iteritems():
+            for modifier in unit.modifiers:
+                modifier.cleanupLogic(self.board)
+        for id, player in self.players.iteritems():
+            for modifier in player.modifiers:
+                modifier.cleanupLogic(self.board)
 
         # Calculate Gameover
         is_tie = True

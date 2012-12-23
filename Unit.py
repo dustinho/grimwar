@@ -34,6 +34,8 @@ class Unit:
         self._ready = True
         self.owner = owner
 
+        self.modifiers = []
+
     def __str__(self):
         return "<{0}, {1} hp, {2} ammo>".format(self.card.name, self.get_curr_hp(), self.get_curr_ammo())
 
@@ -77,7 +79,7 @@ class Unit:
 
     def ready(self):
         self._ready = True
-    
+
     def exhaust(self):
         self._ready = False
 

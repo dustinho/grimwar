@@ -24,6 +24,7 @@ class Player:
         self.set_direction(Player.FACING_RIGHT)
         self.gold = Player.STARTING_GOLD
         self.grimoire = Grimoire()
+        self.modifiers = []
 
     def __str__(self):
         lines = []

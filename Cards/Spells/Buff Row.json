@@ -1,0 +1,10 @@
+{
+    "name": "Buff Row",
+    "cost": 50,
+    "buy_cost": 50,
+    "cast_time": 3,
+    "cast_effect": "pump_row_attack",
+    "cast_args": [1,3],
+    "tier": 1,
+    "type": "neutral"
+}
