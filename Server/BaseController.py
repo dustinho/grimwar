@@ -10,6 +10,7 @@ class BaseController:
 
     #up to controller to decide what exactly this advances
     def advance(self):
+        self.game.spell_phase()
         self.game.move_and_damage_phase()
         self.game.money_phase()
         result = self.game.cleanup_phase()
@@ -18,6 +19,7 @@ class BaseController:
 
         self.game.increment_turn()
         self.game.upkeep_phase()
+        self.game.draw_phase()
 
     def buy_card(self, player_id, card_name):
         player = self.game.players[player_id]
@@ -30,6 +32,5 @@ class BaseController:
         self.game.play_spell(card, player_id, slot)
 
     def play_building_card(self, card, player_id, slot):
-        #self.game.play_buidling(card, player_id, slot)
-        pass
+        self.game.play_building(card, player_id, slot)
 

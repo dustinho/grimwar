@@ -2,6 +2,11 @@
   "Footman" : 4,
   "Knight" : 4,
   "Rifleman" : 4,
-  "Peasant" : 4
+  "Draw" : 4,
+  "Heal Row" : 4,
+  "Econ" : 4,
+  "Peasant" : 4,
+  "SPeasant" : 4,
+  "UPeasant" : 4
 }
 

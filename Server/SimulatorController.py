@@ -15,6 +15,7 @@ class SimulatorController:
         self._init_simulator_casting_hexes()
 
     def advance(self):
+        self.game.spell_phase()
         self.game.move_and_damage_phase()
         self.game.money_phase()
         result = self.game.cleanup_phase()
@@ -23,6 +24,7 @@ class SimulatorController:
 
         self.game.increment_turn()
         self.game.upkeep_phase()
+        self.game.draw_phase()
 
     def play_unit_card(self, card_name, player_id, location):
         self.add_card_and_gold(card_name, player_id)

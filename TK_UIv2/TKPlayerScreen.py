@@ -92,7 +92,7 @@ class TKPlayerScreen:
             return lambda: self.play_building_card(pid, c, s)
 
         for i in xrange(self.game_board.minor):
-            pix = self.game_board.get_center_pixel_for_slot(self.player_id, i, 1)
+            pix = self.game_board.get_center_pixel_for_slot(self.player_id, i, 0)
             btn = Button(text=str(i),
                     command= play_building_command(self.player_id, card, i))
             btn_opts = { "window": btn }
@@ -109,7 +109,7 @@ class TKPlayerScreen:
         self.clear_casting_buttons()
         self.player_actions.play_spell_card(player_id, card, slot)
 
-    def player_building_card(self, player_id, card, slot):
+    def play_building_card(self, player_id, card, slot):
         self.clear_casting_buttons()
         self.player_actions.play_building_card(player_id, card, slot)
 
