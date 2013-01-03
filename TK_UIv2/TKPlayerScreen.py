@@ -3,6 +3,7 @@ from UITools import BoardTools
 import sys
 sys.path.append('../')
 from Card import *
+from TKPlayerBase import TKPlayerBase
 
 GRIMOIRE_XOFFSET = 700
 STATUS_YOFFSET = 150
@@ -18,7 +19,7 @@ class TKPlayerScreen:
         self.yoffset = yoffset
         
         self.screen_items = []
-        #The assingment of casting hexes doesnt seems right
+        #The assignment of casting hexes doesnt seem right
         self.casting_buttons = []
         self.casting_hexes = []
 
@@ -66,13 +67,11 @@ class TKPlayerScreen:
         def play_unit_command(pid, c, l):
             return lambda: self.play_unit_card(pid, c, l) 
 
-        for i, loc in enumerate(self.casting_hexes):
-            vp = BoardTools.get_visual_position_from_backend_position(loc[0], loc[1],
-                    self.game_board.minor)
-            pix = self.game_board.get_center_pixel_from_visual_position(vp[0], vp[1])
+        for i, pos in enumerate(self.casting_hexes):
+            pix = self.game_board.get_center_pixel_for_battlefield_position(pos)
 
             btn = Button(text=str(i),
-                    command=play_unit_command(self.player_id, card, loc))
+                    command=play_unit_command(self.player_id, card, pos))
             btn_opts = { "window": btn }
             self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
              
@@ -80,21 +79,22 @@ class TKPlayerScreen:
         def play_spell_command(pid, c, s):
             return lambda: self.play_spell_card(pid, c, s)
 
-        for i in xrange(self.game_board.minor):
-            pix = self.game_board.get_center_pixel_for_slot(self.player_id, i, 1)
-            btn = Button(text=str(i),
-                    command=play_spell_command(self.player_id, card, i))
-            btn_opts = { "window": btn }
-            self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
+        self._paint_base_casting_buttons(card, TKPlayerBase.SPELL_COLUMN_INDEX,
+                play_spell_command)
 
     def paint_building_casting_buttons(self, card):
         def play_building_command(pid, c, s):
             return lambda: self.play_building_card(pid, c, s)
 
-        for i in xrange(self.game_board.minor):
-            pix = self.game_board.get_center_pixel_for_slot(self.player_id, i, 0)
-            btn = Button(text=str(i),
-                    command= play_building_command(self.player_id, card, i))
+        self._paint_base_casting_buttons(card, TKPlayerBase.BUILDING_COLUMN_INDEX,
+                play_building_command)
+
+    def _paint_base_casting_buttons(self, card, slot_column, on_click):
+        for i in xrange(self.game_board.bf_height):
+            slot = (slot_column, i)
+            pix = self.game_board.get_center_pixel_for_player_base_slot( \
+                    self.player_id, slot)
+            btn = Button(text=str(i), command=on_click(self.player_id, card, i))
             btn_opts = { "window": btn }
             self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
 

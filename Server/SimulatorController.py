@@ -36,7 +36,7 @@ class SimulatorController:
 
     def play_building_card(self, card_name, player_id, slot):
         self.add_card_and_gold(card_name, player_id)
-        self.game.play_buidling(card_name, player_id, slot)
+        self.game.play_building(card_name, player_id, slot)
 
     def clear(self):
         self.game.reset()
@@ -55,7 +55,7 @@ class SimulatorController:
             for y in xrange(self.game.board.field_width):
                 if x == self.game.board.field_length - 1 and y % 2 == 1:
                     continue
-                pos = BoardTools.get_backend_position_from_visual_position(x, y, self.game.board.field_width)
+                pos = BoardTools.get_backend_position_for_visual_position((x, y), self.game.board.field_width)
                 sector = self.game.board.get_sector_for_position(pos)
                 if sector in sector_dict:
                     sector_dict[sector].append(pos)

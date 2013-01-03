@@ -4,6 +4,7 @@ sys.path.append('../')
 from Card import *
 
 sys.path.append('../TK_UIv2/')
+from TKPlayerBase import TKPlayerBase
 
 from UITools import BoardTools
 
@@ -72,23 +73,6 @@ class TKSimulatorScreen:
                 x += button_offset
 
     def card_clicked(self, card):
-        def play_card_command(c, l):
-            return lambda: self.play_card(c, l)
-
-        self.clear_casting_buttons()
-        casting_hexes_list = [] 
-        [casting_hexes_list.extend(l) for l in self.casting_hexes_dict.itervalues()]
-
-        for i, loc in enumerate(casting_hexes_list):
-            vp = BoardTools.get_visual_position_from_backend_position(loc[0], loc[1],
-                    self.game_board.minor)
-            pix = self.game_board.get_center_pixel_from_visual_position(vp[0], vp[1])
-
-            btn = Button(text=str(i), command=play_card_command(card, loc))
-            btn_opts = { "window": btn }
-            self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
-
-    def card_clicked(self, card):
         self.clear_casting_buttons()
 
         if isinstance(card, SpellCard):
@@ -103,13 +87,11 @@ class TKSimulatorScreen:
             return lambda: self.play_unit_card(pid, c, l)
 
         for player_id, casting_hexes_list in self.casting_hexes_dict.iteritems():
-            for i, loc in enumerate(casting_hexes_list):
-                vp = BoardTools.get_visual_position_from_backend_position(loc[0], loc[1],
-                        self.game_board.minor)
-                pix = self.game_board.get_center_pixel_from_visual_position(vp[0], vp[1])
+            for i, pos in enumerate(casting_hexes_list):
+                pix = self.game_board.get_center_pixel_for_battlefield_position(pos)
 
                 btn = Button(text=str(i),
-                        command=play_unit_command(player_id, card, loc))
+                        command=play_unit_command(player_id, card, pos))
                 btn_opts = { "window": btn }
                 self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
 
@@ -117,23 +99,23 @@ class TKSimulatorScreen:
         def play_spell_command(pid, c, s):
             return lambda: self.play_spell_card(pid, c, s)
 
-        for player_id in self.casting_hexes_dict.iterkeys():
-            for i in xrange(self.game_board.minor):
-                pix = self.game_board.get_center_pixel_for_slot(player_id, i, 1)
-                btn = Button(text=str(i),
-                        command=play_spell_command(player_id, card, i))
-                btn_opts = { "window": btn }
-                self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
+        self._paint_base_casting_buttons(card, TKPlayerBase.SPELL_COLUMN_INDEX,
+                play_spell_command)
 
     def paint_building_casting_buttons(self, card):
         def play_building_command(pid, c, s):
             return lambda: self.play_building_card(pid, c, s)
 
+        self._paint_base_casting_buttons(card, TKPlayerBase.BUILDING_COLUMN_INDEX,
+                play_building_command)
+
+    def _paint_base_casting_buttons(self, card, slot_column, on_click):
         for player_id in self.casting_hexes_dict.iterkeys():
-            for i in xrange(self.game_board.minor):
-                pix = self.game_board.get_center_pixel_for_slot(player_id, i, 0)
-                btn = Button(text=str(i),
-                        command= play_building_command(player_id, card, i))
+            for i in xrange(self.game_board.bf_height):
+                slot = (slot_column, i)
+                pix = self.game_board.get_center_pixel_for_player_base_slot( \
+                        player_id, slot)
+                btn = Button(text=str(i), command=on_click(player_id, card, i))
                 btn_opts = { "window": btn }
                 self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
 

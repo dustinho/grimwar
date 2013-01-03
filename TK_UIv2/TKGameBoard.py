@@ -1,162 +1,117 @@
 
-import math
-from Tkinter import *
-from UITools import BoardTools, BoardTestTools
-from TKUnit import *
+import ui_cfg
+from TKBattlefield import TKBattlefield
+from TKPlayerBase import TKPlayerBase
 
-RADIUS = 32
-SPELL_SLOT_ROW = 1
-BUILDING_SLOT_ROW = 0
+from UITools import BoardTools
+
+from TKUnit import TKUnit
+from TKCardInstance import TKCardInstance
 
 class TKGameBoard:
-    def __init__(self, canvas, width, height, xoffset, yoffset, radius = RADIUS):
+    def __init__(self, canvas, top_left_pixel, bf_width, bf_height):
         self.canvas = canvas
 
-        self.major = width
-        self.minor = height
+        self.xoffset = top_left_pixel[0]
+        self.yoffset = top_left_pixel[1]
 
-        self.xoffset = xoffset
-        self.yoffset = yoffset
+        self.bf_width = bf_width
+        self.bf_height = bf_height
 
-        self.hex_radius = radius
-        self.units = []
+        self.hex_radius = ui_cfg.hex_radius
+        self.spacing = -self.hex_radius // 2
 
-    def paint_board(self, sector_function):
+        self.card_instances = []
+        self.bases = {}
 
-        for i in xrange(self.major):
-            for j in xrange(self.minor):
-                if j % 2 == 1 and i == self.major - 1:
-                    continue
+        base0x = self.xoffset
+        base0y = self.yoffset
+        self.bases[0] = TKPlayerBase(self.canvas, (base0x, base0y), bf_height,
+                TKPlayerBase.LEFT)
 
-                bp = BoardTools.get_backend_position_from_visual_position(
-                        i, j, self.minor)
+        bfx = base0x + self.bases[0].get_pixel_width() + self.spacing 
+        bfy = base0y
+        self.battlefield = TKBattlefield(self.canvas, (bfx, bfy), bf_width,
+                bf_height)
 
-                sector = sector_function((bp[0], bp[1]))
-                hex_options = self.get_hexagon_options(sector)
-
-                pixel = self.get_center_pixel_from_visual_position(i, j)
-                BoardTools.draw_vertical_hexagon(self.canvas, pixel[0], pixel[1], \
-                        self.hex_radius, hex_options, self.get_hex_offsets)
-
-                BoardTestTools.draw_backend_coordinates(self.canvas, i, j, pixel[0], pixel[1], \
-                        self.hex_radius, self.minor)
-
+        base1x = bfx + self.battlefield.get_pixel_width() + self.spacing
+        base1y = base0y
+        self.bases[1] = TKPlayerBase(self.canvas, (base1x, base1y), bf_height,
+                TKPlayerBase.RIGHT)
         
-        for p in xrange(2):
-            for x in xrange(self.minor):
-                for y in xrange(2):
-                    pixel = self.get_center_pixel_for_slot(p, x, y)
-                    BoardTools.draw_rect(self.canvas, pixel[0], pixel[1], \
-                            hex_options, self.get_rect_offsets)
+    def paint(self, fn_battlefield_sector):
+        self.bases[0].paint()
+        self.battlefield.paint(fn_battlefield_sector)
+        self.bases[1].paint()
 
+    def paint_unit_on_battlefield(self, pos, unit):
+        pixel = self.get_center_pixel_for_battlefield_position(pos)
+        unit.paint(self.canvas, pixel)
+        self.card_instances.append(unit)
 
-    def clear_units_from_board(self):
-        for u in self.units:
-            u.clear(self.canvas)
-        self.units = []
+    def paint_spell_in_base(self, player_id, slot_num, spell_instance):
+        self._paint_instance_in_base(player_id, 
+                (TKPlayerBase.SPELL_COLUMN_INDEX, slot_num),
+                spell_instance)
 
-    def paint_unit_on_backend_position(self, x, y, unit):
-        vp = BoardTools.get_visual_position_from_backend_position(x, y, self.minor)
-        self.paint_unit_on_visual_position(vp[0], vp[1], unit) 
+    def paint_building_in_base(self, player_id, slot_num, building_instance):
+        self._paint_instance_in_base(player_id, 
+                (TKPlayerBase.BUILDING_COLUMN_INDEX, slot_num),
+                building_instance)
 
-    def paint_unit_on_visual_position(self, x, y, unit):
-        pixel = self.get_center_pixel_from_visual_position(x, y)
-        unit.paint(self.canvas, pixel[0], pixel[1] )  
-        self.units.append(unit)
+    def _paint_instance_in_base(self, player_id, slot, instance):
+        pixel = self.get_center_pixel_for_player_base_slot(player_id, slot)
+        instance.paint(self.canvas, pixel)
+        self.card_instances.append(instance)
 
-    def paint_spell_on_slot(self, player_id, slot, spell):
-        pixel = self.get_center_pixel_for_slot(player_id, slot, SPELL_SLOT_ROW)
-        spell.paint(self.canvas, pixel[0], pixel[1] )
-        self.units.append(spell)
-
-    def paint_building_on_slot(self, player_id, slot, building):
-        pixel = self.get_center_pixel_for_slot(player_id, slot, BUILDING_SLOT_ROW)
-        building.paint(self.canvas, pixel[0], pixel[1])
-        self.units.append(building)
-
-    def get_center_pixel_from_visual_position(self, x, y):
-        offsets = self.get_hex_offsets()
-        xoffset = offsets[0]
-        yoffset = offsets[1]
-
-        shifts = self.get_hex_shifts()
-        xshift = shifts[0]
-        yshift = shifts[1]
-
-        oddOffset = 0
-        if y % 2 == 1:
-            oddOffset = xoffset
-
-        x_pixel = self.xoffset + xoffset + oddOffset + (x * xshift)
-        y_pixel = self.yoffset + self.hex_radius + (y * yshift)
-        return (x_pixel, y_pixel)
-
-    def get_center_pixel_for_slot(self, player, x, y):
-        rect_offsets = self.get_rect_offsets()
-        x_offset = rect_offsets[0]
-        y_offset = rect_offsets[1]
-
-        x_pix = self.xoffset + x_offset + (x + (player * (1 + self.minor))) * 2 * x_offset 
-        y_pix = self.get_main_board_height() + y_offset + y * 2 * y_offset
-        return (x_pix, y_pix)
-
-
-    def get_hex_shifts(self):
-        offsets = self.get_hex_offsets()
-        xoffset = offsets[0]
-        yoffset = offsets[1]
-
-        xshift = xoffset * 2
-        yshift = yoffset * 3
-        return (xshift, yshift)
-
-    def get_hex_offsets(self):
-        xoffset = self.hex_radius * math.sqrt(3) / 2.0
-        yoffset = self.hex_radius / 2.0
-        return (xoffset, yoffset)
-
-    def get_hexagon_options(self, sector):
-        options = {"fill": "grey", "outline": "black"}
-        if sector == 0:
-            options["fill"] = "#666666"
-        elif sector == 1:
-            options["fill"] = "#555555"
-        elif sector == 2:
-            options["fill"] = "#444444"
-        elif sector == 3:
-            options["fill"] = "#555555"
-        elif sector == 4:
-            options["fill"] = "#666666"
-            
-        return options
-
-    def get_rect_offsets(self):
-        xoffset = self.hex_radius * math.sqrt(3) / 2.0
-        yoffset = xoffset
-        return (xoffset, yoffset)
-
-    def get_main_board_height(self):
-        yshift = self.get_hex_shifts()[1]
-        height = (2 * self.hex_radius) + self.minor * yshift
-        #height = self.y_offset + (2 * self.hex_radius) + self.minor * yshift
-        return height
-
-    def get_slots_height(self):
-        yshift = self.get_rect_offsets()[1]
-        return 3 * (2 * yshift)
+    def clear(self):
+        for instance in self.card_instances:
+            instance.clear(self.canvas)
+        self.card_instances = []
 
     def get_pixel_height(self):
-        return self.get_main_board_height() + self.get_slots_height() 
+        return max(self.battlefield.get_pixel_height(), \
+                self.bases[0].get_pixel_height(), \
+                self.bases[1].get_pixel_height())
+
+    def get_pixel_width(self):
+        return self.bases[0].get_pixel_width() + \
+                self.battlefield.get_pixel_width() + \
+                self.bases[1].get_pixel_width() + (2 * self.spacing)
+
+    def get_center_pixel_for_battlefield_position(self, pos):
+        vp = BoardTools.get_visual_position_for_backend_position(pos, \
+                self.bf_height)
+        pixel = self.battlefield.get_center_pixel_for_visual_position(vp)
+        return pixel
+
+    def get_center_pixel_for_player_base_slot(self, player_id, slot):
+        pixel = self.bases[player_id].get_center_pixel_for_slot(slot)
+        return pixel
 
 if __name__ == "__main__":
+    from Tkinter import *
     window = Tk()
-    canvas = Canvas(window, { "height": 900, "width": 1200 })
-    canvas.grid(column = 0, row = 0, sticky=(N, W))
-    gb = TKGameBoard(canvas, 12, 3, 3, 3, RADIUS)
-    gb.paint_board(lambda x: 1) 
-    tku = TKUnit("Eric", 1, 1, "^", "RED")
-    gb.paint_unit_on_visual_position(0,0, tku)
+    canvas = Canvas(window, { "height": 400, "width": 1450 })
+    canvas.grid(column = 0, row = 0, sticky = (N,W))
+
+    board = TKGameBoard(canvas, (3, 3), 18, 5)
+    board.paint(lambda x: 1)
+
+    tku = TKUnit('Eric', 5, 5, '^', "CYAN")
+    board.paint_unit_on_battlefield((0,0), tku)
+
+    tkci1 = TKCardInstance('Spell1')
+    board.paint_spell_in_base(0, 1, tkci1)
+
+    tkci2 = TKCardInstance('Build1')
+    board.paint_spell_in_base(1, 4, tkci2)
+    print board.get_pixel_height()
+    print board.get_pixel_width()
     def clicked(event):
-        gb.clear_units_from_board()
+        board.clear()
+        print event.x, event.y
+
     canvas.bind("<Button-1>", clicked)
     window.mainloop()
+    
