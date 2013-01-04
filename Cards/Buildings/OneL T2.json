@@ -1,0 +1,9 @@
+{
+    "name": "OneL T2",
+    "cost": 100,
+    "buy_cost": 200,
+    "upkeep_effect": "tech_level",
+    "upkeep_effect_args": ["onelane", 2],
+    "tier": 1,
+    "faction": "neutral"
+}

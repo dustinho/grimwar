@@ -9,7 +9,6 @@
   "attack_type" : "single",
   "tier" : 1,
   "buy_cost" : 50,
-  "faction" : "Human",
-  "archetype" : "Justice"
+  "faction" : "neutral"
 }
 

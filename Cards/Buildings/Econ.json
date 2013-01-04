@@ -5,5 +5,5 @@
 	"upkeep_effect": "upgrade_economy",
 	"upkeep_effect_args": [1],
 	"tier": 1,
-	"type": "neutral"
+	"faction": "neutral"
 }

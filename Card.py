@@ -57,7 +57,6 @@ class Card:
         self.tier = None
         self.buy_cost = None
         self.faction = None
-        self.archetype = None
 
         self.cast_time = None
         self.cast_effect = None
