@@ -6,20 +6,15 @@ class BaseController:
     def __init__(self):
         self.game = Game(input_type='')
 
-        self.game.upkeep_phase()
+        self.game.pre_main_phases()
 
     #up to controller to decide what exactly this advances
     def advance(self):
-        self.game.spell_phase()
-        self.game.move_and_damage_phase()
-        self.game.money_phase()
-        result = self.game.cleanup_phase()
+        result = self.game.post_main_phases()
         if result is not None:
             return result
 
-        self.game.increment_turn()
-        self.game.upkeep_phase()
-        self.game.draw_phase()
+        self.game.pre_main_phases()
 
     def buy_card(self, player_id, card_name):
         player = self.game.players[player_id]
