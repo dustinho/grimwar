@@ -89,16 +89,20 @@ class Game:
                 return winner
 
     def main_loop_once(self):
+        self.pre_main_phases()
+        self.main_phase(0)
+        self.main_phase(1)
+        gameover = self.post_main_phases()
+        if gameover is not None:
+            return gameover
+
+    def pre_main_phases(self):
         self.upkeep_phase()
         self.draw_phase()
 
-        self.main_phase(0)
-        self.main_phase(1)
-
+    def post_main_phases(self):
         self.spell_phase()
-
         self.move_and_damage_phase()
-
         self.money_phase()
 
         result = self.cleanup_phase()

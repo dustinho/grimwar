@@ -23,7 +23,7 @@ class Player:
         self._health = Player.STARTING_HEALTH
         self.set_direction(Player.FACING_RIGHT)
         self.gold = Player.STARTING_GOLD
-        self.grimoire = Grimoire()
+        self.grimoire = Grimoire(self)
         self.modifiers = []
 
     def __str__(self):

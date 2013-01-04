@@ -10,7 +10,6 @@
   "tier" : 1,
   "buy_cost" : 0,
   "level" : 1,
-  "faction" : "Human",
-  "archetype" : "Justice"
+  "faction" : "neutral"
 }
 

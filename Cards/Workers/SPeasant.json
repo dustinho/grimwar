@@ -7,9 +7,8 @@
   "damage" : 5,
   "attack_pattern" : [[1,0]],
   "attack_type" : "single",
-  "tier" : 1,
+  "tier" : 2,
   "buy_cost" : 25,
-  "faction" : "Human",
-  "archetype" : "Justice"
+  "faction" : "neutral"
 }
 

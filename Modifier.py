@@ -61,9 +61,9 @@ class TechLevelModifier(Modifier):
     Grimoires will check if an TechLevelModifier of the right level exists
     before allowing a player to buy a card.
     """
-    def __init__(self, level):
+    def __init__(self, faction, level):
+        self.faction = faction
         self.level = level
-        Modifier.__init__(self)
 
     def attach(self, target):
         assert isinstance(target, Player), "Not a Player: {0}".format(target)

@@ -99,10 +99,12 @@ class Effect:
         Attaches a modifier to the current player that grants it the ability
         to buy cards equal to or below a given tech level for a turn.
 
+        @param Faction
         @param Tech level (2 or 3)
         """
-        tech_level = args[0]
-        tech_modifier = TechLevelModifier(tech_level)
+        tech_faction = args[0]
+        tech_level = args[1]
+        tech_modifier = TechLevelModifier(tech_faction, tech_level)
         tech_modifier.attach(player)
 
 

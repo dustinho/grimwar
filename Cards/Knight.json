@@ -9,7 +9,6 @@
   "attack_type" : "single",
   "tier" : 2,
   "buy_cost" : 100,
-  "faction" : "Human",
-  "archetype" : "Justice"
+  "faction" : "onelane"
 }
 

@@ -6,5 +6,5 @@
 	"cast_effect": "draw",
 	"cast_args": [3],
 	"tier": 1,
-	"type": "neutral"
+	"faction": "neutral"
 }
