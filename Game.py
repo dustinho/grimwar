@@ -13,6 +13,7 @@ import sys
 import copy
 import pickle
 import random
+import math
 
 BOARD_LENGTH = 19
 BOARD_WIDTH = 5
@@ -201,6 +202,11 @@ class Game:
 
 
     def cleanup_phase(self):
+        # Reduce the health of every unit that is out of will by 1/3
+        for location, unit in self.board.grid.iteritems():
+            if unit.get_curr_ammo() <= 0:
+                unit._hp -= int(math.ceil(float(unit.get_max_hp())/3.0))
+
         locations_to_delete = []
         for location, unit in self.board.grid.iteritems():
             if unit.get_curr_hp() <= 0:
