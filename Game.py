@@ -253,6 +253,7 @@ class Game:
     def play_unit(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
         if not self.board.is_playable(self.players[id], position):
+            logging.debug("{0} not playable at {1}".format(card_name, position))
             return False
 
         card = self.players[id].play(card_name)
@@ -265,6 +266,7 @@ class Game:
     def play_spell(self, spell_name, id, slot):
         """ Plays a spell at a given position (0-4 inclusive) for id"""
         if (self.board.spells[id][slot]):
+            logging.debug("{0} not playable at {1}".format(spell_name, slot))
             return False
 
         card = self.players[id].play(spell_name)
@@ -277,6 +279,7 @@ class Game:
     def play_building(self, building_name, id, slot):
         """ Plays a buidling at a given position (0-4 inclusive) for id"""
         if (self.board.buildings[id][slot]):
+            logging.debug("{0} not playable at {1}".format(building_name, slot))
             return
         card = self.players[id].play(building_name)
         self.board.place_building(card, self.players[id], slot)

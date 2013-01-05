@@ -1,5 +1,6 @@
 import json
 import os
+from Modifier import *
 from Card import Card
 
 class Grimoire:
@@ -15,11 +16,22 @@ class Grimoire:
         self._create_card_examples()
 
     def get_buyable_card_names(self):
-        return [x for x in self.library.iterkeys() if self.is_buyable(x)]
+        # Compute max tier level for each faction
+        tech_levels = {}
+        for modifier in self.owner.modifiers:
+            if isinstance(modifier, TechLevelModifier) and \
+                modifier.level > tech_levels.get(modifier.faction, 0):
+                tech_levels[modifier.faction] = modifier.level
 
-    def is_buyable(self, card):
-        if (self.library[card] < 1):
+        return [x for x in self.library.iterkeys() if self.is_buyable(x, tech_levels)]
+
+    def is_buyable(self, card_name, tech_levels):
+        if (self.library[card_name] < 1):
             return False
+        faction = self.cards[card_name].faction
+        tier = self.cards[card_name].tier
+        if faction != 'neutral':
+            return tech_levels.get(faction, 1) >= tier
         return True
 
     def remove_from_grimoire(self, card_name):
