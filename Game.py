@@ -246,6 +246,29 @@ class Game:
         return self.turn_advantage
 
     def calculate_advantage(self):
+        """
+        Return the id of the player with more units. If units are equal, then
+        return id of player with more health of units. Else choose randomly.
+        """
+        p0units = len([unit for pos, unit in self.board.grid.iteritems() if
+            unit.owner.id == 0])
+        p1units = len([unit for pos, unit in self.board.grid.iteritems() if
+            unit.owner.id == 1])
+
+        if p0units > p1units:
+            return 0
+        elif p1units > p0units:
+            return 1
+
+        p0hp = sum([unit.get_curr_hp() for pos, unit in
+            self.board.grid.iteritems() if unit.owner.id == 0])
+        p1hp = sum([unit.get_curr_hp() for pos, unit in
+            self.board.grid.iteritems() if unit.owner.id == 1])
+
+        if p0hp > p1hp:
+            return 0
+        elif p1hp > p0hp:
+            return 1
         return random.randint(0, 1)
 
     def damage_player(self, direction, damage):
