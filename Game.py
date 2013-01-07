@@ -13,6 +13,7 @@ import sys
 import copy
 import pickle
 import random
+import math
 
 import logging
 
@@ -207,6 +208,11 @@ class Game:
 
 
     def cleanup_phase(self):
+        # Reduce the health of every unit that is out of will by 1/3
+        for location, unit in self.board.grid.iteritems():
+            if unit.get_curr_ammo() <= 0:
+                unit._hp -= int(math.ceil(float(unit.get_max_hp())/3.0))
+
         locations_to_delete = []
         for location, unit in self.board.grid.iteritems():
             if unit.get_curr_hp() <= 0:
@@ -246,6 +252,29 @@ class Game:
         return self.turn_advantage
 
     def calculate_advantage(self):
+        """
+        Return the id of the player with more units. If units are equal, then
+        return id of player with more health of units. Else choose randomly.
+        """
+        p0units = len([unit for pos, unit in self.board.grid.iteritems() if
+            unit.owner.id == 0])
+        p1units = len([unit for pos, unit in self.board.grid.iteritems() if
+            unit.owner.id == 1])
+
+        if p0units > p1units:
+            return 0
+        elif p1units > p0units:
+            return 1
+
+        p0hp = sum([unit.get_curr_hp() for pos, unit in
+            self.board.grid.iteritems() if unit.owner.id == 0])
+        p1hp = sum([unit.get_curr_hp() for pos, unit in
+            self.board.grid.iteritems() if unit.owner.id == 1])
+
+        if p0hp > p1hp:
+            return 0
+        elif p1hp > p0hp:
+            return 1
         return random.randint(0, 1)
 
     def damage_player(self, direction, damage):
@@ -259,6 +288,7 @@ class Game:
     def play_unit(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
         if not self.board.is_playable(self.players[id], position):
+            logging.debug("{0} not playable at {1}".format(card_name, position))
             return False
 
         card = self.players[id].play(card_name)
@@ -271,6 +301,7 @@ class Game:
     def play_spell(self, spell_name, id, slot):
         """ Plays a spell at a given position (0-4 inclusive) for id"""
         if (self.board.spells[id][slot]):
+            logging.debug("{0} not playable at {1}".format(spell_name, slot))
             return False
 
         card = self.players[id].play(spell_name)
@@ -283,6 +314,7 @@ class Game:
     def play_building(self, building_name, id, slot):
         """ Plays a buidling at a given position (0-4 inclusive) for id"""
         if (self.board.buildings[id][slot]):
+            logging.debug("{0} not playable at {1}".format(building_name, slot))
             return
         card = self.players[id].play(building_name)
         self.board.place_building(card, self.players[id], slot)

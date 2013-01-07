@@ -1,5 +1,3 @@
-from Unit import *
-
 class Modifier:
     """
     Modifiers affect a unit or player and are stored inside the objects it
@@ -42,7 +40,6 @@ class AttackModifier(Modifier):
         self.turns_left = turns
 
     def attach(self, target):
-        assert isinstance(target, Unit), "Not a Unit: {0}".format(target)
         target._damage += self.plus_attack
         Modifier.attach(self, target)
 
@@ -66,5 +63,4 @@ class TechLevelModifier(Modifier):
         self.level = level
 
     def attach(self, target):
-        assert isinstance(target, Player), "Not a Player: {0}".format(target)
         Modifier.attach(self, target)
