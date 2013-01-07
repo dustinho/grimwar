@@ -9,10 +9,9 @@ logging.getLogger().setLevel(logging.DEBUG)
 TEST_FIELD_LENGTH = 9
 TEST_FIELD_WIDTH = 3
 
-#TODO: Clean up tests to reflect the fact that the movement-damage paradigm has changed
 class TestBoard(unittest.TestCase):
     def setUp(self):
-        self.b = Board(self, field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
+        self.b = Board(None, field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
         self.p1 = Player(0)
         self.p2 = Player(1)
         self.p2.set_direction(Player.FACING_LEFT)
@@ -24,18 +23,15 @@ class TestBoard(unittest.TestCase):
     def test_place_footman_and_move_once(self):
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[ (0,0) ] = footman
-        p1_items = self.b._positioned_units_for_player(self.p1)
-        while(self.b.do_player_movement(self.p1, p1_items)):
-            pass 
+        self.b.do_all_movements_and_combat(self.p1, self.p2)
         self.assertEqual(self.b.grid.pop( (1,0) ), footman)
         self.b.grid.clear()
 
     def test_moving_wont_go_past_edge(self):
         footman = Unit(self.footman_card, self.p1)
+        footman._ammo = 0 #so footman doesn't attempt to damage player
         self.b.grid[ (TEST_FIELD_LENGTH-2,0) ] = footman
-        p1_items = self.b._positioned_units_for_player(self.p1)
-        while(self.b.do_player_movement(self.p1, p1_items)):
-            pass 
+        self.b.do_all_movements_and_combat(self.p1, self.p2)
         self.assertEqual(self.b.grid.pop( (TEST_FIELD_LENGTH-2,0) ), footman)
         self.b.grid.clear()
 
@@ -44,13 +40,8 @@ class TestBoard(unittest.TestCase):
         footman = Unit(self.footman_card, self.p2)
         self.b.grid[(2,0)] = scout
         self.b.grid[(3,0)] = footman
-        p1_items = self.b._positioned_units_for_player(self.p1)
-        while(self.b.do_player_movement(self.p1, p1_items)):
-            pass 
+        self.b.do_all_movements_and_combat(self.p1, self.p2)
         self.assertEqual(self.b.grid[(2,0)], scout)
-        p2_items = self.b._positioned_units_for_player(self.p2)
-        while(self.b.do_player_movement(self.p2, p2_items)):
-            pass 
         self.assertEqual(self.b.grid[(3,0)], footman)
         self.b.grid.clear()
 
@@ -59,9 +50,7 @@ class TestBoard(unittest.TestCase):
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[(2,0)] = scout
         self.b.grid[(3,0)] = footman
-        p1_items = self.b._positioned_units_for_player(self.p1)
-        while(self.b.do_player_movement(self.p1, p1_items)):
-            pass 
+        self.b.do_all_movements_and_combat(self.p1, self.p2)
         self.assertEqual(self.b.grid[(3,0)], scout)
         self.assertEqual(self.b.grid[(4,0)], footman)
         self.b.grid.clear()
