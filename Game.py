@@ -14,11 +14,14 @@ import copy
 import pickle
 import random
 
+import logging
+
 BOARD_LENGTH = 19
 BOARD_WIDTH = 5
 DRAW_FREQUENCY = 2
 UPKEEP_GOLD = 2
 MAX_HAND_SIZE = 5
+
 
 class Game:
     def __init__(self, input_type=''):
@@ -97,6 +100,7 @@ class Game:
             return gameover
 
     def pre_main_phases(self):
+        logging.info("Beginning of Turn {0}".format(self.turn))
         self.upkeep_phase()
         self.draw_phase()
 
@@ -116,6 +120,8 @@ class Game:
 
     def upkeep_phase(self):
         self.turn_advantage = self.calculate_advantage()
+        logging.info("Player {0} has advantage for this turn".format(self.turn_advantage))
+
         self.board.refresh_units()
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
@@ -147,7 +153,7 @@ class Game:
     def move_and_damage_phase(self):
         first = self.get_turn_advantage()
         second = (first + 1) % 2
-
+        
         self.board.do_all_movements_and_combat(self.players[first], self.players[second])
 
     def money_phase(self):

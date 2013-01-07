@@ -8,6 +8,7 @@ from UserInputTypes import PlayBuildingCard, PlaySpellCard, PlayUnitCard
 from UserInputTypes import Next, Reset
 
 import pickle
+import logging
 
 class SimulatorServer:
     def __init__(self):
@@ -16,6 +17,8 @@ class SimulatorServer:
                 self.on_received)
         
         reactor.listenTCP(1079, self.server_factory)
+
+        logging.getLogger().setLevel(logging.INFO)
 
     def start(self):
         reactor.run()
