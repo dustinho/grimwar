@@ -89,9 +89,6 @@ class Board:
 
     def do_all_movements_and_combat(self, player1, player2):
         """Performs the movement and combat phases for both players
-
-        Player1's units move, then a combat phase happens.
-        Next, player2's units move, and then a second combat phase happens.
         """
 
         assert isinstance(player1, Player), "player {0} is not a Player".format(player1)
@@ -101,15 +98,16 @@ class Board:
         player1_items = self._positioned_units_for_player(player1)
         player2_items = self._positioned_units_for_player(player2)
 
+        self.do_all_attacks()
+        self.remove_dead()
+
         p1_moving = True
         while(p1_moving):
             p1_moving = self.do_player_movement(player1, player1_items)
-            self.do_all_attacks()
 
         p2_moving = True
         while(p2_moving):
             p2_moving = self.do_player_movement(player2, player2_items)
-            self.do_all_attacks()
 
 
     def do_player_movement(self, player, items):
@@ -126,9 +124,20 @@ class Board:
         direction_multiplier = (1 if direction == Player.FACING_RIGHT else -1)
         moved = False
         for position, instance in items:
-            if instance.is_ready() and instance.get_remaining_moves() > 0:
-                moved = self.move_instance_one_space(instance, position, direction_multiplier) \
-                        or moved
+            if not instance.is_ready():
+                continue
+            if instance.get_remaining_moves() <= 0:
+                continue
+            moved = self.move_instance_one_space(instance, position, direction_multiplier) \
+                    or moved
+        new_attackers_dict = self.get_attackers_dict()
+        for position, instance in self.grid.iteritems():
+            if instance in new_attackers_dict: 
+                print instance.card.name
+                for attacker in new_attackers_dict[instance]:
+                    print attacker.card.name
+                    attacker.use_all_moves()
+                instance.use_all_moves()
         return moved
 
     def move_instance_one_space(self, instance, position, direction_multiplier):
@@ -166,6 +175,22 @@ class Board:
         self.grid[destination] = self.grid.pop(current_position)
         instance.use_move()
         return True
+
+    def get_attackers_dict(self):
+        attackers_dict = {}
+        for position, instance in self.grid.iteritems():
+            if not instance.is_ready():
+                continue
+
+            target_positions = self.what_can_unit_at_position_hit(position)
+            for position in target_positions:
+                if position in self.grid:
+                    target_unit = self.grid[position]
+                    if target_unit not in attackers_dict:
+                        attackers_dict[target_unit] = []
+                    attackers_dict[target_unit].append(instance)
+
+        return attackers_dict
 
     def do_all_attacks(self):
         for position, instance in self.grid.iteritems():
@@ -346,6 +371,20 @@ class Board:
                 else:
                     hexes.append((self.field_length -i/2-2,i))
         return hexes
+
+    def remove_dead(self):
+        locations_to_delete = [] 
+        for location, unit in self.grid.iteritems(): 
+            if unit.get_curr_hp() <= 0: 
+                if isinstance(unit, Hero): 
+                    unit.owner.hero_died(unit) 
+                else: 
+                    unit.owner.unit_died(unit) 
+                locations_to_delete.append(location) 
+ 
+        for loc in locations_to_delete: 
+            del self.grid[loc] 
+
 
     def get_units_with_preds(self, *preds):
         """returns all units that match the all predicates in *preds
