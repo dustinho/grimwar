@@ -87,16 +87,13 @@ class Board:
             unit.ready()
             unit.refresh_moves()
 
-    def do_all_movements_and_combat(self, player1, player2):
-        """Performs the movement and combat phases for both players
-        """
-
+    def do_combat(self, player1, player2):
         assert isinstance(player1, Player), "player {0} is not a Player".format(player1)
         assert isinstance(player2, Player), "player {0} is not a Player".format(player2)
 
         self.do_all_attacks()
-        self.remove_dead()
 
+    def do_movements(self, player1, player2):
         # Collect all the units that are owned by the specified player
         player1_items = self._positioned_units_for_player(player1)
         player2_items = self._positioned_units_for_player(player2)
@@ -108,7 +105,6 @@ class Board:
         p2_moving = True
         while(p2_moving):
             p2_moving = self.do_player_movement(player2, player2_items)
-
 
     def do_player_movement(self, player, items):
         """
@@ -132,7 +128,7 @@ class Board:
                     or moved
         new_attackers_dict = self.get_attackers_dict()
         for position, instance in self.grid.iteritems():
-            if instance in new_attackers_dict: 
+            if instance in new_attackers_dict:
                 print instance.card.name
                 for attacker in new_attackers_dict[instance]:
                     logging.info("Attacker {0} has acquired a target".format(attacker))
@@ -378,17 +374,24 @@ class Board:
         return hexes
 
     def remove_dead(self):
-        locations_to_delete = [] 
-        for location, unit in self.grid.iteritems(): 
-            if unit.get_curr_hp() <= 0: 
-                if isinstance(unit, Hero): 
-                    unit.owner.hero_died(unit) 
-                else: 
-                    unit.owner.unit_died(unit) 
-                locations_to_delete.append(location) 
- 
-        for loc in locations_to_delete: 
-            del self.grid[loc] 
+        """
+        You probably shouldn't call this unless you're cleanup_phase()
+        """
+        locations_to_delete = []
+        for location, unit in self.grid.iteritems():
+            if unit.get_curr_hp() <= 0:
+                if isinstance(unit, Hero):
+                    unit.owner.hero_died(unit)
+                else:
+                    unit.owner.unit_died(unit)
+                locations_to_delete.append(location)
+
+        things_deleted = 0
+        for loc in locations_to_delete:
+            del self.grid[loc]
+            things_deleted += 1
+
+        return things_deleted
 
 
     def get_units_with_preds(self, *preds):

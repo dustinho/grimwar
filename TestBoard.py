@@ -23,7 +23,7 @@ class TestBoard(unittest.TestCase):
     def test_place_footman_and_move_once(self):
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[ (0,0) ] = footman
-        self.b.do_all_movements_and_combat(self.p1, self.p2)
+        self.b.do_movements(self.p1, self.p2)
         self.assertEqual(self.b.grid.pop( (1,0) ), footman)
         self.b.grid.clear()
 
@@ -31,7 +31,7 @@ class TestBoard(unittest.TestCase):
         footman = Unit(self.footman_card, self.p1)
         footman._ammo = 0 #so footman doesn't attempt to damage player
         self.b.grid[ (TEST_FIELD_LENGTH-2,0) ] = footman
-        self.b.do_all_movements_and_combat(self.p1, self.p2)
+        self.b.do_movements(self.p1, self.p2)
         self.assertEqual(self.b.grid.pop( (TEST_FIELD_LENGTH-2,0) ), footman)
         self.b.grid.clear()
 
@@ -40,7 +40,7 @@ class TestBoard(unittest.TestCase):
         footman = Unit(self.footman_card, self.p2)
         self.b.grid[(2,0)] = scout
         self.b.grid[(3,0)] = footman
-        self.b.do_all_movements_and_combat(self.p1, self.p2)
+        self.b.do_movements(self.p1, self.p2)
         self.assertEqual(self.b.grid[(2,0)], scout)
         self.assertEqual(self.b.grid[(3,0)], footman)
         self.b.grid.clear()
@@ -50,7 +50,7 @@ class TestBoard(unittest.TestCase):
         footman = Unit(self.footman_card, self.p1)
         self.b.grid[(2,0)] = scout
         self.b.grid[(3,0)] = footman
-        self.b.do_all_movements_and_combat(self.p1, self.p2)
+        self.b.do_movements(self.p1, self.p2)
         self.assertEqual(self.b.grid[(3,0)], scout)
         self.assertEqual(self.b.grid[(4,0)], footman)
         self.b.grid.clear()

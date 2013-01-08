@@ -104,11 +104,15 @@ class Game:
         logging.info("********************")
         logging.info("Beginning of Turn {0}".format(self.turn))
         self.upkeep_phase()
+        self.cleanup_phase()
         self.draw_phase()
 
     def post_main_phases(self):
         self.spell_phase()
-        self.move_and_damage_phase()
+        self.damage_phase()
+        self.cleanup_phase()
+        self.move_phase()
+
         self.money_phase()
 
         result = self.cleanup_phase()
@@ -161,6 +165,24 @@ class Game:
 
         self.board.do_all_movements_and_combat(self.players[first], self.players[second])
 
+
+    def damage_phase(self):
+        first = self.get_turn_advantage()
+        second = (first + 1) % 2
+
+        self.board.do_combat(self.players[first], self.players[second])
+
+        # Reduce the health of every unit that is out of will by 1/3
+        for location, unit in self.board.grid.iteritems():
+            if unit.get_curr_ammo() <= 0:
+                unit._hp -= int(math.ceil(float(unit.get_max_hp())/3.0))
+
+    def move_phase(self):
+        first = self.get_turn_advantage()
+        second = (first + 1) % 2
+
+        self.board.do_movements(self.players[first], self.players[second])
+
     def money_phase(self):
         """
         Workers get money from the sector they end up in, but should only be
@@ -212,22 +234,25 @@ class Game:
 
 
     def cleanup_phase(self):
-        # Reduce the health of every unit that is out of will by 1/3
-        for location, unit in self.board.grid.iteritems():
-            if unit.get_curr_ammo() <= 0:
-                unit._hp -= int(math.ceil(float(unit.get_max_hp())/3.0))
+        num_removed = True
+        while (num_removed):
+            """
+            We run cleanup whenever shit may be needed to be removed from
+            the board. Cleanup will go through every modifier and check if it
+            needs to go, then check if any units need to go. It'll keep doing
+            this until no units die (meaning no modifiers will change, meaning
+            we've reached a stable state)
 
-        self.board.remove_dead()
-        # Let modifiers remove themselves if necesssary.
-        # TODO: We need to loop over removal for the case where unit dies
-        # results in removal of a modifier that causes another unit to die.
-        # TODO: Building modifiers? Spell modifiers?
-        for location, unit in self.board.grid.iteritems():
-            for modifier in unit.modifiers:
-                modifier.cleanupLogic(self.board)
-        for id, player in self.players.iteritems():
-            for modifier in player.modifiers:
-                modifier.cleanupLogic(self.board)
+            TODO: Building modifiers? Spell modifiers?
+            """
+            for location, unit in self.board.grid.iteritems():
+                for modifier in unit.modifiers:
+                    modifier.cleanupLogic(self.board)
+            for id, player in self.players.iteritems():
+                for modifier in player.modifiers:
+                    modifier.cleanupLogic(self.board)
+
+            num_removed = self.board.remove_dead()
 
         # Calculate Gameover
         is_tie = True
