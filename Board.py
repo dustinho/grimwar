@@ -71,6 +71,7 @@ class Board:
                 Player.FACING_LEFT)
         self.right_facing_casting_zones = self._get_default_casting_zones_for_direction(
                 Player.FACING_RIGHT)
+        self.next_turn_advantage = 0
 
     def clear(self):
         self.grid = {}
@@ -189,6 +190,10 @@ class Board:
         logging.info("moving {0} from {1} to {2}".format(instance, current_position, destination))
         self.grid[destination] = self.grid.pop(current_position)
         instance.use_move()
+
+        if destination == self.get_center_position():
+            self.next_turn_advantage = instance.owner.id
+
         return True
 
     def get_attackers_dict(self):
@@ -422,3 +427,16 @@ class Board:
         for pred in preds:
             items = [item for item in items if pred(item[0], item[1])]
         return [item[1] for item in items] # just return the unit objects
+
+    def get_center_position(self):
+        """
+        Return the center hex.
+        """
+        return (8,2)
+
+    def get_next_turn_advantage(self):
+        """
+        Return who should have advantage next turn.
+        """
+        return self.next_turn_advantage
+

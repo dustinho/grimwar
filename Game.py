@@ -134,13 +134,20 @@ class Game:
 
         # Let modifiers do updates. This must occur before effects, as a
         # effects may apply modifiers.
-        # TODO: Building modifiers? Spell modifiers?
         for location, unit in self.board.grid.iteritems():
             for modifier in unit.modifiers:
                 modifier.upkeepLogic(self.board)
         for id, player in self.players.iteritems():
             for modifier in player.modifiers:
                 modifier.upkeepLogic(self.board)
+            for spell in self.board.spells[id]:
+                if spell is not None:
+                    for modifier in spell.modifiers:
+                        modifier.upkeepLogic(self.board)
+            for building in self.board.buildings[id]:
+                if building is not None:
+                    for modifier in building.modifiers:
+                        modifier.upkeepLogic(self.board)
 
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
@@ -236,8 +243,6 @@ class Game:
             needs to go, then check if any units need to go. It'll keep doing
             this until no units die (meaning no modifiers will change, meaning
             we've reached a stable state)
-
-            TODO: Building modifiers? Spell modifiers?
             """
             for location, unit in self.board.grid.iteritems():
                 for modifier in unit.modifiers:
@@ -245,6 +250,14 @@ class Game:
             for id, player in self.players.iteritems():
                 for modifier in player.modifiers:
                     modifier.cleanupLogic(self.board)
+                for spell in self.board.spells[id]:
+                    if spell is not None:
+                        for modifier in spell.modifiers:
+                            modifier.cleanupLogic(self.board)
+                for building in self.board.buildings[id]:
+                    if building is not None:
+                        for modifier in building.modifiers:
+                            modifier.cleanupLogic(self.board)
 
             num_removed = self.board.remove_dead()
 
@@ -264,7 +277,7 @@ class Game:
         return self.turn_advantage
 
     def calculate_advantage(self):
-        return (self.get_turn_advantage() + 1) % 2
+        return self.board.get_next_turn_advantage()
 
     def damage_player(self, direction, damage):
         if direction == Player.FACING_RIGHT:
