@@ -101,6 +101,7 @@ class Game:
             return gameover
 
     def pre_main_phases(self):
+        logging.info("********************")
         logging.info("Beginning of Turn {0}".format(self.turn))
         self.upkeep_phase()
         self.draw_phase()
@@ -113,7 +114,9 @@ class Game:
         result = self.cleanup_phase()
         if result is not None:
             return result
-
+        
+        logging.info("End of Turn {0}".format(self.turn))
+        logging.info("********************")
         self.increment_turn()
 
     def increment_turn(self):
@@ -213,18 +216,7 @@ class Game:
             if unit.get_curr_ammo() <= 0:
                 unit._hp -= int(math.ceil(float(unit.get_max_hp())/3.0))
 
-        locations_to_delete = []
-        for location, unit in self.board.grid.iteritems():
-            if unit.get_curr_hp() <= 0:
-                if isinstance(unit, Hero):
-                    unit.owner.hero_died(unit)
-                else:
-                    unit.owner.unit_died(unit)
-                locations_to_delete.append(location)
-
-        for loc in locations_to_delete:
-            del self.board.grid[loc]
-
+        self.board.remove_dead()
         # Let modifiers remove themselves if necesssary.
         # TODO: We need to loop over removal for the case where unit dies
         # results in removal of a modifier that causes another unit to die.

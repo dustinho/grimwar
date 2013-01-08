@@ -94,12 +94,12 @@ class Board:
         assert isinstance(player1, Player), "player {0} is not a Player".format(player1)
         assert isinstance(player2, Player), "player {0} is not a Player".format(player2)
 
+        self.do_all_attacks()
+        self.remove_dead()
+
         # Collect all the units that are owned by the specified player
         player1_items = self._positioned_units_for_player(player1)
         player2_items = self._positioned_units_for_player(player2)
-
-        self.do_all_attacks()
-        self.remove_dead()
 
         p1_moving = True
         while(p1_moving):
@@ -135,8 +135,9 @@ class Board:
             if instance in new_attackers_dict: 
                 print instance.card.name
                 for attacker in new_attackers_dict[instance]:
-                    print attacker.card.name
+                    logging.info("Attacker {0} has acquired a target".format(attacker))
                     attacker.use_all_moves()
+                logging.info("{0} is being suppressed".format(instance))
                 instance.use_all_moves()
         return moved
 
@@ -171,7 +172,7 @@ class Board:
             return False
 
         destination = possible_destination
-        logging.debug("moving {0} from {1} to {2}".format(instance, current_position, destination))
+        logging.info("moving {0} from {1} to {2}".format(instance, current_position, destination))
         self.grid[destination] = self.grid.pop(current_position)
         instance.use_move()
         return True
@@ -209,12 +210,16 @@ class Board:
                     # Damage player directly
                     player_to_damage_direction = self._which_player_owns_hex(target)
                     if player_to_damage_direction != Player.INVALID_PLAYER:
-                        logging.info("{0} deals {1} damage to player {2}".format(instance, instance.get_damage(), player_to_damage_direction))
+                        logging.info("{0} at {1} deals {2} damage to player {3}". \
+                                format(instance, position, \
+                                instance.get_damage(), player_to_damage_direction))
                         self.game.damage_player(player_to_damage_direction, instance.get_damage())
                 else:
                     # Damage enemy unit on that hex
                     enemy = self.grid[target]
-                    logging.info("{0} deals {1} damage to {2}".format(instance, instance.get_damage(), enemy))
+                    logging.info("{0} at {1} deals {2} damage to {3} at {4}". \
+                            format(instance, position, instance.get_damage(), \
+                            enemy, target))
                     enemy.take_damage(instance.get_damage())
                 if instance.get_attack_type() == "single":
                     break
