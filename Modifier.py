@@ -18,15 +18,17 @@ class Modifier:
         self.target = target
 
     def upkeepLogic(self, board):
-        return
+        """
+        This gets called every upkeep
+        """
+        self.remove()
 
     def cleanupLogic(self, board):
         """
-        This function gets run in the cleanup phase. Usually you should
-        determine if the modifier needs to be removed here. By default all
-        modifiers expire upon end of turn.
+        This determines whether a spell should be removed or not. This should
+        not modify state, as it will be repeatedly called.
         """
-        self.remove()
+        return
 
     def remove(self):
         self.target.modifiers.remove(self)
@@ -43,8 +45,11 @@ class AttackModifier(Modifier):
         target._damage += self.plus_attack
         Modifier.attach(self, target)
 
-    def cleanupLogic(self, board):
+    def upkeepLogic(self, board):
         self.turns_left -= 1
+        self.cleanupLogic(board)
+
+    def cleanupLogic(self, board):
         if self.turns_left <= 0:
             self.remove()
 
@@ -64,3 +69,7 @@ class TechLevelModifier(Modifier):
 
     def attach(self, target):
         Modifier.attach(self, target)
+
+
+#class AmbushModifier(Modifier):
+

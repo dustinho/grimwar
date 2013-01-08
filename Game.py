@@ -114,7 +114,7 @@ class Game:
         result = self.cleanup_phase()
         if result is not None:
             return result
-        
+
         logging.info("End of Turn {0}".format(self.turn))
         logging.info("********************")
         self.increment_turn()
@@ -126,12 +126,8 @@ class Game:
         self.turn_advantage = self.calculate_advantage()
         logging.info("Player {0} has advantage for this turn".format(self.turn_advantage))
 
-        self.board.refresh_units()
-        for id, player in self.players.iteritems():
-            player.gold += UPKEEP_GOLD
-        self.apply_phase_effects()
-
-        # Let modifiers do updates.
+        # Let modifiers do updates. This must occur before effects, as a
+        # effects may apply modifiers.
         # TODO: Building modifiers? Spell modifiers?
         for location, unit in self.board.grid.iteritems():
             for modifier in unit.modifiers:
@@ -139,6 +135,11 @@ class Game:
         for id, player in self.players.iteritems():
             for modifier in player.modifiers:
                 modifier.upkeepLogic(self.board)
+
+        self.board.refresh_units()
+        for id, player in self.players.iteritems():
+            player.gold += UPKEEP_GOLD
+        self.apply_phase_effects()
 
 
     def draw_phase(self):
@@ -157,7 +158,7 @@ class Game:
     def move_and_damage_phase(self):
         first = self.get_turn_advantage()
         second = (first + 1) % 2
-        
+
         self.board.do_all_movements_and_combat(self.players[first], self.players[second])
 
     def money_phase(self):

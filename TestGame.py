@@ -124,6 +124,7 @@ class TestGame(unittest.TestCase):
         self.assertEquals(footman1.get_damage(), 6)
         self.game.main_loop_once()
         # At the end of the third turn, the unit reverts back to 5 attack.
+        self.game.pre_main_phases()
         self.assertEquals(footman1.get_damage(), 5)
 
 
