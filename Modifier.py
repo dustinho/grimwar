@@ -71,5 +71,27 @@ class TechLevelModifier(Modifier):
         Modifier.attach(self, target)
 
 
-#class AmbushModifier(Modifier):
+class AmbushModifier(Modifier):
+    """
+    When a unit is ambushed, this modifier is applied to it.
+    Reduces movement speed to 0 for the rest of the turn.
+
+    NOTE: We MIGHT want to also reduce movement to 0 for the next turn.
+    """
+    def attach(self, target):
+        target.use_all_moves()
+    #    self.turns_left = 2
+    #    Modifier.attach(self, target)
+
+    #def upkeepLogic(self, board):
+    #    self.turns_left -= 1
+    #    if self.turns_left <= 0:
+    #        self.remove()
+    #    self.target.use_all_moves()
+
+
+
+
+
+
 

@@ -129,6 +129,8 @@ class Game:
     def upkeep_phase(self):
         self.turn_advantage = self.calculate_advantage()
         logging.info("Player {0} has advantage for this turn".format(self.turn_advantage))
+        # Refresh must occur first
+        self.board.refresh_units()
 
         # Let modifiers do updates. This must occur before effects, as a
         # effects may apply modifiers.
@@ -140,7 +142,6 @@ class Game:
             for modifier in player.modifiers:
                 modifier.upkeepLogic(self.board)
 
-        self.board.refresh_units()
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
         self.apply_phase_effects()
@@ -158,13 +159,6 @@ class Game:
 
         CLIClient.main_phase(id, self)
         return
-
-    def move_and_damage_phase(self):
-        first = self.get_turn_advantage()
-        second = (first + 1) % 2
-
-        self.board.do_all_movements_and_combat(self.players[first], self.players[second])
-
 
     def damage_phase(self):
         first = self.get_turn_advantage()

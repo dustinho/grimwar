@@ -2,6 +2,7 @@ from Player import *
 from Unit import *
 from Spell import *
 from Building import *
+from Modifier import *
 import logging
 
 class Board:
@@ -112,6 +113,10 @@ class Board:
         Units move their movement speed if possible, but if not, they move as
         many spaces as they can.  So if a speed 2 unit is behind a speed 1 unit,
         both will advance one square each tick.
+
+        Ambush:
+        If a unit moves into a hex where it would be hit by something it wasn't
+        hit by in the previous hex, it becomes ambushed.
         """
 
         direction = player.get_direction()
@@ -119,6 +124,8 @@ class Board:
 
         direction_multiplier = (1 if direction == Player.FACING_RIGHT else -1)
         moved = False
+
+        old_attackers_dict = self.get_attackers_dict()
         for position, instance in items:
             if not instance.is_ready():
                 continue
@@ -127,14 +134,25 @@ class Board:
             moved = self.move_instance_one_space(instance, position, direction_multiplier) \
                     or moved
         new_attackers_dict = self.get_attackers_dict()
+
+        # Take the difference of the attackers before and after moving
+        attackers_diff = {}
+        for target, attackers in new_attackers_dict.iteritems():
+            if target not in old_attackers_dict:
+                attackers_diff[target] = attackers
+            else:
+                difference = attackers.difference(old_attackers_dict[target])
+                if len(difference) > 0:
+                    attackers_diff[target] = difference
+
         for position, instance in self.grid.iteritems():
-            if instance in new_attackers_dict:
-                print instance.card.name
-                for attacker in new_attackers_dict[instance]:
-                    logging.info("Attacker {0} has acquired a target".format(attacker))
+            if instance in attackers_diff:
+                for attacker in attackers_diff[instance]:
+                    logging.info("Attacker {0} ambushes target".format(attacker))
                     attacker.use_all_moves()
-                logging.info("{0} is being suppressed".format(instance))
-                instance.use_all_moves()
+                logging.info("{0} is being ambushed".format(instance))
+                ambush = AmbushModifier()
+                ambush.attach(instance)
         return moved
 
     def move_instance_one_space(self, instance, position, direction_multiplier):
@@ -174,6 +192,9 @@ class Board:
         return True
 
     def get_attackers_dict(self):
+        """
+        Dictionary mapping target units to a set of units that currently hit it
+        """
         attackers_dict = {}
         for position, instance in self.grid.iteritems():
             if not instance.is_ready():
@@ -184,8 +205,8 @@ class Board:
                 if position in self.grid:
                     target_unit = self.grid[position]
                     if target_unit not in attackers_dict:
-                        attackers_dict[target_unit] = []
-                    attackers_dict[target_unit].append(instance)
+                        attackers_dict[target_unit] = set()
+                    attackers_dict[target_unit].add(instance)
 
         return attackers_dict
 
