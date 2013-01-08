@@ -118,6 +118,7 @@ class TKPlayerScreen:
             self.canvas.delete(casting_button)
 
     def paint_grimoire(self, grimoire): 
+        print "Painting Grimoire"
         def buy_card_command(card_name):
             return lambda: self.buy_card(card_name)
 
@@ -126,8 +127,8 @@ class TKPlayerScreen:
 
         y_change = 25
 
-        for name, count in grimoire.library.iteritems():
-            amount = count
+        for name in grimoire.get_buyable_card_names():
+            amount = grimoire.library[name]
             #FIXME: Shouldn't need the dependency on card
             card = Card.get_card(name)
             cost = card.buy_cost

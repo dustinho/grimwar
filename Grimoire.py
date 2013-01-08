@@ -32,6 +32,11 @@ class Grimoire:
         tier = self.cards[card_name].tier
         if faction != 'neutral':
             return tech_levels.get(faction, 1) >= tier
+        elif faction == 'neutral':
+            if len(tech_levels) == 0:
+                return 1 >= tier
+            else:
+                return max(tech_levels.values(), 1) >= tier
         return True
 
     def remove_from_grimoire(self, card_name):
