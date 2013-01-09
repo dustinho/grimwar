@@ -67,8 +67,9 @@ class Player:
         self.discard_pile.append(card)
 
     def unit_died(self, unit):
-        self.inplay.remove(unit.card)
-        self.discard_pile.append(unit.card)
+        if unit.card in self.inplay:
+            self.inplay.remove(unit.card)
+            self.discard_pile.append(unit.card)
 
     def hero_died(self, hero):
         self.inplay.remove(hero.card)
