@@ -201,40 +201,11 @@ class Game:
         first = self.get_turn_advantage()
         second = (first + 1) % 2
 
-        for i in xrange(len(self.board.spells[first])):
-            spell = self.board.spells[first][i]
-            if spell:
-                spell.cast_time_remaining -= 1
-                if spell.cast_time_remaining <= 0:
-                    Effect.applyEffect(
-                        spell.cast_effect,
-                        self.players[first],
-                        self.players[second],
-                        spell,
-                        self.board,
-                        spell.cast_args
-                    )
-                    self.players[first].spell_remove(spell)
-                    self.board.spells[first][i] = None
-
-        for i in xrange(len(self.board.spells[second])):
-            spell = self.board.spells[second][i]
-            if spell:
-                spell.cast_time_remaining -= 1
-                if spell.cast_time_remaining <= 0:
-                    Effect.applyEffect(
-                        spell.cast_effect,
-                        self.players[second],
-                        self.players[first],
-                        spell,
-                        self.board,
-                        spell.cast_args
-                    )
-                    self.players[second].spell_remove(spell)
-                    self.board.spells[second][i] = None
-
+        self.board.process_spells(self.players[first], self.players[second])
+        self.board.process_spells(self.players[second], self.players[first])
 
     def cleanup_phase(self):
+        logging.info("Start of cleanup phase")
         num_removed = True
         while (num_removed):
             """

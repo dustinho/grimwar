@@ -28,7 +28,6 @@ class Effect:
         cards_to_draw = args[0]
         for x in xrange(cards_to_draw):
             player.draw()
-        return
 
     @staticmethod
     def heal_row(player, opponent, instance, board, args):
@@ -41,7 +40,6 @@ class Effect:
             preds["owner"](player))
         for unit in units:
             unit.take_damage(-amount)
-            return
 
     @staticmethod
     def upgrade_economy(player, opponent, instance, board, args):
@@ -91,7 +89,6 @@ class Effect:
         for unit in units:
             attack_modifier = AttackModifier(plus_attack, duration)
             attack_modifier.attach(unit)
-        return
 
     @staticmethod
     def tech_level(player, opponent, instance, board, args):

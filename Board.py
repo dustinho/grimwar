@@ -3,6 +3,7 @@ from Unit import *
 from Spell import *
 from Building import *
 from Modifier import *
+from Effect import *
 import logging
 
 class Board:
@@ -88,6 +89,23 @@ class Board:
         for unit in self.grid.itervalues():
             unit.ready()
             unit.refresh_moves()
+
+    def process_spells(self, owner, opponent):
+        for slot_num, spell in enumerate(self.spells[owner.id]):
+            if spell:
+                spell.cast_time_remaining -= 1
+                if spell.cast_time_remaining <= 0:
+                    logging.info("Spell {0} has finished casting".format(spell.card.name))
+                    Effect.applyEffect(
+                        spell.cast_effect,
+                        owner,
+                        opponent,
+                        spell,
+                        self,
+                        spell.cast_args
+                    )
+                    owner.spell_remove(spell)
+                    self.spells[owner.id][slot_num] = None
 
     def do_combat(self, player1, player2):
         assert isinstance(player1, Player), "player {0} is not a Player".format(player1)
@@ -345,15 +363,19 @@ class Board:
         at position (u,v)"""
         if (position in self.grid):
             logging.debug("Unit already exists at {0}".format(position))
-            return
-        self.grid[position] = Unit.get_unit(card, owner)
+            return None
+        unit = Unit.get_unit(card, owner)
+        self.grid[position] = unit
+        return unit
 
     def place_spell(self, card, owner, row):
         """Places spell for owner in row row"""
         if (self.spells[owner.id][row] or row < 0 or row > 4):
             logging.debug("Spell cant be placed at {0}".format(row))
             return
-        self.spells[owner.id][row] = Spell.get_spell(card, owner)
+        spell = Spell.get_spell(card, owner)
+        self.spells[owner.id][row] = spell
+        return spell 
 
     def get_row_for_spell(self, owner, spell):
         """returns row number of a given spell instance for owner"""
@@ -424,8 +446,10 @@ class Board:
         """returns all units that match the all predicates in *preds
         preds take 2 arguments in the form pred(position, unit_object)"""
         items = self.grid.items()
-        for pred in preds:
+        for i, pred in enumerate(preds):
             items = [item for item in items if pred(item[0], item[1])]
+            logging.debug("Filtered to {0} items after {1} preds".
+                    format(len(items), i+1)) 
         return [item[1] for item in items] # just return the unit objects
 
     def get_center_position(self):
