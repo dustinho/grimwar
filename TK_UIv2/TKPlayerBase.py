@@ -63,6 +63,7 @@ class TKPlayerBase:
 
             x_pixel = (x_toff / 2) + oddOffset + (column * x_toff)
             y_pixel = self.hex_radius + (row * y_toff)
+            y_pixel = self.get_pixel_height() - y_pixel
 
             if (self.direction == TKPlayerBase.RIGHT):
                 x_pixel = self.get_pixel_width() - x_pixel
@@ -76,6 +77,7 @@ class TKPlayerBase:
 
             x_pixel = (x_toff / 2) + (column * x_toff)
             y_pixel = (y_toff / 2) + row * y_toff
+            y_pixel = self.get_pixel_height() - y_pixel
             return (x_pixel, y_pixel)
 
     def get_pixel_height(self):
