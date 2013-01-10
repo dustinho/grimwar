@@ -72,15 +72,15 @@ class BuffStatsModifier(Modifier):
 class DebuffStatsModifier(Modifier):
     """This modifier debuffs attk/ammo/hp(curr and max)/movement
     of a unit for a certain number of turns"""
-    def __init__(self, minus_attack, minus_ammo, minus_hp, minus_movement, turns):
-        self.minus_attack = minus_attack
+    def __init__(self, minus_damage, minus_ammo, minus_hp, minus_movement, turns):
+        self.minus_damage = minus_damage
         self.minus_ammo = minus_ammo
         self.minus_hp = minus_hp
         self.minus_movement = minus_movement
         self.turns_left = turns
 
     def attach(self, target):
-        target._damage -= self.minus_attack
+        target._damage -= self.minus_damage
         target._ammo -= self.minus_ammo
         target._hp -= self.minus_hp
         target._max_hp -= self.minus_hp
@@ -97,7 +97,7 @@ class DebuffStatsModifier(Modifier):
             self.remove()
 
     def remove(self):
-        self.target._damage += self.minus_attack
+        self.target._damage += self.minus_damage
         self.target._ammo += self.minus_ammo
         self.target._hp += self.minus_hp
         self.target._max_hp += self.minus_hp
