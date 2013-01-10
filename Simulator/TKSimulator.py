@@ -15,6 +15,7 @@ from PlayerProtocol import *
 from Card import Card
 
 from TKUnit import *
+from TKSpell import *
 from TKCardInstance import *
 
 
@@ -73,8 +74,8 @@ class TKSimulator:
         for player_id, spell_list in board.spells.iteritems():
             for slot_num, spell in enumerate(spell_list):
                 if spell:
-                    tkci = TKCardInstance(spell.card.name)
-                    self.game_board.paint_spell_in_base(player_id, slot_num, tkci)
+                    tks = TKSpell(spell.card.name, spell.cast_time_remaining, "BLACK")
+                    self.game_board.paint_spell_in_base(player_id, slot_num, tks)
 
         for player_id, building_list in board.buildings.iteritems():
             for slot_num, building in enumerate(building_list):
