@@ -1,10 +1,10 @@
 {
-    "name": "Buff Row",
+    "name": "Test Buff Row",
     "cost": 50,
     "buy_cost": 50,
     "cast_time": 3,
     "cast_effect": "buff_row_stats",
-    "cast_args": [1,0,0,0,3],
+    "cast_args": [1,1,5,1,3],
     "tier": 1,
     "faction": "neutral"
 }

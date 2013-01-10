@@ -1,0 +1,10 @@
+{
+    "name": "Double Time",
+    "cost": 100,
+    "buy_cost": 100,
+    "cast_time": 3,
+    "cast_effect": "buff_row_stats",
+    "cast_args": [0,0,0,1,5],
+    "tier": 2,
+    "faction": "onelane"
+}
