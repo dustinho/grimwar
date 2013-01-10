@@ -25,6 +25,7 @@ class Unit:
         assert isinstance(owner, Player), "owner is not a Player: {0}".format(Player)
         self.card = card
         self._hp = self.card.hp
+        self._max_hp = self.card.hp
         self._ammo = self.card.ammo
         self._speed = self.card.speed
         self._damage = self.card.damage
@@ -42,14 +43,8 @@ class Unit:
     def get_curr_hp(self):
         return self._hp
 
-    def get_max_hp(self):
-        return self.card.hp
-
     def get_curr_ammo(self):
         return self._ammo
-
-    def get_max_ammo(self):
-        return self.card.ammo
 
     def get_modifiers(self):
         # TODO
@@ -100,7 +95,7 @@ class Unit:
 
     def take_damage(self, damage_amount):
         self._hp = self._hp - damage_amount
-        if self._hp > self.get_max_hp():
+        if self._hp > self._max_hp:
             self._hp = self.card.hp
 
     def spend_ammo(self, ammo_spent=1):

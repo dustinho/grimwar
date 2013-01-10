@@ -33,16 +33,23 @@ class Modifier:
     def remove(self):
         self.target.modifiers.remove(self)
 
-class AttackModifier(Modifier):
-    """
-    This modifier pumps a unit's attack for a certain number of turns.
-    """
-    def __init__(self, plus_attack, turns):
+class BuffStatsModifier(Modifier):
+    """This modifier buffs attk/ammo/hp(curr and max)/movement
+    of a unit for a certain number of turns"""
+    def __init__(self, plus_attack, plus_ammo, plus_hp, plus_movement, turns):
         self.plus_attack = plus_attack
+        self.plus_ammo = plus_ammo
+        self.plus_hp = plus_hp
+        self.plus_movement = plus_movement
         self.turns_left = turns
 
     def attach(self, target):
         target._damage += self.plus_attack
+        target._ammo += self.plus_ammo
+        target._hp += self.plus_hp
+        target._max_hp += self.plus_hp
+        target._speed += self.plus_movement
+        target._remaining_moves += self.plus_movement
         Modifier.attach(self, target)
 
     def upkeepLogic(self, board):
@@ -55,6 +62,47 @@ class AttackModifier(Modifier):
 
     def remove(self):
         self.target._damage -= self.plus_attack
+        self.target._ammo -= self.plus_ammo
+        self.target._hp -= self.plus_hp
+        self.target._max_hp -= self.plus_hp
+        self.target._speed -= self.plus_movement
+        self.target._remaining_moves -= self.plus_movement
+        Modifier.remove(self)
+
+class DebuffStatsModifier(Modifier):
+    """This modifier debuffs attk/ammo/hp(curr and max)/movement
+    of a unit for a certain number of turns"""
+    def __init__(self, minus_damage, minus_ammo, minus_hp, minus_movement, turns):
+        self.minus_damage = minus_damage
+        self.minus_ammo = minus_ammo
+        self.minus_hp = minus_hp
+        self.minus_movement = minus_movement
+        self.turns_left = turns
+
+    def attach(self, target):
+        target._damage -= self.minus_damage
+        target._ammo -= self.minus_ammo
+        target._hp -= self.minus_hp
+        target._max_hp -= self.minus_hp
+        target._speed -= self.minus_movement
+        target._remaining_moves -= self.minus_movement
+        Modifier.attach(self, target)
+
+    def upkeepLogic(self, board):
+        self.turns_left -= 1
+        self.cleanupLogic(board)
+
+    def cleanupLogic(self, board):
+        if self.turns_left <= 0:
+            self.remove()
+
+    def remove(self):
+        self.target._damage += self.minus_damage
+        self.target._ammo += self.minus_ammo
+        self.target._hp += self.minus_hp
+        self.target._max_hp += self.minus_hp
+        self.target._speed += self.minus_movement
+        self.target._speed += self.minus_movement
         Modifier.remove(self)
 
 

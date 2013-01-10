@@ -73,22 +73,59 @@ class Effect:
                 player.discard_pile.append(Card.get_card("SPeasant"))
 
     @staticmethod
-    def pump_row_attack(player, opponent, instance, board, args):
+    def buff_row_stats(player, opponent, instance, board, args):
         """
-        Increases a row's attack by some amount for some number of turns.
-
-        @param How much attack to increase by
-        @param How many turns this buff lasts
+        Increases a row's attack/ammo/hp/movement for some number of turns.
+        @param attack buff amount
+        @param ammo buff amount
+        @param hp (current and max) buff amount
+        @param movement buff amount
+        @param number of turns this buff lasts
         """
         plus_attack = args[0]
-        duration = args[1]
-
-        row = board.get_row_for_spell(player,instance)
+        plus_ammo = args[1]
+        plus_hp = args[2]
+        plus_movement = args[3]
+        duration = args[4]
+        row = board.get_row_for_spell(player, instance)
         units = board.get_units_with_preds(preds["row"](row),
             preds["owner"](player))
         for unit in units:
-            attack_modifier = AttackModifier(plus_attack, duration)
-            attack_modifier.attach(unit)
+            buff_stats_modifier = BuffStatsModifier(
+                plus_attack, 
+                plus_ammo,
+                plus_hp,
+                plus_movement,
+                duration)
+            buff_stats_modifier.attach(unit)
+
+    @staticmethod
+    def debuff_row_stats(player, opponent, instance, board, args):
+        """
+        Increases a row's attack/ammo/hp/movement for some number of turns.
+        @param attack debuff amount
+        @param ammo debuff amount
+        @param hp (current and max) debuff amount
+        @param movement debuff amount
+        @param number of turns this debuff lasts
+        """
+        plus_attack = args[0]
+        plus_ammo = args[1]
+        plus_hp = args[2]
+        plus_movement = args[3]
+        duration = args[4]
+        row = board.get_row_for_spell(player, instance)
+        units = board.get_units_with_preds(preds["row"](row),
+            preds["owner"](player))
+        for unit in units:
+            debuff_stats_modifier = DebuffStatsModifier(
+                plus_attack, 
+                plus_ammo,
+                plus_hp,
+                plus_movement,
+                duration)
+            debuff_stats_modifier.attach(unit)
+
 
     @staticmethod
     def tech_level(player, opponent, instance, board, args):
@@ -103,7 +140,6 @@ class Effect:
         tech_level = args[1]
         tech_modifier = TechLevelModifier(tech_faction, tech_level)
         tech_modifier.attach(player)
-
 
 
 

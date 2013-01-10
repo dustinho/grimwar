@@ -104,9 +104,12 @@ class TestGame(unittest.TestCase):
         self.p0.gold = 9999
         self.p0.hand.append(Card.get_card('Buff Row'))
 
-        footman1 = self.b.place_unit(self.footman_card, self.p0, (4,0))
+        footman1 = self.b.place_unit(self.footman_card, self.p0, (1,0))
 
         self.assertEquals(footman1.get_damage(), 5)
+        self.assertEquals(footman1.get_curr_ammo(), 5)
+        self.assertEquals(footman1.get_curr_hp(), 15)
+        self.assertEquals(footman1.get_speed(),1)
         self.g.play_spell('Buff Row', 0, 0)
 
         self.g.main_loop_once()
@@ -114,8 +117,14 @@ class TestGame(unittest.TestCase):
 
         # Spell should take effect on the third turn after play
         self.assertEquals(footman1.get_damage(), 5)
+        self.assertEquals(footman1.get_curr_ammo(), 5)
+        self.assertEquals(footman1.get_curr_hp(), 15)
+        self.assertEquals(footman1.get_speed(),1)
         self.g.main_loop_once()
         self.assertEquals(footman1.get_damage(), 6)
+        self.assertEquals(footman1.get_curr_ammo(), 5)
+        self.assertEquals(footman1.get_curr_hp(), 15)
+        self.assertEquals(footman1.get_speed(),1)
 
         # Modifier should last a total of 3 turns
         self.g.main_loop_once()
@@ -124,6 +133,47 @@ class TestGame(unittest.TestCase):
         # At the end of the third turn, the unit reverts back to 5 attack.
         self.g.pre_main_phases()
         self.assertEquals(footman1.get_damage(), 5)
+
+    def test_test_buff_row(self):
+        self.p0.gold = 9999
+        self.p0.hand.append(Card.get_card('Test Buff Row'))
+
+        footman1 = self.b.place_unit(self.footman_card, self.p0, (1,0))
+
+        self.assertEquals(footman1.get_damage(), 5)
+        self.assertEquals(footman1.get_curr_ammo(), 5)
+        self.assertEquals(footman1.get_curr_hp(), 15)
+        self.assertEquals(footman1.get_speed(),1)
+        self.g.play_spell('Test Buff Row', 0, 0)
+
+        self.g.main_loop_once()
+        self.g.main_loop_once()
+
+        # Spell should take effect on the third turn after play
+        self.assertEquals(footman1.get_damage(), 5)
+        self.assertEquals(footman1.get_curr_ammo(), 5)
+        self.assertEquals(footman1.get_curr_hp(), 15)
+        self.assertEquals(footman1.get_speed(),1)
+        self.g.main_loop_once()
+        self.assertEquals(footman1.get_damage(), 6)
+        self.assertEquals(footman1.get_curr_ammo(), 6)
+        self.assertEquals(footman1.get_curr_hp(), 20)
+        self.assertEquals(footman1.get_speed(),2)
+
+        # Modifier should last a total of 3 turns
+        self.g.main_loop_once()
+        self.assertEquals(footman1.get_damage(), 6)
+        self.assertEquals(footman1.get_curr_ammo(), 5) #attacks
+        self.assertEquals(footman1.get_curr_hp(), 20)
+        self.assertEquals(footman1.get_speed(),2)
+        self.g.main_loop_once()
+        # At the end of the third turn, the unit reverts back to 5 attack.
+        self.g.pre_main_phases()
+        self.assertEquals(footman1.get_damage(), 5)
+        self.assertEquals(footman1.get_curr_ammo(), 3) #attacks
+        self.assertEquals(footman1.get_curr_hp(), 15)
+        self.assertEquals(footman1.get_speed(),1)
+
 
     def test_two_footmen(self):
         footman1 = self.b.place_unit(self.footman_card, self.p0, (2,1))
