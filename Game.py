@@ -310,7 +310,7 @@ class Game:
         self.apply_phase_effects_for_player(second, first)
 
     def apply_phase_effects_for_player(self, player_id, opponent_id):
-        for (index, object) in enumerate(self.board.buildings[player_id]):
+        for object in self.board.get_everything():
             if object and object.upkeep_effect:
                 Effect.applyEffect(
                     object.upkeep_effect,

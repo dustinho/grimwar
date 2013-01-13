@@ -25,6 +25,9 @@ class Spell:
         self.owner = owner
         self.modifiers = []
 
+        self.upkeep_effect = self.card.upkeep_effect
+        self.upkeep_effect_args = self.card.upkeep_effect_args
+
     def __str__(self):
         return "<{0}, {1} cast_time_remaining>".format(
             self.card.name,

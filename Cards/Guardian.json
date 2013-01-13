@@ -1,0 +1,15 @@
+{
+  "name" : "Guardian",
+  "cost" : 100,
+  "hp" : 50,
+  "ammo" : 5,
+  "speed" : 1,
+  "damage" : 5,
+  "attack_pattern" : [[1,0]],
+  "attack_type" : "single",
+  "upkeep_effect" : "give_protection",
+  "tier" : 2,
+  "buy_cost" : 100,
+  "faction" : "onelane"
+}
+

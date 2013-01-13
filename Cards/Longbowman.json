@@ -1,0 +1,14 @@
+{
+  "name" : "Longbowman",
+  "cost" : 100,
+  "hp" : 15,
+  "ammo" : 10,
+  "speed" : 1,
+  "damage" : 5,
+  "attack_pattern" : [[1,0],[2,0],[3,0],[4,0]],
+  "attack_type" : "single",
+  "tier" : 2,
+  "buy_cost" : 100,
+  "faction" : "onelane"
+}
+

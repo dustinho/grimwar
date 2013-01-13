@@ -484,3 +484,13 @@ class Board:
         """
         return self.next_turn_advantage
 
+    def get_everything(self):
+        """
+        Returns a list of all objects on the board.
+        """
+        return self.grid.values() + \
+            self.buildings[0] + \
+            self.buildings[1] + \
+            self.spells[0] + \
+            self.spells[1]
+

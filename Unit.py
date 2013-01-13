@@ -39,6 +39,8 @@ class Unit:
         self.combat_effect_args = self.card.combat_effect_args
         self.defensive_effect = self.card.defensive_effect
         self.defensive_effect_args = self.card.defensive_effect_args
+        self.upkeep_effect = self.card.upkeep_effect
+        self.upkeep_effect_args = self.card.upkeep_effect_args
 
         self.modifiers = []
 
