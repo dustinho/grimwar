@@ -481,7 +481,6 @@ class Board:
         """
         return self.next_turn_advantage
 
-<<<<<<< HEAD
     def get_everything(self):
         """
         Returns a list of all objects on the board.
@@ -492,7 +491,6 @@ class Board:
             self.spells[0] + \
             self.spells[1]
 
-=======
     def get_unit_position(self, unit):
         """
         Returns position of unit
@@ -543,4 +541,3 @@ class Board:
         if position in self.grid.keys():
             return False
         return True
->>>>>>> Code cleaning, EffectUtils, Ragnarok implemented
