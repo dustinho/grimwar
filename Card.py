@@ -65,6 +65,11 @@ class Card:
         self.upkeep_effect = None
         self.upkeep_effect_args = None
 
+        self.combat_effect = None
+        self.combat_effect_args = None
+        self.defensive_effect = None
+        self.defensive_effect_args = None
+
         data = json.load(open(spec_file))
 
         for key in data:

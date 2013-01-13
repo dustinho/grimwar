@@ -35,6 +35,11 @@ class Unit:
         self._ready = True
         self.owner = owner
 
+        self.combat_effect = self.card.combat_effect
+        self.combat_effect_args = self.card.combat_effect_args
+        self.defensive_effect = self.card.defensive_effect
+        self.defensive_effect_args = self.card.defensive_effect_args
+
         self.modifiers = []
 
     def __str__(self):

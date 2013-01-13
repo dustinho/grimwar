@@ -4,6 +4,7 @@ from Spell import *
 from Building import *
 from Modifier import *
 from Effect import *
+from CombatEffect import *
 import logging
 
 class Board:
@@ -261,6 +262,25 @@ class Board:
                             format(instance, position, instance.get_damage(), \
                             enemy, target))
                     enemy.take_damage(instance.get_damage())
+
+                    # Apply effects if necessary.
+                    if instance.combat_effect:
+                        CombatEffect.applyCombatEffect(
+                            instance.combat_effect,
+                            instance,
+                            enemy,
+                            self,
+                            instance.combat_effect_args
+                        )
+                    if enemy.defensive_effect:
+                        DefensiveEffect.applyDefensiveEffect(
+                            enemy.defensive_effect,
+                            instance,
+                            enemy,
+                            self,
+                            enemy.defensive_effect_args
+                        )
+
                 if instance.get_attack_type() == "single":
                     break
             instance.exhaust()
@@ -375,7 +395,7 @@ class Board:
             return
         spell = Spell.get_spell(card, owner)
         self.spells[owner.id][row] = spell
-        return spell 
+        return spell
 
     def get_row_for_spell(self, owner, spell):
         """returns row number of a given spell instance for owner"""
@@ -449,7 +469,7 @@ class Board:
         for i, pred in enumerate(preds):
             items = [item for item in items if pred(item[0], item[1])]
             logging.debug("Filtered to {0} items after {1} preds".
-                    format(len(items), i+1)) 
+                    format(len(items), i+1))
         return [item[1] for item in items] # just return the unit objects
 
     def get_center_position(self):
