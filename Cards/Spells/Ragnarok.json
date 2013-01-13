@@ -1,0 +1,10 @@
+{
+	"name": "Ragnarok",
+	"cost": 500,
+	"buy_cost": 1000,
+	"cast_time": 3,
+	"cast_effect": "ragnarok",
+	"cast_args": [5],
+	"tier": 3,
+	"faction": "onelane"
+}

@@ -137,6 +137,28 @@ class AmbushModifier(Modifier):
     #        self.remove()
     #    self.target.use_all_moves()
 
+class FadingModifier(Modifier):
+    """
+    Keeps an internal counter of how long unit has been fading.
+    When the fading duration ends, the unit gets will = 0.
+    """
+    def __init__(self, turns):
+        self.turns_left = turns
+
+    def attach(self, target):
+        Modifier.attach(self, target)
+
+    def upkeepLogic(self, board):
+        self.turns_left -= 1
+        self.cleanupLogic(board)
+
+    def cleanupLogic(self, board):
+        if self.turns_left <= 0:
+            self.remove(board)
+
+    def remove(self, board):
+        self.target._ammo = 0
+        Modifier.remove(self)
 
 
 

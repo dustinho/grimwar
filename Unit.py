@@ -1,5 +1,5 @@
 from Card import *
-from Player import *
+import copy
 
 class Unit:
     """
@@ -22,7 +22,6 @@ class Unit:
 
     def __init__(self, card, owner):
         assert isinstance(card, Card), "card is not a Card: {0}".format(card)
-        assert isinstance(owner, Player), "owner is not a Player: {0}".format(Player)
         self.card = card
         self._hp = self.card.hp
         self._max_hp = self.card.hp
@@ -50,6 +49,9 @@ class Unit:
     def get_curr_hp(self):
         return self._hp
 
+    def get_curr_hp(self):
+        return self._hp
+
     def get_curr_ammo(self):
         return self._ammo
 
@@ -67,7 +69,7 @@ class Unit:
 
     def get_attack_pattern(self):
         # an array of [x,y] coordinates it can attack if the unit is at [0,0]
-        if self.owner.get_direction() == Player.FACING_RIGHT:
+        if self.owner.get_direction() == self.owner.FACING_RIGHT:
             return [ (x[0], x[1]) for x in self._attack_pattern ]
         else:
             return [ (-x[0], -x[1]) for x in self._attack_pattern ]
@@ -107,6 +109,26 @@ class Unit:
 
     def spend_ammo(self, ammo_spent=1):
         self._ammo = self._ammo - ammo_spent
+
+    def clone(self):
+        """
+        Returns a clone of self
+        """
+        new_unit = Unit.get_unit(self.card, self.owner)
+        new_unit.card = self.card
+        new_unit._hp = self._hp
+        new_unit._max_hp = self._max_hp
+        new_unit._ammo = self._ammo
+        new_unit._speed = self._speed
+        new_unit._damage = self._damage
+        new_unit._attack_pattern = self._attack_pattern
+        new_unit._attack_type = self._attack_type
+        new_unit._remaining_moves = self._remaining_moves
+        new_unit._ready = self._ready
+        new_unit.owner = self.owner
+        new_unit.modifiers = copy.deepcopy(self.modifiers)
+
+        return new_unit
 
 class Worker(Unit):
     def __init__(self, card, owner):

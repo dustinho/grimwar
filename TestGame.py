@@ -236,6 +236,39 @@ class TestGame(unittest.TestCase):
         unit_health = [unit.get_curr_hp() for unit in units]
         self.assertEquals(unit_health, [10, 0, -2, -6])
         
+    def test_ragnarok(self):
+        ragnarok = Card.get_card('Ragnarok')
+        self.p0.hand.append(ragnarok)
+        self.p0.gold += ragnarok.cost
+        self.g.play_spell('Ragnarok', 0, 1)        
+        cast_time = ragnarok.cast_time
+        fading = ragnarok.cast_args[0]
+        for i in range(cast_time - 1):
+            self.g.main_loop_once() 
+
+        footman0 = self.b.place_unit(self.footman_card, self.p0, (0,0))
+        footman1 = self.b.place_unit(self.footman_card, self.p0, (0,1))
+        footman2 = self.b.place_unit(self.footman_card, self.p0, (1,1))
+        footman3 = self.b.place_unit(self.footman_card, self.p0, (3,2))
+        footman4 = self.b.place_unit(self.footman_card, self.p1, (2,2))
+        self.g.main_loop_once()
+
+        # kill off footmen on row 2
+        self.assertTrue(self.b.get_unit_position(footman0), None)
+        self.assertTrue(self.b.get_unit_position(footman1), None)        
+        self.assertTrue(self.b.get_unit_position(footman2), None)
+        self.assertEquals(self.b.get_unit_position(footman3), None)
+        self.assertEquals(self.b.get_unit_position(footman4), None)
+
+        # run for fading duration turns, check that there are 5 footmen,
+        # and 2 of them are out of will
+        for i in range(fading):
+            self.g.main_loop_once()
+  
+        footmen_will = [unit._ammo for unit in self.b.grid.values()]
+        footmen_will.sort()
+        self.assertEquals(len(footmen_will), fading)
+        self.assertEquals(footmen_will[0:2], [0, 0])
 
 
 if __name__ == "__main__":

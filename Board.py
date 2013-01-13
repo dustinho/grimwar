@@ -448,10 +448,7 @@ class Board:
         locations_to_delete = []
         for location, unit in self.grid.iteritems():
             if unit.get_curr_hp() <= 0:
-                if isinstance(unit, Hero):
-                    unit.owner.hero_died(unit)
-                else:
-                    unit.owner.unit_died(unit)
+                unit.owner.unit_died(unit)
                 locations_to_delete.append(location)
 
         things_deleted = 0
@@ -484,6 +481,7 @@ class Board:
         """
         return self.next_turn_advantage
 
+<<<<<<< HEAD
     def get_everything(self):
         """
         Returns a list of all objects on the board.
@@ -494,3 +492,55 @@ class Board:
             self.spells[0] + \
             self.spells[1]
 
+=======
+    def get_unit_position(self, unit):
+        """
+        Returns position of unit
+        """
+        for location, board_unit in self.grid.iteritems():
+            if unit == board_unit:
+                return location
+
+    def get_hex_to_right(self, position, owner, forward = True):
+        """
+        Returns the location of the hex to the right and forward
+        of position for owner
+        """
+        direction = owner.get_direction()
+        if direction == Player.FACING_RIGHT:
+            if forward:
+                right_position = (position[0], position[1] + 1)
+            else:
+                right_position = (position[0] - 1, position[1] + 1)  
+        else:
+            if forward:
+                right_position = (position[0], position[1] - 1)
+            else:
+                right_position = (position[0] + 1, position[1] - 1)  
+        return right_position
+
+    def get_row_to_right(self, row, owner):
+        """
+        Returns the row to the right of row from the perspective
+        of owner
+        """
+        direction = owner.get_direction()
+        if direction == Player.FACING_RIGHT:
+            right_row = row + 1
+        else:
+            right_row = row - 1
+        if right_row < 0 or right_row > self.field_width:
+            right_row = False
+        return right_row
+
+    def is_empty_for_units(self, position):
+        """
+        Returns True if position empty and a valid position
+        for a unit to be.
+        """
+        if not self._is_hex_on_board(position):
+            return False
+        if position in self.grid.keys():
+            return False
+        return True
+>>>>>>> Code cleaning, EffectUtils, Ragnarok implemented

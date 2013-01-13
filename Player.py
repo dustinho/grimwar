@@ -1,6 +1,7 @@
 from collections import deque
 from Grimoire import Grimoire
 from Card import Card
+from Unit import *
 import random
 import logging
 
@@ -68,12 +69,12 @@ class Player:
 
     def unit_died(self, unit):
         if unit.card in self.inplay:
-            self.inplay.remove(unit.card)
-            self.discard_pile.append(unit.card)
-
-    def hero_died(self, hero):
-        self.inplay.remove(hero.card)
-        self.deck.appendleft(hero.card)
+            if isinstance(unit, Hero):
+                self.inplay.remove(unit.card)
+                self.deck.appendleft(unit.card)
+            else:
+                self.inplay.remove(unit.card)
+                self.discard_pile.append(unit.card)
 
     def spell_remove(self, spell):
         self.inplay.remove(spell.card)

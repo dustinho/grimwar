@@ -131,7 +131,6 @@ class Game:
         logging.info("Player {0} has advantage for this turn".format(self.turn_advantage))
         # Refresh must occur first
         self.board.refresh_units()
-
         # Let modifiers do updates. This must occur before effects, as a
         # effects may apply modifiers.
         for location, unit in self.board.grid.iteritems():
@@ -176,7 +175,7 @@ class Game:
         # Reduce the health of every unit that is out of will by 1/3
         for location, unit in self.board.grid.iteritems():
             if unit.get_curr_ammo() <= 0:
-                unit._hp -= int(math.ceil(float(unit.get_max_hp())/3.0))
+                unit._hp -= int(math.ceil(float(unit._max_hp)/3.0))
 
     def move_phase(self):
         first = self.get_turn_advantage()

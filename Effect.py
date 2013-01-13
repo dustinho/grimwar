@@ -3,6 +3,7 @@ from Board import *
 from Unit import *
 from Preds import preds
 from Modifier import *
+from EffectUtils import *
 
 class Effect:
     """
@@ -141,6 +142,28 @@ class Effect:
         tech_modifier = TechLevelModifier(tech_faction, tech_level)
         tech_modifier.attach(player)
 
+    @staticmethod
+    def ragnarok(player, opponent, instance, board, args):
+        """
+        Destroys all units in the row to the right.  Copies over
+        all allied units to that row, and gives them all fading 
+        for some turns
+        @param fading length
+        """
+        spell_row = board.get_row_for_spell(player, instance)
+        target_row = board.get_row_to_right(spell_row, player)
+        target_units = board.get_units_with_preds(preds["row"](spell_row),
+            preds["owner"](player)) # this will copy heroes, as well!
+        if not target_row:
+            return
 
-
-
+        EffectUtils.destroy_row(target_row, board)
+        for unit in target_units:
+            position = board.get_unit_position(unit)
+            new_position = board.get_hex_to_right(position, player)
+            if not board.is_empty_for_units(new_position):
+                continue
+            new_unit = unit.clone()
+            board.grid[new_position] = new_unit
+            fading_modifier = FadingModifier(args[0])
+            fading_modifier.attach(new_unit)
