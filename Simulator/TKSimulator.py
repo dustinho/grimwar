@@ -67,7 +67,8 @@ class TKSimulator:
             if unit.owner.direction == unit.owner.FACING_LEFT:
                 direction = "<" 
                 color = "BLUE"
-            tku = TKUnit(unit.card.name, unit.get_curr_ammo(), unit.get_curr_hp(),
+            tku = TKUnit(unit.card.name, unit.get_damage(),
+                    unit.get_curr_ammo(), unit.get_curr_hp(),
                     direction, color)
             self.game_board.paint_unit_on_battlefield(position, tku)
 

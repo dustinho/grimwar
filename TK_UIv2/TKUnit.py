@@ -1,10 +1,11 @@
-
+from Tkinter import E, W
 
 class TKUnit:
-    def __init__(self, name, ammo, life, direction, color):
+    def __init__(self, name, attack, will, hp, direction, color):
         self.name = name
-        self.ammo = str(ammo)
-        self.life = str(life)
+        self.attack = str(attack)
+        self.will = str(will)
+        self.hp = str(hp)
         self.direction = str(direction)
         self.color = color
         self.canvas_items = []
@@ -13,29 +14,36 @@ class TKUnit:
         x = pixel[0]
         y = pixel[1]
 
-        item1_str = self.name
-        item1_opts = { "text": item1_str, "fill": self.color, "font": ("ms serif", 14) }
+        name_str = self.name
+        name_opts = { "text": name_str, "fill": self.color, "font": ("ms serif", 14) }
 
-        item1 = canvas.create_text(x, y - 9, **item1_opts)
-        self.canvas_items.append(item1)
+        name = canvas.create_text(x, y - 9, **name_opts)
+        self.canvas_items.append(name)
 
-        item2_str = self.ammo
-        item2_opts = { "text": item2_str, "fill": self.color, "font": ("ms serif", 10) }
+        attack_str = self.attack
+        attack_opts = { "anchor":E, "text": attack_str, 
+                "fill": self.color, "font": ("ms serif", 10) }
+        attack = canvas.create_text(x - 15, y + 10, **attack_opts)
+        self.canvas_items.append(attack)
+
+        will_str = self.will
+        will_opts = { "text": will_str, "fill": self.color, "font": ("ms serif", 10) }
         
-        item2 = canvas.create_text(x - 11, y + 10, **item2_opts)
-        self.canvas_items.append(item2)
+        will = canvas.create_text(x, y + 10, **will_opts)
+        self.canvas_items.append(will)
 
-        item3_str = self.life
-        item3_opts = { "text": item3_str, "fill": self.color, "font": ("ms serif", 10) }
+        hp_str = self.hp
+        hp_opts = { "anchor":W, "text": hp_str, 
+                "fill": self.color, "font": ("ms serif", 10) }
         
-        item3 = canvas.create_text(x + 12, y + 10, **item3_opts)
-        self.canvas_items.append(item3)
+        hp = canvas.create_text(x + 15, y + 10, **hp_opts)
+        self.canvas_items.append(hp)
 
-        item4_str = self.direction
-        item4_opts = { "text": item4_str, "fill": self.color, "font": ("ms serif", 8) }
+        direction_str = self.direction
+        direction_opts = { "text": direction_str, "fill": self.color, "font": ("ms serif", 8) }
         
-        item4 = canvas.create_text(x, y + 20, **item4_opts)
-        self.canvas_items.append(item4)
+        direction = canvas.create_text(x, y + 20, **direction_opts)
+        self.canvas_items.append(direction)
         
 
     def clear(self, canvas):
