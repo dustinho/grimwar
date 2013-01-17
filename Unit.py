@@ -1,5 +1,7 @@
 from Card import *
+from Modifier import *
 import copy
+import logging
 
 class Unit:
     """
@@ -103,7 +105,22 @@ class Unit:
         self._remaining_moves = self._speed
 
     def take_damage(self, damage_amount):
+        for modifier in self.modifiers:
+            if isinstance(modifier, ProtectionModifier):
+                if damage_amount >= modifier.amount:
+                    damage_amount -= modifier.amount
+                    modifier.protector.take_damage(modifier.amount)
+                else:
+                    damage_amount = 0
+                    modifier.protector.take_damage(damage_amount)
+                logging.info("{0} was protected.".format(self.card.name))
+
         self._hp = self._hp - damage_amount
+        if self._hp > self._max_hp:
+            self._hp = self.card.hp
+
+    def heal(self, amount):
+        self._hp = self._hp + amount
         if self._hp > self._max_hp:
             self._hp = self.card.hp
 

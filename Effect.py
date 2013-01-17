@@ -40,7 +40,7 @@ class Effect:
         units = board.get_units_with_preds(preds["row"](row),
             preds["owner"](player))
         for unit in units:
-            unit.take_damage(-amount)
+            unit.heal(amount)
 
     @staticmethod
     def upgrade_economy(player, opponent, instance, board, args):
@@ -93,7 +93,7 @@ class Effect:
             preds["owner"](player))
         for unit in units:
             buff_stats_modifier = BuffStatsModifier(
-                plus_attack, 
+                plus_attack,
                 plus_ammo,
                 plus_hp,
                 plus_movement,
@@ -120,7 +120,7 @@ class Effect:
             preds["owner"](player))
         for unit in units:
             debuff_stats_modifier = DebuffStatsModifier(
-                plus_attack, 
+                plus_attack,
                 plus_ammo,
                 plus_hp,
                 plus_movement,
@@ -146,8 +146,9 @@ class Effect:
     def ragnarok(player, opponent, instance, board, args):
         """
         Destroys all units in the row to the right.  Copies over
-        all allied units to that row, and gives them all fading 
+        all allied units to that row, and gives them all fading
         for some turns
+
         @param fading length
         """
         spell_row = board.get_row_for_spell(player, instance)
@@ -167,3 +168,24 @@ class Effect:
             board.grid[new_position] = new_unit
             fading_modifier = FadingModifier(args[0])
             fading_modifier.attach(new_unit)
+
+    @staticmethod
+    def give_protection(player, opponent, instance, board, args):
+        """
+        Whenever unit in front takes damage, this unit takes some amount of
+        damage instead.
+
+        @param protect amount
+        """
+        amount = args[0]
+        position = board.get_unit_position(instance)
+        space_ahead = (position[0]+1, position[1])
+
+        target = board.grid.get(space_ahead)
+        if target:
+            protection = ProtectionModifier(instance, amount)
+            protection.attach(target)
+
+
+
+

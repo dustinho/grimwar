@@ -498,6 +498,7 @@ class Board:
         for location, board_unit in self.grid.iteritems():
             if unit == board_unit:
                 return location
+        return None
 
     def get_hex_to_right(self, position, owner, forward = True):
         """
@@ -509,12 +510,12 @@ class Board:
             if forward:
                 right_position = (position[0], position[1] + 1)
             else:
-                right_position = (position[0] - 1, position[1] + 1)  
+                right_position = (position[0] - 1, position[1] + 1)
         else:
             if forward:
                 right_position = (position[0], position[1] - 1)
             else:
-                right_position = (position[0] + 1, position[1] - 1)  
+                right_position = (position[0] + 1, position[1] - 1)
         return right_position
 
     def get_row_to_right(self, row, owner):

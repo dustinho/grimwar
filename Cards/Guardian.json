@@ -8,6 +8,7 @@
   "attack_pattern" : [[1,0]],
   "attack_type" : "single",
   "upkeep_effect" : "give_protection",
+  "upkeep_effect_args" : [5],
   "tier" : 2,
   "buy_cost" : 100,
   "faction" : "onelane"

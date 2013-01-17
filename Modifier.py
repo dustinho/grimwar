@@ -1,3 +1,5 @@
+import traceback
+
 class Modifier:
     """
     Modifiers affect a unit or player and are stored inside the objects it
@@ -123,19 +125,9 @@ class AmbushModifier(Modifier):
     """
     When a unit is ambushed, this modifier is applied to it.
     Reduces movement speed to 0 for the rest of the turn.
-
-    NOTE: We MIGHT want to also reduce movement to 0 for the next turn.
     """
     def attach(self, target):
         target.use_all_moves()
-    #    self.turns_left = 2
-    #    Modifier.attach(self, target)
-
-    #def upkeepLogic(self, board):
-    #    self.turns_left -= 1
-    #    if self.turns_left <= 0:
-    #        self.remove()
-    #    self.target.use_all_moves()
 
 class FadingModifier(Modifier):
     """
@@ -157,11 +149,22 @@ class FadingModifier(Modifier):
             self.remove(board)
 
     def remove(self, board):
-        self.target._ammo = 0
+        self.target.ammo = 0
         Modifier.remove(self)
 
+class ProtectionModifier(Modifier):
+    """
+    When a unit protects another unit, whenever the target unit takes damage
+    the protector takes a certain amount of damage instead of the unit.
 
+    Let's not bounce units. So many modifiers could get fucked up if we have a
+    bounce.
+    """
+    def __init__(self, protector, amount):
+        self.protector = protector
+        self.amount = amount
 
-
+    def attach(self, target):
+        Modifier.attach(self, target)
 
 
