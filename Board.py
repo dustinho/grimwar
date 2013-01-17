@@ -248,13 +248,24 @@ class Board:
             instance.spend_ammo()
             for target in valid_targets:
                 if target not in self.grid:
+                    target_player = self._which_player_owns_hex(target) 
+                    # Damage building if possible
+                    target_row = target[1]
+                    player_id = target_player - 1 #TODO fix this whole player id bullshit
+                    if self.buildings[player_id][target_row]:
+                        enemy = self.buildings[player_id][target_row]
+                        logging.info("{0} at {1} deals {2} damage to {3} at {4}". \
+                            format(instance, position, instance.get_damage(), \
+                            enemy, target))
+                        enemy.take_damage(instance.get_damage())
                     # Damage player directly
-                    player_to_damage_direction = self._which_player_owns_hex(target)
-                    if player_to_damage_direction != Player.INVALID_PLAYER:
-                        logging.info("{0} at {1} deals {2} damage to player {3}". \
-                                format(instance, position, \
-                                instance.get_damage(), player_to_damage_direction))
-                        self.game.damage_player(player_to_damage_direction, instance.get_damage())
+                    else:   
+                        if target_player != Player.INVALID_PLAYER:
+                            enemy = self.game.players[player_id]
+                            logging.info("{0} at {1} deals {2} damage to player {3}". \
+                                    format(instance, position, \
+                                    instance.get_damage(), target_player))
+                            self.game.damage_player(target_player, instance.get_damage())
                 else:
                     # Damage enemy unit on that hex
                     enemy = self.grid[target]
@@ -263,23 +274,23 @@ class Board:
                             enemy, target))
                     enemy.take_damage(instance.get_damage())
 
-                    # Apply effects if necessary.
-                    if instance.combat_effect:
-                        CombatEffect.applyCombatEffect(
-                            instance.combat_effect,
-                            instance,
-                            enemy,
-                            self,
-                            instance.combat_effect_args
-                        )
-                    if enemy.defensive_effect:
-                        DefensiveEffect.applyDefensiveEffect(
-                            enemy.defensive_effect,
-                            instance,
-                            enemy,
-                            self,
-                            enemy.defensive_effect_args
-                        )
+                # Apply effects if necessary.
+                if instance.combat_effect:
+                    CombatEffect.applyCombatEffect(
+                        instance.combat_effect,
+                        instance,
+                        enemy,
+                        self,
+                        instance.combat_effect_args
+                    )   
+                if hasattr(enemy, "defensive_effect") and enemy.defensive_effect:
+                    DefensiveEffect.applyDefensiveEffect(
+                        enemy.defensive_effect,
+                        instance,
+                        enemy,
+                        self,
+                        enemy.defensive_effect_args
+                    )
 
                 if instance.get_attack_type() == "single":
                     break
@@ -451,9 +462,20 @@ class Board:
                 unit.owner.unit_died(unit)
                 locations_to_delete.append(location)
 
+        buildings_to_delete = []
+        for player_id,rows in self.buildings.iteritems():
+            for row, building in enumerate(rows):
+                if building and building.get_curr_hp() <= 0:
+                    building.owner.unit_died(building)
+                    buildings_to_delete.append((player_id,row))
+
         things_deleted = 0
         for loc in locations_to_delete:
             del self.grid[loc]
+            things_deleted += 1
+
+        for building in buildings_to_delete:
+            del self.buildings[building[0]][building[1]]
             things_deleted += 1
 
         return things_deleted

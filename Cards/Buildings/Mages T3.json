@@ -1,6 +1,7 @@
 {
     "name": "Mages T3",
     "cost": 200,
+    "hp": 100,
     "buy_cost": 300,
     "upkeep_effect": "tech_level",
     "upkeep_effect_args": ["mages", 3],

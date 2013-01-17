@@ -1,6 +1,7 @@
 from Player import *
 from Board import *
 from Unit import *
+from Building import *
 from Preds import preds
 from Modifier import *
 
@@ -18,6 +19,11 @@ class CombatEffect:
             board,
             args
         )
+
+    @staticmethod
+    def siege(attacker, defender, board, args):
+
+        return
 
 
 class DefensiveEffect:
