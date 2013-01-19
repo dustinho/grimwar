@@ -149,7 +149,7 @@ class FadingModifier(Modifier):
             self.remove(board)
 
     def remove(self, board):
-        self.target.ammo = 0
+        self.target._ammo = 0
         Modifier.remove(self)
 
 class ProtectionModifier(Modifier):

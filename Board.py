@@ -251,7 +251,7 @@ class Board:
                     target_player = self._which_player_owns_hex(target) 
                     # Damage building if possible
                     target_row = target[1]
-                    player_id = target_player - 1 #TODO fix this whole player id bullshit
+                    player_id = 2 - target_player #TODO fix this whole player id bullshit
                     if self.buildings[player_id][target_row]:
                         enemy = self.buildings[player_id][target_row]
                         logging.info("{0} at {1} deals {2} damage to {3} at {4}". \

@@ -14,6 +14,7 @@ class TestGame(unittest.TestCase):
         self.scout_card = Card.get_card("Scout")
         self.hero_card = HeroCard.get_card("Arius")
         self.worker_card = WorkerCard.get_card("Peasant")
+        self.trebuchet_card = Card.get_card("Trebuchet")
 
         self.p0 = self.game.players[0]
         self.p1 = self.game.players[1]
@@ -269,6 +270,35 @@ class TestGame(unittest.TestCase):
         footmen_will.sort()
         self.assertEquals(len(footmen_will), fading)
         self.assertEquals(footmen_will[0:2], [0, 0])
+
+    def test_trebuchet_build(self):
+        """
+        Tests that a trebuchet will kill a 15 hp footman in 2 turns
+        and a 100 hp building in 4 turns
+        """
+        self.b.field_length = 11
+        self.p1.gold = 9999
+        self.p1.hand.append(Card.get_card('Econ'))
+        self.g.play_building('Econ', 1, 0)
+        trebuchet = self.b.place_unit(self.trebuchet_card, self.p0, (0,0))
+        footman = self.b.place_unit(self.footman_card, self.p1, (6,0))
+        trebuchet_damage = self.trebuchet_card.damage
+        trebuchet_bdamage = self.trebuchet_card.combat_effect_args[0] + \
+            trebuchet_damage
+        trebuchet_range = self.trebuchet_card.attack_pattern[0][0]
+
+        self.g.main_loop_once()
+        self.assertEquals(self.b.grid[5,0]._hp, 
+            self.footman_card.hp - trebuchet_damage) 
+
+        self.assertEquals(self.p1._health, 55)
+        self.assertEquals(self.b.buildings[1][0]._hp, 100)
+
+        for i in range(self.b.field_length - trebuchet_range + 1):
+            self.g.main_loop_once() # inch the trebuchet forward
+
+        self.assertEquals(self.p1._health, 55)
+        self.assertEquals(self.b.buildings[1][0]._hp, 75) # does 25 damage!
 
 
 if __name__ == "__main__":
