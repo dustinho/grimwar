@@ -251,9 +251,8 @@ class Board:
                     target_player = self._which_player_owns_hex(target) 
                     # Damage building if possible
                     target_row = target[1]
-                    player_id = 2 - target_player #TODO fix this whole player id bullshit
-                    if self.buildings[player_id][target_row]:
-                        enemy = self.buildings[player_id][target_row]
+                    if self.buildings[target_player][target_row]:
+                        enemy = self.buildings[target_player][target_row]
                         logging.info("{0} at {1} deals {2} damage to {3} at {4}". \
                             format(instance, position, instance.get_damage(), \
                             enemy, target))
@@ -261,7 +260,7 @@ class Board:
                     # Damage player directly
                     else:   
                         if target_player != Player.INVALID_PLAYER:
-                            enemy = self.game.players[player_id]
+                            enemy = self.game.players[target_player]
                             logging.info("{0} at {1} deals {2} damage to player {3}". \
                                     format(instance, position, \
                                     instance.get_damage(), target_player))
@@ -522,7 +521,7 @@ class Board:
                 return location
         return None
 
-    def get_hex_to_right(self, position, owner, forward = True):
+    def get_hex_to_right(self, position, owner, forward=True):
         """
         Returns the location of the hex to the right and forward
         of position for owner

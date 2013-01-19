@@ -5,19 +5,25 @@ from Building import *
 from Preds import preds
 from Modifier import *
 
+
 def affects_buildings(effect):
     effect.affects_buildings = True
     return effect
+
 
 def affects_players(effect):
     effect.affects_players = True
     return effect
 
+
 class CombatEffect:
     """
     CombatEffects are just effects that trigger during the combat phase, so
     they have a different set of natural arguments. It is checked after one
-    unit hits another.
+    unit hits something.  If the other target is a player or building,
+    the effect only activates if the effect function has @affects_players or
+    @affects_buildings, respectively. Otherwise, the target is a unit,
+    and the effect happens.
     """
     @staticmethod
     def applyCombatEffect(effect_name, attacker, defender, board, args):
@@ -38,7 +44,7 @@ class CombatEffect:
                     board,
                     args
                     )
-        else:
+        else:  # Defender is probably a Unit
             return effect(
                     attacker,
                     defender,
@@ -46,7 +52,6 @@ class CombatEffect:
                     args
                     )
         return
-
 
     @staticmethod
     @affects_buildings
@@ -100,7 +105,6 @@ class DefensiveEffect:
         """
         attacker._ammo -= 1
         return
-
 
 
 
