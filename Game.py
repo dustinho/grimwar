@@ -156,8 +156,7 @@ class Game:
     def draw_phase(self):
         if self.turn % DRAW_FREQUENCY == 0:
             for id, player in self.players.iteritems():
-                if len(self.players[id].hand) < MAX_HAND_SIZE:
-                    self.players[id].draw()
+                self.players[id].draw()
 
     def main_phase(self, id):
         if self.input_type != 'Console':

@@ -11,6 +11,7 @@ class TestEffect(unittest.TestCase):
         self.game.board = Board(self.game, field_length=7,field_width=3)
 
     def test_draw(self):
+        self.game.players[0].hand = deque()
         cards_in_hand = len(self.game.players[0].hand)
         Effect.applyEffect(
             "draw",

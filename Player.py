@@ -11,6 +11,7 @@ class Player:
     FACING_LEFT = 1
     FACING_RIGHT = 0
     STARTING_GOLD = 20
+    MAX_HAND_SIZE = 5
 
     def __init__(self, id):
         self.id = id
@@ -61,7 +62,8 @@ class Player:
             self.deck = self.discard_pile
             self.discard_pile = deque()
             random.shuffle(self.deck)
-        self.hand.append(self.deck.popleft())
+        if len(self.hand) < self.MAX_HAND_SIZE:
+            self.hand.append(self.deck.popleft())
 
     def discard(self, card):
         self.hand.remove(card)

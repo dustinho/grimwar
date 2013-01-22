@@ -31,21 +31,24 @@ class TestGame(unittest.TestCase):
         """
         Tests that draw 3 spell correctly draws after cast_time turns
         """
+        self.p0.hand = deque()
         draw_card = Card.get_card('Draw')
         self.p0.hand.append(draw_card)
         self.p0.gold += draw_card.cost
         self.g.play_spell('Draw', 0, 0)
-        cards_in_hand = len(self.p0.hand)
         cast_time = draw_card.cast_time
+        cards_in_hand = len(self.p0.hand)
+
         for x in reversed(range(cast_time)):
             self.g.main_loop_once()
             print x, self.b.spells[0][0]
             if x != 0:
-                self.assertEquals(
-                    len(self.p0.hand), cards_in_hand)
+                cards_in_hand = len(self.p0.hand)
             else:
                 self.assertEquals(
-                    len(self.p0.hand), cards_in_hand+3)
+                    len(self.p0.hand),
+                    min(cards_in_hand + 3, self.p0.MAX_HAND_SIZE)
+                    )
 
     def test_heal_row(self):
         """
