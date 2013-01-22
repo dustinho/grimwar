@@ -78,7 +78,7 @@ class Server:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--t', type=float, default=5)
+    parser.add_argument('--t', type=float, default=2.5)
     args = parser.parse_args()
 
     s = Server()
