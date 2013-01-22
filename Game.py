@@ -286,9 +286,13 @@ class Game:
         """ Plays a buidling at a given position (0-4 inclusive) for id"""
         if (self.board.buildings[id][slot]):
             logging.debug("{0} not playable at {1}".format(building_name, slot))
-            return
+            return False
         card = self.players[id].play(building_name)
+        if card == None:
+            return False
+
         self.board.place_building(card, self.players[id], slot)
+        return True
 
     def put_in_play(self, card, id, position):
         """ puts a unit into play without paying the cost """
