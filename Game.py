@@ -57,7 +57,7 @@ class Game:
         self.players[0].set_hand([
             Card.get_card('Footman'),
             Card.get_card('Footman'),
-            Card.get_card('Peasant'),
+            Card.get_card('Scout'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
         ])
@@ -71,7 +71,7 @@ class Game:
         self.players[1].set_hand([
             Card.get_card('Footman'),
             Card.get_card('Footman'),
-            Card.get_card('Peasant'),
+            Card.get_card('Scout'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
         ])

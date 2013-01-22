@@ -7,18 +7,23 @@ sys.path.append('../TK_UIv2')
 from UserInputTypes import PlayBuildingCard, PlaySpellCard, PlayUnitCard, BuyCard
 
 import pickle
+import argparse
+
 
 class Server:
     def __init__(self):
-        self.TIME = 2.5
+        self.TIME = 5
         self.controller = BaseController()
         self.server_factory = ServerProtocolFactory(self.on_connection,
                 self.on_received)
-        
+
         reactor.listenTCP(1079, self.server_factory)
 
         self.go = False
         self.end = False
+
+    def setTime(self, time):
+        self.TIME = time
 
     def start(self):
         reactor.callLater(self.TIME, self.loop)
@@ -39,12 +44,12 @@ class Server:
             if self.go == True:
                 print "Active Connections:"
                 for conn in self.server_factory.connections:
-                    print conn.transport.getPeer() 
+                    print conn.transport.getPeer()
 
         reactor.callLater(self.TIME, self.loop)
 
     def on_connection(self, connection):
-        print "New Connection", connection.transport.getPeer() 
+        print "New Connection", connection.transport.getPeer()
         game_data = self._get_game_data()
         connection.sendString(game_data)
 
@@ -61,7 +66,6 @@ class Server:
 
         self.broadcast_game()
 
-
     def broadcast_game(self):
         game_data = self._get_game_data()
         self.server_factory.broadcast(game_data)
@@ -70,9 +74,13 @@ class Server:
         game = self.controller.game
         pickled_game = pickle.dumps(game)
         return pickled_game
-        
+
 
 if __name__ == "__main__":
-    s = Server()
-    s.start()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--t', type=float, default=5)
+    args = parser.parse_args()
 
+    s = Server()
+    s.setTime(args.t)
+    s.start()
