@@ -1,6 +1,6 @@
 {
 	"name": "Draw",
-	"cost": 50,
+	"cost": 20,
 	"buy_cost": 50,
 	"cast_time": 6,
 	"cast_effect": "draw",
