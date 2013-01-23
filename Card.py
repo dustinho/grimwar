@@ -70,6 +70,8 @@ class Card:
         self.defensive_effect = None
         self.defensive_effect_args = None
 
+        self.payout = None
+
         data = json.load(open(spec_file))
 
         for key in data:

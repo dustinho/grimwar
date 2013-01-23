@@ -43,6 +43,8 @@ class Unit:
         self.upkeep_effect = self.card.upkeep_effect
         self.upkeep_effect_args = self.card.upkeep_effect_args
 
+        self.payout = self.card.payout
+
         self.modifiers = []
 
     def __str__(self):

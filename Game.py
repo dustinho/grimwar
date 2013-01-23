@@ -174,7 +174,7 @@ class Game:
         # Reduce the health of every unit that is out of will by 1/3
         for location, unit in self.board.grid.iteritems():
             if unit.get_curr_ammo() <= 0:
-                unit._hp -= int(math.ceil(float(unit._max_hp)/3.0))
+                unit._hp -= int(math.ceil(float(unit._max_hp) / 3.0))
 
     def move_phase(self):
         first = self.get_turn_advantage()
@@ -190,8 +190,13 @@ class Game:
         for location, unit in self.board.grid.iteritems():
             if isinstance(unit, Worker):
                 sector = self.board.get_sector_for_position(location)
+                # Flip sector for p1
+                if unit.owner.id == 1:
+                    sector = len(self.board.SECTOR_COLS) - 1 - sector
                 if sector not in unit.visited_sectors:
-                    unit.owner.gold += self.board.SECTOR_PAYOUT[len(unit.visited_sectors)]
+                    payout = unit.payout[len(unit.visited_sectors)]
+                    unit.owner.gold += payout
+                    logging.info("{0} gold gained for sector {1}".format(payout, sector))
                     unit.visited_sectors.append(sector)
 
     def spell_phase(self):

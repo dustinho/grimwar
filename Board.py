@@ -54,21 +54,13 @@ class Board:
     """
     SECTOR_COLS = [0, 6, 14, 23, 31]
 
-    SECTOR_PAYOUT = {
-        0 : 0,
-        1 : 10,
-        2 : 20,
-        3 : 30,
-        4 : 40,
-    }
-
     def __init__(self, game, field_length=17, field_width=5):
         self.game = game
         self.field_length = field_length
         self.field_width = field_width
         self.grid = {}
-        self.spells = { 0: [None] * 5, 1: [None] * 5 }
-        self.buildings = { 0: [None] * 5, 1: [None] * 5 }
+        self.spells = {0: [None] * 5, 1: [None] * 5}
+        self.buildings = {0: [None] * 5, 1: [None] * 5}
         self.left_facing_casting_zones = self._get_default_casting_zones_for_direction(
                 Player.FACING_LEFT)
         self.right_facing_casting_zones = self._get_default_casting_zones_for_direction(
@@ -77,8 +69,8 @@ class Board:
 
     def clear(self):
         self.grid = {}
-        self.spells = { 0: [None] * 5, 1: [None] * 5 }
-        self.buildings = { 0: [None] * 5, 1: [None] * 5 }
+        self.spells = {0: [None] * 5, 1: [None] * 5}
+        self.buildings = {0: [None] * 5, 1: [None] * 5}
 
     def __str__(self):
         """return a string describing all of the objects on the board"""
@@ -248,7 +240,7 @@ class Board:
             instance.spend_ammo()
             for target in valid_targets:
                 if target not in self.grid:
-                    target_player = self._which_player_owns_hex(target) 
+                    target_player = self._which_player_owns_hex(target)
                     # Damage building if possible
                     target_row = target[1]
                     if self.buildings[target_player][target_row]:
@@ -258,7 +250,7 @@ class Board:
                             enemy, target))
                         enemy.take_damage(instance.get_damage())
                     # Damage player directly
-                    else:   
+                    else:
                         if target_player != Player.INVALID_PLAYER:
                             enemy = self.game.players[target_player]
                             logging.info("{0} at {1} deals {2} damage to player {3}". \
@@ -281,7 +273,7 @@ class Board:
                         enemy,
                         self,
                         instance.combat_effect_args
-                    )   
+                    )
                 if hasattr(enemy, "defensive_effect") and enemy.defensive_effect:
                     DefensiveEffect.applyDefensiveEffect(
                         enemy.defensive_effect,
@@ -353,7 +345,7 @@ class Board:
         Find the largest sector marker (in old-style columns) that position is
         larger than.
 
-        Sector index increases from left to right, starting at sector 0
+        Sector index increases from left to right, starting at sector 0.
         """
         column = self._column_distance_from_left(position)
 
