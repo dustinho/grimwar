@@ -294,13 +294,13 @@ class TestGame(unittest.TestCase):
         self.assertEquals(self.b.grid[5,0]._hp, 
             self.footman_card.hp - trebuchet_damage) 
 
-        self.assertEquals(self.p1._health, 55)
+        self.assertEquals(self.p1._health, self.p1.STARTING_HEALTH)
         self.assertEquals(self.b.buildings[1][0]._hp, 100)
 
         for i in range(self.b.field_length - trebuchet_range + 1):
             self.g.main_loop_once() # inch the trebuchet forward
 
-        self.assertEquals(self.p1._health, 55)
+        self.assertEquals(self.p1._health, self.p1.STARTING_HEALTH)
         self.assertEquals(self.b.buildings[1][0]._hp, 75) # does 25 damage!
 
 
