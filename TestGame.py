@@ -195,8 +195,8 @@ class TestGame(unittest.TestCase):
 
     def test_arius_two_footman_1(self):
         arius = self.b.place_unit(self.hero_card, self.p0, (3,1))
-        footman1 = self.b.place_unit(self.footman_card, self.p1, (4,2))
-        footman2 = self.b.place_unit(self.footman_card, self.p1, (5,2))
+        footman1 = self.b.place_unit(self.footman_card, self.p1, (4,0))
+        footman2 = self.b.place_unit(self.footman_card, self.p1, (5,0))
 
         units = [arius, footman1, footman2]
         unit_health = [unit.get_curr_hp() for unit in units]
@@ -302,6 +302,24 @@ class TestGame(unittest.TestCase):
 
         self.assertEquals(self.p1._health, self.p1.STARTING_HEALTH)
         self.assertEquals(self.b.buildings[1][0]._hp, 75) # does 25 damage!
+
+    def test_right_atacking_left_player(self):
+        """
+        Tests player 1's footman damaging player 0 and not moving
+        into casting hex.
+        All tests up until this point assume left player attacking
+        right.  This is to make sure we haven't broken anything
+        with the left side casting hexes, etc.
+        """
+        footman = self.b.place_unit(self.footman_card, self.p1, (6, 0))
+        footman_total_damage = self.footman_card.ammo * self.footman_card.damage
+        for i in range(6):
+            self.g.main_loop_once()
+        self.assertEquals(self.b.grid[(1, 0)], footman)
+        for i in range(self.footman_card.ammo):
+            self.g.main_loop_once()
+        self.assertEquals(self.p0.get_curr_health(),
+            self.p1.STARTING_HEALTH - footman_total_damage)
 
 
 if __name__ == "__main__":

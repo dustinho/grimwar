@@ -7,7 +7,7 @@ import logging
 
 class Player:
     STARTING_HEALTH = 100
-    INVALID_PLAYER = 0
+    INVALID_PLAYER = -1
     FACING_LEFT = 1
     FACING_RIGHT = 0
     STARTING_GOLD = 20
