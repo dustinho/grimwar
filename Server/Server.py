@@ -8,6 +8,8 @@ from UserInputTypes import PlayBuildingCard, PlaySpellCard, PlayUnitCard, BuyCar
 
 import pickle
 import argparse
+import pprint
+import logging
 
 
 class Server:
@@ -21,6 +23,7 @@ class Server:
 
         self.go = False
         self.end = False
+        logging.getLogger().setLevel(logging.INFO)
 
     def setTime(self, time):
         self.TIME = time
@@ -83,4 +86,10 @@ if __name__ == "__main__":
 
     s = Server()
     s.setTime(args.t)
-    s.start()
+    try:
+        s.start()
+    except Exception as ex:
+        # Super Awesome Exception logging
+        pprint.pprint(s.controller.game)
+        raise ex
+

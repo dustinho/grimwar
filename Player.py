@@ -25,7 +25,7 @@ class Player:
         self._health = Player.STARTING_HEALTH
         self.set_direction(Player.FACING_RIGHT)
         self.gold = Player.STARTING_GOLD
-        self.grimoire = Grimoire(self)
+        self.grimoire = Grimoire(self, 'play')
         self.modifiers = []
 
     def __str__(self):
@@ -111,9 +111,6 @@ class Player:
 
     def set_inplay(self, inplay):
         self.inplay = deque(inplay)
-
-    def set_library(self, library):
-        self.grimoire.library = library
 
     def set_gold(self, amount):
         self.gold = amount

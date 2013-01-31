@@ -1,6 +1,6 @@
 {
   "name" : "Rifleman",
-  "cost" : 30,
+  "cost" : 15,
   "hp" : 10,
   "ammo" : 10,
   "speed" : 1,

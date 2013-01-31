@@ -17,7 +17,7 @@ class TKPlayerScreen:
         self.game_board = game_board
         self.xoffset = xoffset
         self.yoffset = yoffset
-        
+
         self.screen_items = []
         #The assignment of casting hexes doesnt seem right
         self.casting_buttons = []
@@ -49,7 +49,7 @@ class TKPlayerScreen:
                     command=hand_button_command(card)) }
 
             button = self.canvas.create_window(x, y, **card_opts)
-            self.screen_items.append(button) 
+            self.screen_items.append(button)
 
             x += button_offset
 
@@ -65,7 +65,7 @@ class TKPlayerScreen:
 
     def paint_unit_casting_buttons(self, card):
         def play_unit_command(pid, c, l):
-            return lambda: self.play_unit_card(pid, c, l) 
+            return lambda: self.play_unit_card(pid, c, l)
 
         for i, pos in enumerate(self.casting_hexes):
             pix = self.game_board.get_center_pixel_for_battlefield_position(pos)
@@ -74,7 +74,7 @@ class TKPlayerScreen:
                     command=play_unit_command(self.player_id, card, pos))
             btn_opts = { "window": btn }
             self.casting_buttons.append(self.canvas.create_window(pix[0], pix[1], **btn_opts))
-             
+
     def paint_spell_casting_buttons(self, card):
         def play_spell_command(pid, c, s):
             return lambda: self.play_spell_card(pid, c, s)
@@ -117,7 +117,7 @@ class TKPlayerScreen:
         for casting_button in self.casting_buttons:
             self.canvas.delete(casting_button)
 
-    def paint_grimoire(self, grimoire): 
+    def paint_grimoire(self, grimoire):
         print "Painting Grimoire"
         def buy_card_command(card_name):
             return lambda: self.buy_card(card_name)
@@ -134,7 +134,7 @@ class TKPlayerScreen:
             cost = card.buy_cost
             name = card.name
 
-            btn_text = ''.join([str(amount), 'x ', name, ' $', str(cost)]) 
+            btn_text = ''.join([str(amount), 'x ', name, ' $', str(cost)])
             btn_opts = { "anchor": W, "window": Button(text=btn_text, \
                     command=buy_card_command(name)) }
 
@@ -150,7 +150,7 @@ class TKPlayerScreen:
         x = self.xoffset
         y = self.yoffset + STATUS_YOFFSET
 
-        lbl = Label(text=''.join(['Player: ', str(self.player_id), '\n', 
+        lbl = Label(text=''.join(['Player: ', str(self.player_id), '\n',
                 str(player)]), justify=LEFT)
         lbl_opts = { "window": lbl, "anchor": NW }
         self.screen_items.append(self.canvas.create_window(x, y, **lbl_opts))

@@ -1,6 +1,6 @@
 {
   "name" : "Footman",
-  "cost" : 20,
+  "cost" : 10,
   "hp" : 15,
   "ammo" : 5,
   "speed" : 1,

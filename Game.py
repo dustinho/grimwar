@@ -50,13 +50,13 @@ class Game:
         self.players[0].set_deck([
             Card.get_card('Rifleman'),
             Card.get_card('Footman'),
-            Card.get_card('Peasant'),
+            Card.get_card('Footman'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
         ])
         self.players[0].set_hand([
             Card.get_card('Footman'),
-            Card.get_card('Footman'),
+            Card.get_card('Rifleman'),
             Card.get_card('Scout'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
@@ -64,13 +64,13 @@ class Game:
         self.players[1].set_deck([
             Card.get_card('Rifleman'),
             Card.get_card('Footman'),
-            Card.get_card('Peasant'),
+            Card.get_card('Footman'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
         ])
         self.players[1].set_hand([
             Card.get_card('Footman'),
-            Card.get_card('Footman'),
+            Card.get_card('Rifleman'),
             Card.get_card('Scout'),
             Card.get_card('Peasant'),
             Card.get_card('Peasant'),
@@ -80,10 +80,6 @@ class Game:
         middle = (BOARD_WIDTH - 1) / 2
         self.put_in_play(Card.get_card('Arius'), 0, (-1, middle))
         self.put_in_play(Card.get_card('Arius'), 1, (BOARD_LENGTH-2, middle))
-
-        # Initial Grimoire
-        self.players[0].library = {'Peasant' : 10, 'Footman' : 10}
-        self.players[1].library = {'Peasant' : 10, 'Footman' : 10}
 
     def main_loop(self):
         # Main Loop
@@ -328,15 +324,6 @@ class Game:
                     self.board,
                     object.upkeep_effect_args
                 )
-
-
-## Debug function to print out current state
-def print_state(players, board):
-    for p, cm in players.items():
-        print "%d card state:" % p
-        print cm
-    print ""
-    return
 
 ## Print out information needed to instantiate game
 def print_startinfo():
