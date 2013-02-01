@@ -61,6 +61,7 @@ class Card:
         self.cast_time = None
         self.cast_effect = None
         self.cast_args = None
+        self.channeling_time = None
 
         self.upkeep_effect = None
         self.upkeep_effect_args = None

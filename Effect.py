@@ -35,7 +35,7 @@ class Effect:
         """
         @param Heal amount
         """
-        row = board.get_row_for_spell(player,instance)
+        row = board.get_row_for_spell(player, instance)
         amount = args[0]
         units = board.get_units_with_preds(preds["row"](row),
             preds["owner"](player))
@@ -127,7 +127,6 @@ class Effect:
                 duration)
             debuff_stats_modifier.attach(unit)
 
-
     @staticmethod
     def tech_level(player, opponent, instance, board, args):
         """
@@ -154,7 +153,7 @@ class Effect:
         spell_row = board.get_row_for_spell(player, instance)
         target_row = board.get_row_to_right(spell_row, player)
         target_units = board.get_units_with_preds(preds["row"](spell_row),
-            preds["owner"](player)) # this will copy heroes, as well!
+            preds["owner"](player))  # this will copy heroes, as well!
         if not target_row:
             return
 
@@ -179,13 +178,28 @@ class Effect:
         """
         amount = args[0]
         position = board.get_unit_position(instance)
-        space_ahead = (position[0]+1, position[1])
+        space_ahead = (position[0] + 1, position[1])
 
         target = board.grid.get(space_ahead)
         if target:
             protection = ProtectionModifier(instance, amount)
             protection.attach(target)
 
+    @staticmethod
+    def defenses(player, opponent, instance, board, args):
+        """
+        Deals damage to all enemy units in row within range
 
+        @param damage amount
+        @param range (in columns)
+        """
+        amount = args[0]
+        hrange = args[1]
+        row = board.get_row_for_spell(player, instance)
+        units = board.get_units_with_preds(preds["row"](row),
+            preds["owner"](opponent),
+            preds["hrange"](hrange, player.id * (board.field_length - 1)))  # 0 if p0, 16 if p1
+        for unit in units:
+            unit.take_damage(amount)
 
 

@@ -1,6 +1,7 @@
 from Card import *
 from Player import *
 
+
 class Spell:
     """
     Spells are the manifestation of a played SpellCard on the board.
@@ -19,7 +20,11 @@ class Spell:
         self.cast_time = self.card.cast_time
         self.cast_effect = self.card.cast_effect
         self.cast_args = self.card.cast_args
-
+        self.channeling_time = 0
+        self.channeling_time_remaining = 0
+        if self.card.channeling_time:
+            self.channeling_time = self.card.channeling_time
+            self.channeling_time_remaining = self.channeling_time
         self.cast_time_remaining = self.cast_time
 
         self.owner = owner

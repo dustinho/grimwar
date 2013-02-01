@@ -75,7 +75,7 @@ class Board:
     def __str__(self):
         """return a string describing all of the objects on the board"""
         return "<Board object containing ({0})>".format(
-            ", ".join(["{0} at ({1},{2})".format(instance, position[0],position[1]) for (position, instance) in self.grid.iteritems()])
+            ", ".join(["{0} at ({1},{2})".format(instance, position[0], position[1]) for (position, instance) in self.grid.iteritems()])
                 )
 
     def refresh_units(self):
@@ -88,7 +88,7 @@ class Board:
             if spell:
                 spell.cast_time_remaining -= 1
                 if spell.cast_time_remaining <= 0:
-                    logging.info("Spell {0} has finished casting".format(spell.card.name))
+                    logging.info("Spell {0} is casting".format(spell.card.name))
                     Effect.applyEffect(
                         spell.cast_effect,
                         owner,
@@ -97,8 +97,10 @@ class Board:
                         self,
                         spell.cast_args
                     )
-                    owner.spell_remove(spell)
-                    self.spells[owner.id][slot_num] = None
+                    spell.channeling_time_remaining -= 1
+                    if spell.channeling_time_remaining < 0:
+                        owner.spell_remove(spell)
+                        self.spells[owner.id][slot_num] = None
 
     def do_combat(self, player1, player2):
         assert isinstance(player1, Player), "player {0} is not a Player".format(player1)
@@ -316,7 +318,7 @@ class Board:
         player_items = []
         for position, instance in self.grid.iteritems():
             if instance.owner == player:
-                player_items.append( (position, instance) )
+                player_items.append((position, instance))
         return player_items
 
     def _column_distance_from_left(self, position):
