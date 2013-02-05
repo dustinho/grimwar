@@ -3,6 +3,7 @@ from Modifier import *
 import copy
 import logging
 
+
 class Unit:
     """
     A Unit is a representation of what a played card summons to the Board.
@@ -42,6 +43,8 @@ class Unit:
         self.defensive_effect_args = self.card.defensive_effect_args
         self.upkeep_effect = self.card.upkeep_effect
         self.upkeep_effect_args = self.card.upkeep_effect_args
+        self.play_effect = self.card.play_effect
+        self.play_effect_args = self.card.play_effect_args
 
         self.payout = self.card.payout
 
@@ -49,9 +52,6 @@ class Unit:
 
     def __str__(self):
         return "<{0}, {1} hp, {2} ammo>".format(self.card.name, self.get_curr_hp(), self.get_curr_ammo())
-
-    def get_curr_hp(self):
-        return self._hp
 
     def get_curr_hp(self):
         return self._hp
@@ -74,9 +74,9 @@ class Unit:
     def get_attack_pattern(self):
         # an array of [x,y] coordinates it can attack if the unit is at [0,0]
         if self.owner.get_direction() == self.owner.FACING_RIGHT:
-            return [ (x[0], x[1]) for x in self._attack_pattern ]
+            return [(x[0], x[1]) for x in self._attack_pattern]
         else:
-            return [ (-x[0], -x[1]) for x in self._attack_pattern ]
+            return [(-x[0], -x[1]) for x in self._attack_pattern]
 
     def get_attack_type(self):
         # "single" attacks first enemy unit in range, "splash" attacks all in range
@@ -149,10 +149,12 @@ class Unit:
 
         return new_unit
 
+
 class Worker(Unit):
     def __init__(self, card, owner):
         Unit.__init__(self, card, owner)
         self.visited_sectors = []
+
 
 class Hero(Unit):
     def __init(self, card, owner):

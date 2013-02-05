@@ -1,0 +1,14 @@
+{
+  "name" : "Imp",
+  "cost" : 13,
+  "hp" : 10,
+  "ammo" : 5,
+  "speed" : 1,
+  "damage" : 5,
+  "attack_pattern" : [[1,0],[2,0]],
+  "attack_type" : "splash",
+  "tier" : 1,
+  "buy_cost" : 50,
+  "faction" : "neutral"
+}
+

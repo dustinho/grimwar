@@ -1,0 +1,16 @@
+{
+  "name" : "Footpad",
+  "cost" : 13,
+  "hp" : 10,
+  "ammo" : 5,
+  "speed" : 1,
+  "damage" : 5,
+  "attack_pattern" : [[1,0]],
+  "attack_type" : "single",
+  "play_effect" : "ping",
+  "play_effect_args" : [5],
+  "tier" : 1,
+  "buy_cost" : 50,
+  "faction" : "neutral"
+}
+

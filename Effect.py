@@ -227,3 +227,26 @@ class Effect:
             target_unit.take_damage(amount)
         else:
             player.gold += gold
+
+    @staticmethod
+    def ping(player, opponent, instance, board, args):
+        """
+        Deals damage to first enemy unit in row.
+
+        @param damage
+        """
+        dmg = args[0]
+        row = board.get_unit_position(instance)[1]
+
+        row_units = board.get_units_with_preds(
+            preds["row"](row),
+            preds["owner"](opponent)
+        )
+
+        if len(row_units) > 0:
+            index = 0
+            if player.id == 1:
+                index = -1  # last unit object is nearest if facing left
+            target_unit = row_units[index]
+            target_unit.take_damage(dmg)
+

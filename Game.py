@@ -8,13 +8,7 @@ from Effect import *
 from CLIClient import *
 
 import json
-import random
-import sys
-import copy
-import pickle
-import random
 import math
-
 import logging
 
 BOARD_LENGTH = 19
@@ -267,7 +261,17 @@ class Game:
         if card == None:
             return False
 
-        self.board.place_unit(card, self.players[id], position)
+        unit = self.board.place_unit(card, self.players[id], position)
+        if unit.play_effect != None:
+            Effect.applyEffect(
+                unit.play_effect,
+                self.players[id],
+                self.players[(id + 1) % 2],
+                unit,
+                self.board,
+                unit.play_effect_args
+            )
+
         return True
 
     def play_spell(self, spell_name, id, slot):

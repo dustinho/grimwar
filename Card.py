@@ -1,6 +1,6 @@
 import json
 import os
-import logging
+
 
 class Card:
     """
@@ -16,7 +16,7 @@ class Card:
         """Factory method that searches all card folders for the named card and
         returns an instance of the appropriate typed subclass of Card"""
         card_root = os.path.join(os.path.dirname(__file__), 'Cards')
-        folders_and_types = [ (card_root, Card),
+        folders_and_types = [(card_root, Card),
                               (os.path.join(card_root, "Workers"), WorkerCard),
                               (os.path.join(card_root, "Heroes"), HeroCard),
                               (os.path.join(card_root, "Spells"), SpellCard),
@@ -70,6 +70,8 @@ class Card:
         self.combat_effect_args = None
         self.defensive_effect = None
         self.defensive_effect_args = None
+        self.play_effect = None
+        self.play_effect_args = None
 
         self.payout = None
 
@@ -92,6 +94,7 @@ class WorkerCard(Card):
     def __init__(self, spec_file):
         Card.__init__(self, spec_file)
 
+
 class HeroCard(Card):
     """
     WorkerCard is a special card. Its JSON is loaded from the /Cards/Workers
@@ -100,6 +103,7 @@ class HeroCard(Card):
     def __init__(self, spec_file):
         Card.__init__(self, spec_file)
 
+
 class SpellCard(Card):
     """
     SpellCard is a special card. Its JSON is loaded from the /Cards/Workers
@@ -107,6 +111,7 @@ class SpellCard(Card):
     """
     def __init__(self, spec_file):
         Card.__init__(self, spec_file)
+
 
 class BuildingCard(Card):
     """
