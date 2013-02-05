@@ -282,4 +282,3 @@ class Effect:
             target_unit = units[index]
             stunned_modifier = StunnedModifier(duration)
             stunned_modifier.attach(target_unit)
-            print target_unit.modifiers

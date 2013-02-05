@@ -4,10 +4,11 @@ from Unit import *
 import logging
 logging.getLogger().setLevel(logging.DEBUG)
 
+
 class TestGrimoire(unittest.TestCase):
     def setUp(self):
         self.game = Game()
-        self.game.board = Board(self.game, field_length=7,field_width=3)
+        self.game.board = Board(self.game, field_length=7, field_width=3)
 
     def test_buyable(self):
         """

@@ -73,7 +73,7 @@ class Game:
         # Initial Heroes
         middle = (BOARD_WIDTH - 1) / 2
         self.put_in_play(Card.get_card('Arius'), 0, (-1, middle))
-        self.put_in_play(Card.get_card('Arius'), 1, (BOARD_LENGTH-2, middle))
+        self.put_in_play(Card.get_card('Arius'), 1, (BOARD_LENGTH - 2, middle))
 
     def main_loop(self):
         # Main Loop
@@ -141,7 +141,6 @@ class Game:
         for id, player in self.players.iteritems():
             player.gold += UPKEEP_GOLD
         self.apply_phase_effects()
-
 
     def draw_phase(self):
         if self.turn % DRAW_FREQUENCY == 0:
@@ -329,12 +328,12 @@ class Game:
                     object.upkeep_effect_args
                 )
 
+
 ## Print out information needed to instantiate game
 def print_startinfo():
     startinfo = {
-        "board_length" : BOARD_LENGTH,
-        "board_width" : BOARD_WIDTH,
+        "board_length": BOARD_LENGTH,
+        "board_width": BOARD_WIDTH,
     }
     print json.dumps(startinfo)
     return
-

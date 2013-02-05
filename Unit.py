@@ -9,9 +9,6 @@ class Unit:
     A Unit is a representation of what a played card summons to the Board.
     It has a base card it was created from, tracks the result of actions
     performed on it (damage, loss of ammo, modifiers applied).
-
-    TODO later:
-    Modifiers
     """
 
     @staticmethod
@@ -60,8 +57,7 @@ class Unit:
         return self._ammo
 
     def get_modifiers(self):
-        # TODO
-        return []
+        return self.modifiers
 
     def get_speed(self):
         # how many forward spaces the unit moves per turn (possibly fancier moves later)

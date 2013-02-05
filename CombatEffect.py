@@ -105,6 +105,3 @@ class DefensiveEffect:
         """
         attacker._ammo -= 1
         return
-
-
-

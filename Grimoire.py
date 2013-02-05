@@ -3,6 +3,7 @@ import os
 from Modifier import *
 from Card import Card
 
+
 class Grimoire:
     # keeps track of a player's Grimoire,
     # instantiate it with a dict of "cardname":number
