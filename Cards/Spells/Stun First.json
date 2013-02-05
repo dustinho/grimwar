@@ -1,0 +1,10 @@
+{
+	"name": "Stun First",
+	"cost": 15,
+	"buy_cost": 60,
+	"cast_time": 3,
+	"cast_effect": "stun_first",
+	"cast_args": [5],
+	"tier": 1,
+	"faction": "thieves"
+}

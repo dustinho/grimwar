@@ -1,0 +1,10 @@
+{
+	"name": "Fireball",
+	"cost": 20,
+	"buy_cost": 80,
+	"cast_time": 5,
+	"cast_effect": "fireball",
+	"cast_args": [5],
+	"tier": 1,
+	"faction": "mages"
+}

@@ -5,6 +5,7 @@ from Preds import preds
 from Modifier import *
 from EffectUtils import *
 
+
 class Effect:
     """
     Effects let you define a effect to apply in json. Game should test the
@@ -250,3 +251,35 @@ class Effect:
             target_unit = row_units[index]
             target_unit.take_damage(dmg)
 
+    @staticmethod
+    def fireball(player, opponent, instance, board, args):
+        """
+        Damages all enemy units in a row.
+        @param fireball damage
+        """
+        row = board.get_row_for_spell(player, instance)
+        amount = args[0]
+        units = board.get_units_with_preds(preds["row"](row),
+            preds["owner"](opponent))
+        for unit in units:
+            unit.take_damage(amount)
+
+    @staticmethod
+    def stun_first(player, opponent, instance, board, args):
+        """
+        Immobilizes the first enemy unit for 5 turns
+
+        @param duration
+        """
+        duration = args[0]
+        row = board.get_row_for_spell(player, instance)
+        units = board.get_units_with_preds(preds["row"](row),
+            preds["owner"](opponent))
+        if len(units) > 0:
+            index = 0
+            if player.id == 1:
+                index = -1  # last unit object is nearest if facing left
+            target_unit = units[index]
+            stunned_modifier = StunnedModifier(duration)
+            stunned_modifier.attach(target_unit)
+            print target_unit.modifiers

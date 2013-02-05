@@ -35,6 +35,7 @@ class Modifier:
     def remove(self):
         self.target.modifiers.remove(self)
 
+
 class BuffStatsModifier(Modifier):
     """This modifier buffs attk/ammo/hp(curr and max)/movement
     of a unit for a certain number of turns"""
@@ -70,6 +71,7 @@ class BuffStatsModifier(Modifier):
         self.target._speed -= self.plus_movement
         self.target._remaining_moves -= self.plus_movement
         Modifier.remove(self)
+
 
 class DebuffStatsModifier(Modifier):
     """This modifier debuffs attk/ammo/hp(curr and max)/movement
@@ -129,6 +131,7 @@ class AmbushModifier(Modifier):
     def attach(self, target):
         target.use_all_moves()
 
+
 class FadingModifier(Modifier):
     """
     Keeps an internal counter of how long unit has been fading.
@@ -152,6 +155,7 @@ class FadingModifier(Modifier):
         self.target._ammo = 0
         Modifier.remove(self)
 
+
 class ProtectionModifier(Modifier):
     """
     When a unit protects another unit, whenever the target unit takes damage
@@ -168,3 +172,24 @@ class ProtectionModifier(Modifier):
         Modifier.attach(self, target)
 
 
+class StunnedModifier(Modifier):
+    """
+    A modifier that identifies a unit as "stunned" so that movement
+    code can ignore its movements
+    """
+    def __init__(self, turns):
+        self.turns_left = turns
+
+    def attach(self, target):
+        Modifier.attach(self, target)
+
+    def upkeepLogic(self, board):
+        self.turns_left -= 1
+        self.cleanupLogic(board)
+
+    def cleanupLogic(self, board):
+        if self.turns_left <= 0:
+            self.remove(board)
+
+    def remove(self, board):
+        Modifier.remove(self)

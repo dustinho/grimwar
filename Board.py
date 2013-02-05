@@ -145,6 +145,12 @@ class Board:
                 continue
             if instance.get_remaining_moves() <= 0:
                 continue
+            stunned = False
+            for modifier in instance.modifiers:
+                if isinstance(modifier, StunnedModifier):
+                    stunned = True
+            if stunned:
+                continue
             moved = self.move_instance_one_space(instance, position, direction_multiplier) \
                     or moved
         new_attackers_dict = self.get_attackers_dict()
