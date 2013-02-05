@@ -202,4 +202,28 @@ class Effect:
         for unit in units:
             unit.take_damage(amount)
 
+    @staticmethod
+    def defense_building(player, opponent, instance, board, args):
+        """
+        Deals damage to first enemy unit within range.
+        If there are no units in range, generate gold.
 
+        @param damage per upkeep
+        @param range(in columns from casting zone)
+        @param bonus gold
+        """
+        amount = args[0]
+        hrange = args[1]
+        gold = args[2]
+        row = board.get_row_for_building(player, instance)
+        units = board.get_units_with_preds(preds["row"](row),
+            preds["owner"](opponent),
+            preds["hrange"](hrange, player.id * (board.field_length - 1)))
+        if len(units) > 0:
+            index = 0
+            if player.id == 1:
+                index = -1  # last unit object is nearest if facing left
+            target_unit = units[index]
+            target_unit.take_damage(amount)
+        else:
+            player.gold += gold

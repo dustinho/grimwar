@@ -1,0 +1,10 @@
+{
+	"name": "Defenseb",
+	"cost": 25,
+	"hp": 40,
+	"buy_cost": 100,
+	"upkeep_effect": "defense_building",
+	"upkeep_effect_args": [4, 3, 1],
+	"tier": 1,
+	"faction": "neutral"
+}

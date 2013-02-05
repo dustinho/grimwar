@@ -4,7 +4,7 @@
 	"buy_cost": 100,
 	"cast_time": 5,
 	"cast_effect": "defenses",
-	"cast_args": [5, 7],
+	"cast_args": [4, 7],
     "channeling_time": 10,
 	"tier": 1,
 	"faction": "onelane"

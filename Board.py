@@ -407,6 +407,12 @@ class Board:
             if self.spells[owner.id][i] == spell:
                 return i
 
+    def get_row_for_building(self, owner, building):
+        """returns row number of a given building instance for owner"""
+        for i in range(5):
+            if self.buildings[owner.id][i] == building:
+                return i
+
     def place_building(self, card, owner, row):
         if (self.buildings[owner.id][row] or row < 0 or row > 4):
             logging.debug("Building cant be placed at {0}".format(row))
@@ -477,7 +483,8 @@ class Board:
     def get_units_with_preds(self, *preds):
         """returns all units that match the all predicates in *preds
         preds take 2 arguments in the form pred(position, unit_object)"""
-        items = self.grid.items()
+        # sort items increasing column number
+        items = [(position, self.grid[position]) for position in sorted(self.grid.iterkeys())]
         for i, pred in enumerate(preds):
             items = [item for item in items if pred(item[0], item[1])]
             logging.debug("Filtered to {0} items after {1} preds".
