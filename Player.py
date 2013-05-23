@@ -1,4 +1,3 @@
-from collections import deque
 from Grimoire import Grimoire
 from Card import Card
 from Unit import *
@@ -18,10 +17,10 @@ class Player:
         self.reset()
 
     def reset(self):
-        self.deck = deque()
-        self.discard_pile = deque()
-        self.hand = deque()
-        self.inplay = deque()
+        self.deck = []
+        self.discard_pile = []
+        self.hand = []
+        self.inplay = []
         self._health = Player.STARTING_HEALTH
         self.set_direction(Player.FACING_RIGHT)
         self.gold = Player.STARTING_GOLD
@@ -56,10 +55,10 @@ class Player:
             if len(self.discard_pile) == 0:
                 return
             self.deck = self.discard_pile
-            self.discard_pile = deque()
+            self.discard_pile = []
             random.shuffle(self.deck)
         if len(self.hand) < self.MAX_HAND_SIZE:
-            self.hand.append(self.deck.popleft())
+            self.hand.append(self.deck.pop(0))
 
     def discard(self, card):
         self.hand.remove(card)
@@ -69,7 +68,7 @@ class Player:
         if unit.card in self.inplay:
             if isinstance(unit, Hero):
                 self.inplay.remove(unit.card)
-                self.deck.appendleft(unit.card)
+                self.deck.insert(0, unit.card)
             else:
                 self.inplay.remove(unit.card)
                 self.discard_pile.append(unit.card)
@@ -97,16 +96,16 @@ class Player:
     ## Setters
 
     def set_discard_pile(self, discard_pile):
-        self.discard_pile = deque(discard_pile)
+        self.discard_pile = discard_pile
 
     def set_deck(self, deck):
-        self.deck = deque(deck)
+        self.deck = deck
 
     def set_hand(self, hand):
-        self.hand = deque(hand)
+        self.hand = hand
 
     def set_inplay(self, inplay):
-        self.inplay = deque(inplay)
+        self.inplay = inplay
 
     def set_gold(self, amount):
         self.gold = amount

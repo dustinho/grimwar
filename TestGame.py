@@ -31,7 +31,7 @@ class TestGame(unittest.TestCase):
         """
         Tests that draw 3 spell correctly draws after cast_time turns
         """
-        self.p0.hand = deque()
+        self.p0.hand = []
         draw_card = Card.get_card('Draw')
         self.p0.hand.append(draw_card)
         self.p0.gold += draw_card.cost
@@ -204,7 +204,7 @@ class TestGame(unittest.TestCase):
 
         for x in xrange(4):
             self.g.main_loop_once()
-        
+
         unit_health = [unit.get_curr_hp() for unit in units]
         self.assertEquals(unit_health, [30, 10, 10])
 
@@ -229,7 +229,7 @@ class TestGame(unittest.TestCase):
         rifleman2 = self.b.place_unit(self.rifleman_card, self.p0, (1, 0))
         scout1 = self.b.place_unit(self.scout_card, self.p1, (5, 0))
         scout2 = self.b.place_unit(self.scout_card, self.p1, (6, 0))
-        
+
         units = [rifleman1, rifleman2, scout1, scout2]
         unit_health = [unit.get_curr_hp() for unit in units]
         self.assertEquals(unit_health, [10, 10, 10, 10])
@@ -239,16 +239,16 @@ class TestGame(unittest.TestCase):
 
         unit_health = [unit.get_curr_hp() for unit in units]
         self.assertEquals(unit_health, [10, 0, -2, -6])
-        
+
     def test_ragnarok(self):
         ragnarok = Card.get_card('Ragnarok')
         self.p0.hand.append(ragnarok)
         self.p0.gold += ragnarok.cost
-        self.g.play_spell('Ragnarok', 0, 1)        
+        self.g.play_spell('Ragnarok', 0, 1)
         cast_time = ragnarok.cast_time
         fading = ragnarok.cast_args[0]
         for i in range(cast_time - 1):
-            self.g.main_loop_once() 
+            self.g.main_loop_once()
 
         footman0 = self.b.place_unit(self.footman_card, self.p0, (0,0))
         footman1 = self.b.place_unit(self.footman_card, self.p0, (0,1))
@@ -259,7 +259,7 @@ class TestGame(unittest.TestCase):
 
         # kill off footmen on row 2
         self.assertTrue(self.b.get_unit_position(footman0), None)
-        self.assertTrue(self.b.get_unit_position(footman1), None)        
+        self.assertTrue(self.b.get_unit_position(footman1), None)
         self.assertTrue(self.b.get_unit_position(footman2), None)
         self.assertEquals(self.b.get_unit_position(footman3), None)
         self.assertEquals(self.b.get_unit_position(footman4), None)
@@ -268,7 +268,7 @@ class TestGame(unittest.TestCase):
         # and 2 of them are out of will
         for i in range(fading):
             self.g.main_loop_once()
-  
+
         footmen_will = [unit._ammo for unit in self.b.grid.values()]
         footmen_will.sort()
         self.assertEquals(len(footmen_will), fading)
@@ -291,8 +291,8 @@ class TestGame(unittest.TestCase):
         trebuchet_range = self.trebuchet_card.attack_pattern[0][0]
 
         self.g.main_loop_once()
-        self.assertEquals(self.b.grid[5,0]._hp, 
-            self.footman_card.hp - trebuchet_damage) 
+        self.assertEquals(self.b.grid[5,0]._hp,
+            self.footman_card.hp - trebuchet_damage)
 
         self.assertEquals(self.p1._health, self.p1.STARTING_HEALTH)
         self.assertEquals(self.b.buildings[1][0]._hp, 100)

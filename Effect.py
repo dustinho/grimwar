@@ -57,9 +57,9 @@ class Effect:
                 [card for card in player.discard_pile if card.name == \
                 "SPeasant"]
             )
-            player.discard_pile = deque([
+            player.discard_pile = [
                 card for card in player.discard_pile \
-                if not card.name == "SPeasant"])
+                if not card.name == "SPeasant"]
             for x in xrange(workers_to_upgrade):
                 player.discard_pile.append(Card.get_card("UPeasant"))
 
@@ -68,9 +68,9 @@ class Effect:
                 [card for card in player.discard_pile if card.name == \
                 "Peasant"]
             )
-            player.discard_pile = deque([
+            player.discard_pile = [
                 card for card in player.discard_pile \
-                if not card.name == "Peasant"])
+                if not card.name == "Peasant"]
             for x in xrange(workers_to_upgrade):
                 player.discard_pile.append(Card.get_card("SPeasant"))
 
