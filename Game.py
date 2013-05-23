@@ -5,6 +5,7 @@ from Board import *
 from Card import *
 from Unit import *
 from Effect import *
+from Const import *
 
 import math
 import logging
@@ -33,7 +34,7 @@ class Game:
         # Instantiate Players
         self.players[0] = Player(0)
         self.players[1] = Player(1)
-        self.players[1].set_direction(Player.FACING_LEFT)
+        self.players[1].set_direction(Const.FACING_LEFT)
 
         # Initial Decks
         self.players[0].set_deck([
@@ -166,11 +167,11 @@ class Game:
             if isinstance(unit, Worker):
                 sector = self.board.get_sector_for_position(location)
                 # Flip sector for p1
-                if unit.owner.id == 1:
+                if unit.owner_id == 1:
                     sector = len(self.board.SECTOR_COLS) - 1 - sector
                 if sector not in unit.visited_sectors:
                     payout = unit.payout[len(unit.visited_sectors)]
-                    unit.owner.gold += payout
+                    players[unit.owner_id].gold += payout
                     logging.info("{0} gold gained for sector {1}".format(payout, sector))
                     unit.visited_sectors.append(sector)
 
@@ -227,14 +228,6 @@ class Game:
 
     def calculate_advantage(self):
         return self.board.get_next_turn_advantage()
-
-    def damage_player(self, direction, damage):
-        if direction == Player.FACING_RIGHT:
-            self.players[0].take_damage(damage)
-        elif direction == Player.FACING_LEFT:
-            self.players[1].take_damage(damage)
-        else:
-            raise ValueError("Invalid direction")
 
     def play_unit(self, card_name, id, position):
         """plays a card for player id from his hand at position (u,v)"""
@@ -304,7 +297,7 @@ class Game:
     def apply_phase_effects_for_player(self, player_id, opponent_id):
         for object in self.board.get_everything():
             if object and object.upkeep_effect and \
-                    object.owner == self.players[player_id]:
+                    object.owner_id == player_id:
                 Effect.applyEffect(
                     object.upkeep_effect,
                     self.players[player_id],

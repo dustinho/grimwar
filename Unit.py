@@ -1,5 +1,6 @@
 from Card import *
 from Modifier import *
+from Const import *
 import copy
 import logging
 
@@ -32,7 +33,8 @@ class Unit:
         self._attack_type = self.card.attack_type
         self._remaining_moves = self._speed
         self._ready = True
-        self.owner = owner
+        self.owner_id = owner.id
+        self.direction = owner.get_direction()
 
         self.combat_effect = self.card.combat_effect
         self.combat_effect_args = self.card.combat_effect_args
@@ -69,7 +71,7 @@ class Unit:
 
     def get_attack_pattern(self):
         # an array of [x,y] coordinates it can attack if the unit is at [0,0]
-        if self.owner.get_direction() == self.owner.FACING_RIGHT:
+        if self.direction == Const.FACING_RIGHT:
             return [(x[0], x[1]) for x in self._attack_pattern]
         else:
             return [(-x[0], -x[1]) for x in self._attack_pattern]
@@ -125,11 +127,11 @@ class Unit:
     def spend_ammo(self, ammo_spent=1):
         self._ammo = self._ammo - ammo_spent
 
-    def clone(self):
+    def clone(self, owner):
         """
         Returns a clone of self
         """
-        new_unit = Unit.get_unit(self.card, self.owner)
+        new_unit = Unit.get_unit(self.card, owner)
         new_unit.card = self.card
         new_unit._hp = self._hp
         new_unit._max_hp = self._max_hp
@@ -140,7 +142,8 @@ class Unit:
         new_unit._attack_type = self._attack_type
         new_unit._remaining_moves = self._remaining_moves
         new_unit._ready = self._ready
-        new_unit.owner = self.owner
+        new_unit.owner_id = self.owner_id
+        new_unit.direction = self.direction
         new_unit.modifiers = copy.deepcopy(self.modifiers)
 
         return new_unit

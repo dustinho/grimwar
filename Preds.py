@@ -14,7 +14,7 @@ def pred_for_owner(player):
     belongs to player
     """
     def player_pred(position, unit_object):
-        return unit_object.owner == player
+        return unit_object.owner_id == player.id
     return player_pred
 
 

@@ -14,6 +14,7 @@ import pickle
 import sys
 sys.path.append('../')
 from Game import *
+from Const import *
 
 from optparse import OptionParser
 
@@ -61,11 +62,11 @@ class TKTestPlayer:
         for position, unit in board.grid.iteritems():
             direction = ">"
             color = "RED"
-            if unit.owner.direction == unit.owner.FACING_LEFT:
+            if unit.owner.direction == Const.FACING_LEFT:
                 direction = "<"
                 color = "BLUE"
-            tku = TKUnit(unit.card.name, unit.get_damage(), 
-                    unit.get_curr_ammo(), unit.get_curr_hp(), 
+            tku = TKUnit(unit.card.name, unit.get_damage(),
+                    unit.get_curr_ammo(), unit.get_curr_hp(),
                     direction, color)
             self.game_board.paint_unit_on_battlefield(position, tku)
 
@@ -80,7 +81,7 @@ class TKTestPlayer:
                 if building:
                     tkci = TKCardInstance(building.card.name)
                     self.game_board.paint_building_in_base(player_id, slot_num, tkci)
-    
+
     def update_player(self, player, casting_hexes):
         if self.player_screen == None:
             self.player_screen = self.create_player_screen()
@@ -88,14 +89,14 @@ class TKTestPlayer:
             self.player_screen.clear()
 
         self.player_screen.paint(player, casting_hexes)
-        self.player = player  
+        self.player = player
 
     def create_game_board(self, width, height):
         return TKGameBoard(self.canvas, (3, 3), width, height)
 
     def create_player_screen(self):
         return TKPlayerScreen(self.player_actions, self.player_id,
-                self.canvas, self.game_board, 
+                self.canvas, self.game_board,
                 3, 30 + self.game_board.get_pixel_height())
 
 if __name__ == "__main__":
@@ -107,4 +108,4 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     tktp = TKTestPlayer(options.ip, int(options.player_id))
-    
+

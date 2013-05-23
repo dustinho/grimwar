@@ -6,16 +6,16 @@ from Modifier import *
 
 class EffectUtils:
     """
-    EffectUtils are helper functions to ease the creation of 
+    EffectUtils are helper functions to ease the creation of
     complicated Effects.
     """
     @staticmethod
     def destroy_unit(unit, board):
         """
-        Destroys a unit object on board. 
+        Destroys a unit object on board.
         """
         location = board.get_unit_position(unit)
-        unit.owner.unit_died(unit)
+        board.players[unit.owner_id].unit_died(unit)
         del board.grid[location]
 
     @staticmethod

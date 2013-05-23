@@ -164,7 +164,7 @@ class Effect:
             new_position = board.get_hex_to_right(position, player)
             if not board.is_empty_for_units(new_position):
                 continue
-            new_unit = unit.clone()
+            new_unit = unit.clone(player)
             board.grid[new_position] = new_unit
             fading_modifier = FadingModifier(args[0])
             fading_modifier.attach(new_unit)

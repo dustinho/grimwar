@@ -1,14 +1,13 @@
 from Grimoire import Grimoire
 from Card import Card
 from Unit import *
+from Const import *
 import random
 import logging
 
 class Player:
     STARTING_HEALTH = 100
     INVALID_PLAYER = -1
-    FACING_LEFT = 1
-    FACING_RIGHT = 0
     STARTING_GOLD = 20
     MAX_HAND_SIZE = 5
 
@@ -22,7 +21,7 @@ class Player:
         self.hand = []
         self.inplay = []
         self._health = Player.STARTING_HEALTH
-        self.set_direction(Player.FACING_RIGHT)
+        self.set_direction(Const.FACING_RIGHT)
         self.gold = Player.STARTING_GOLD
         self.grimoire = Grimoire(self, 'play')
         self.modifiers = []

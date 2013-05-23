@@ -24,7 +24,7 @@ class Building:
         self.upkeep_effect = card.upkeep_effect
         self.upkeep_effect_args = card.upkeep_effect_args
 
-        self.owner = owner
+        self.owner_id = owner.id
         self.modifiers = []
 
     def __str__(self):
@@ -37,4 +37,4 @@ class Building:
 
     def get_curr_hp(self):
         return self._hp
-    
+

@@ -5,6 +5,7 @@ from Building import *
 from Modifier import *
 from Effect import *
 from CombatEffect import *
+from Const import *
 import logging
 
 class Board:
@@ -55,16 +56,16 @@ class Board:
     SECTOR_COLS = [0, 6, 14, 23, 31]
 
     def __init__(self, game, field_length=17, field_width=5):
-        self.game = game
+        self.players = game.players
         self.field_length = field_length
         self.field_width = field_width
         self.grid = {}
         self.spells = {0: [None] * 5, 1: [None] * 5}
         self.buildings = {0: [None] * 5, 1: [None] * 5}
         self.left_facing_casting_zones = self._get_default_casting_zones_for_direction(
-                Player.FACING_LEFT)
+                Const.FACING_LEFT)
         self.right_facing_casting_zones = self._get_default_casting_zones_for_direction(
-                Player.FACING_RIGHT)
+                Const.FACING_RIGHT)
         self.next_turn_advantage = 0
 
     def clear(self):
@@ -77,6 +78,9 @@ class Board:
         return "<Board object containing ({0})>".format(
             ", ".join(["{0} at ({1},{2})".format(instance, position[0], position[1]) for (position, instance) in self.grid.iteritems()])
                 )
+
+    def niceFormatGrid(self):
+        return {str(key): value for key, value in self.grid.iteritems()}
 
     def refresh_units(self):
         for unit in self.grid.itervalues():
@@ -134,9 +138,9 @@ class Board:
         """
 
         direction = player.get_direction()
-        items.sort(key=lambda x: x[0][0], reverse=(direction == Player.FACING_RIGHT))
+        items.sort(key=lambda x: x[0][0], reverse=(direction == Const.FACING_RIGHT))
 
-        direction_multiplier = (1 if direction == Player.FACING_RIGHT else -1)
+        direction_multiplier = (1 if direction == Const.FACING_RIGHT else -1)
         moved = False
 
         old_attackers_dict = self.get_attackers_dict()
@@ -211,7 +215,7 @@ class Board:
         instance.use_move()
 
         if destination == self.get_center_position():
-            self.next_turn_advantage = instance.owner.id
+            self.next_turn_advantage = instance.owner_id
 
         return True
 
@@ -260,11 +264,11 @@ class Board:
                     # Damage player directly
                     else:
                         if target_player != Player.INVALID_PLAYER:
-                            enemy = self.game.players[target_player]
+                            enemy = self.players[target_player]
                             logging.info("{0} at {1} deals {2} damage to player {3}". \
                                     format(instance, position, \
                                     instance.get_damage(), target_player))
-                            self.game.damage_player(target_player, instance.get_damage())
+                            self.damage_player(target_player, instance.get_damage())
                 else:
                     # Damage enemy unit on that hex
                     enemy = self.grid[target]
@@ -309,11 +313,12 @@ class Board:
                 # You can't hit something off-board.
                 break
             target_hex_owner = self._which_player_owns_hex(target_hex)
-            if target_hex_owner != unit.owner.get_direction() and target_hex_owner != Player.INVALID_PLAYER:
+            if target_hex_owner != unit.direction and target_hex_owner != Player.INVALID_PLAYER:
                 # Casting squares are valid targets and deal damage to the owning player.
                 reachable_targets.append(target_hex)
                 continue
-            if target_hex in self.grid and self.grid[target_hex].owner != unit.owner:
+            if target_hex in self.grid and \
+                    self.grid[target_hex].owner_id != unit.owner_id:
                 # Enemy units are valid targets too.
                 reachable_targets.append(target_hex)
                 continue
@@ -323,7 +328,7 @@ class Board:
         assert isinstance(player, Player), "player {0} is not a Player".format(player)
         player_items = []
         for position, instance in self.grid.iteritems():
-            if instance.owner == player:
+            if instance.owner_id == player.id:
                 player_items.append((position, instance))
         return player_items
 
@@ -335,10 +340,10 @@ class Board:
     def _which_player_owns_hex(self, position):
         dist_from_left = self._column_distance_from_left(position)
         if dist_from_left == 0 or dist_from_left == 1:
-            return Player.FACING_RIGHT
+            return Const.FACING_RIGHT
         if dist_from_left == 2 * (self.field_length - 1) or \
             dist_from_left == 2 * (self.field_length - 1) - 1:
-            return Player.FACING_LEFT
+            return Const.FACING_LEFT
         return Player.INVALID_PLAYER
 
     def _is_hex_on_board(self, position):
@@ -371,9 +376,9 @@ class Board:
     def is_playable(self, owner, position):
         """returns True if position (u,v) is playable by owner"""
         casting_zones = []
-        if owner.direction == Player.FACING_LEFT:
+        if owner.direction == Const.FACING_LEFT:
             casting_zones = self.left_facing_casting_zones
-        elif owner.direction == Player.FACING_RIGHT:
+        elif owner.direction == Const.FACING_RIGHT:
             casting_zones = self.right_facing_casting_zones
 
         if position not in casting_zones:
@@ -428,15 +433,15 @@ class Board:
 
     def get_valid_casting_hexes(self, owner):
         """returns a list of tuples describing valid plays areas for owner"""
-        assert owner.direction == Player.FACING_RIGHT or \
-                owner.direction == Player.FACING_LEFT, \
+        assert owner.direction == Const.FACING_RIGHT or \
+                owner.direction == Const.FACING_LEFT, \
                 "{0} is not a valid player".format(owner)
         return self.get_casting_hexes_for_direction(owner.direction)
 
     def get_casting_hexes_for_direction(self, direction):
-        if direction == Player.FACING_LEFT:
+        if direction == Const.FACING_LEFT:
             return self.left_facing_casting_zones
-        elif direction == Player.FACING_RIGHT:
+        elif direction == Const.FACING_RIGHT:
             return self.right_facing_casting_zones
         else:
             logging.debug("Tried to get casting hexes of an invalid direction")
@@ -445,12 +450,12 @@ class Board:
     def _get_default_casting_zones_for_direction(self, direction):
         hexes = []
         for i in xrange(self.field_width):
-            if direction == Player.FACING_RIGHT:
+            if direction == Const.FACING_RIGHT:
                 if i%2 == 0:
                     hexes.append((-i/2,i))
                 else:
                     hexes.append((-i/2+1,i))
-            elif direction == Player.FACING_LEFT:
+            elif direction == Const.FACING_LEFT:
                 if i%2 == 0:
                     hexes.append((self.field_length -i/2-1,i))
                 else:
@@ -464,14 +469,14 @@ class Board:
         locations_to_delete = []
         for location, unit in self.grid.iteritems():
             if unit.get_curr_hp() <= 0:
-                unit.owner.unit_died(unit)
+                self.players[unit.owner_id].unit_died(unit)
                 locations_to_delete.append(location)
 
         buildings_to_delete = []
         for player_id,rows in self.buildings.iteritems():
             for row, building in enumerate(rows):
                 if building and building.get_curr_hp() <= 0:
-                    building.owner.unit_died(building)
+                    self.players[building.owner_id].unit_died(building)
                     buildings_to_delete.append((player_id,row))
 
         things_deleted = 0
@@ -534,7 +539,7 @@ class Board:
         of position for owner
         """
         direction = owner.get_direction()
-        if direction == Player.FACING_RIGHT:
+        if direction == Const.FACING_RIGHT:
             if forward:
                 right_position = (position[0], position[1] + 1)
             else:
@@ -552,7 +557,7 @@ class Board:
         of owner
         """
         direction = owner.get_direction()
-        if direction == Player.FACING_RIGHT:
+        if direction == Const.FACING_RIGHT:
             right_row = row + 1
         else:
             right_row = row - 1
@@ -570,3 +575,12 @@ class Board:
         if position in self.grid.keys():
             return False
         return True
+
+    def damage_player(self, direction, damage):
+        if direction == Const.FACING_RIGHT:
+            self.players[0].take_damage(damage)
+        elif direction == Const.FACING_LEFT:
+            self.players[1].take_damage(damage)
+        else:
+            raise ValueError("Invalid direction")
+

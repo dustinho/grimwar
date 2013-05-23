@@ -1,6 +1,5 @@
 from Tkinter import *
 
-
 from TKSimulatorScreen import *
 from SimulatorActions import *
 from twisted.internet import reactor, tksupport, protocol
@@ -18,6 +17,7 @@ from TKUnit import *
 from TKSpell import *
 from TKCardInstance import *
 
+from Const import *
 
 class TKSimulator:
     def __init__(self):
@@ -34,7 +34,7 @@ class TKSimulator:
 
         tksupport.install(self.window)
         reactor.run()
-        
+
     def got_protocol(self, p):
         self.actions = SimulatorActions(p)
 
@@ -49,7 +49,7 @@ class TKSimulator:
         casting_hexes_dict = {}
         for p_id in game.players.iterkeys():
             casting_hexes_dict[p_id] = game.board.get_valid_casting_hexes(game.players[p_id])
-        
+
         self.update_board(game.board)
         self.update_simulator(Card.get_all_cards_list(), casting_hexes_dict)
 
@@ -64,8 +64,8 @@ class TKSimulator:
         for position, unit in board.grid.iteritems():
             direction = ">"
             color = "RED"
-            if unit.owner.direction == unit.owner.FACING_LEFT:
-                direction = "<" 
+            if unit.direction == Const.FACING_LEFT:
+                direction = "<"
                 color = "BLUE"
             tku = TKUnit(unit.card.name, unit.get_damage(),
                     unit.get_curr_ammo(), unit.get_curr_hp(),
@@ -98,6 +98,6 @@ class TKSimulator:
     def create_simulator_screen(self):
         return TKSimulatorScreen(self.actions, self.canvas, self.game_board,
                 3, 30 + self.game_board.get_pixel_height())
-        
+
 if __name__ == "__main__":
     TKSimulator()

@@ -27,7 +27,7 @@ class Spell:
             self.channeling_time_remaining = self.channeling_time
         self.cast_time_remaining = self.cast_time
 
-        self.owner = owner
+        self.owner_id = owner.id
         self.modifiers = []
 
         self.upkeep_effect = self.card.upkeep_effect

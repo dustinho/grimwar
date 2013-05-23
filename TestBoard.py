@@ -3,6 +3,8 @@ from Board import Board
 from Card import *
 from Player import *
 from Unit import Unit
+from Const import *
+from Game import *
 import logging
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -11,10 +13,11 @@ TEST_FIELD_WIDTH = 3
 
 class TestBoard(unittest.TestCase):
     def setUp(self):
-        self.b = Board(None, field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
-        self.p1 = Player(0)
-        self.p2 = Player(1)
-        self.p2.set_direction(Player.FACING_LEFT)
+        self.game = Game()
+        self.b = Board(self.game, field_length=TEST_FIELD_LENGTH, field_width=TEST_FIELD_WIDTH)
+        self.p1 = self.game.players[0]
+        self.p2 = self.game.players[1]
+        self.p2.set_direction(Const.FACING_LEFT)
         self.footman_card = Card.get_card("Footman")
         self.scout_card = Card.get_card("Scout")
         self.hero_card = HeroCard.get_card("Arius")

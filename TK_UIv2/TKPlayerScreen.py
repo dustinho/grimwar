@@ -26,7 +26,7 @@ class TKPlayerScreen:
     def paint(self, player, casting_hexes):
         self.casting_hexes = casting_hexes
         self.paint_hand(player.hand)
-        self.paint_grimoire(player.grimoire)
+        self.paint_grimoire(player, player.grimoire)
         self.paint_status(player)
 
     def clear(self):
@@ -117,7 +117,7 @@ class TKPlayerScreen:
         for casting_button in self.casting_buttons:
             self.canvas.delete(casting_button)
 
-    def paint_grimoire(self, grimoire):
+    def paint_grimoire(self, player, grimoire):
         print "Painting Grimoire"
         def buy_card_command(card_name):
             return lambda: self.buy_card(card_name)
@@ -127,7 +127,7 @@ class TKPlayerScreen:
 
         y_change = 25
 
-        for name in grimoire.get_buyable_card_names():
+        for name in grimoire.get_buyable_card_names(player):
             amount = grimoire.library[name]
             #FIXME: Shouldn't need the dependency on card
             card = Card.get_card(name)

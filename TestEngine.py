@@ -4,6 +4,7 @@ from Board import *
 from Unit import *
 from Card import *
 from Game import *
+from Const import *
 
 class TestEngine(unittest.TestCase):
     def setUp(self):
@@ -11,7 +12,7 @@ class TestEngine(unittest.TestCase):
         self.game.players = {}
         self.game.players[0] = Player(0)
         self.game.players[1] = Player(1)
-        self.game.players[1].set_direction(Player.FACING_LEFT)
+        self.game.players[1].set_direction(Const.FACING_LEFT)
         self.game.board = Board(self.game, 3,7)
 
     def test_cleanup_death(self):

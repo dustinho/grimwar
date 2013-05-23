@@ -38,14 +38,18 @@ class GameResource(resource.Resource):
 
 class CheckHandler(GameResource):
     def render_GET(self, request):
-        id = request.args['id'][0]
-        if id != '1' and id != '2':
-            return "Bad ID"
+        # Alright this can be a bitch, because all keys need to be strings for
+        # this json encoder to play nicely.
+        dump_data = {
+            'players': self.game.players,
+            'spells': self.game.board.spells,
+            'buildings': self.game.board.buildings,
+            'grid': self.game.board.niceFormatGrid(),
+            'turn': self.game.turn,
+            'turn_advantage': self.game.turn_advantage
+        }
+        return json.dumps(dump_data, cls=GameEncoder)
 
-        return json.dumps(self.game, cls=GameEncoder)
-"""
-TODO - get rid of deque, get rid of player references in the unit.
-"""
 class GameEncoder(json.JSONEncoder):
     def default(self, o):
         if not isinstance(o, object):
