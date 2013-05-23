@@ -33,10 +33,6 @@ class Player:
         lines.append("Health: {0}".format(self.get_curr_health()))
         lines.append("Gold: {0}".format(self.gold))
         lines.append("Hand: {0}".format(", ".join([str(x) for x in self.hand])))
-        lines.append("Deck: {0}".format(", ".join([str(x) for x in self.deck])))
-        lines.append("Discard Pile: {0}".format(", ".join(
-            [str(x) for x in self.discard_pile]
-        )))
         return "\n".join(lines)
 
     def buy(self, card_name):

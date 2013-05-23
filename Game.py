@@ -5,9 +5,7 @@ from Board import *
 from Card import *
 from Unit import *
 from Effect import *
-from CLIClient import *
 
-import json
 import math
 import logging
 
@@ -17,14 +15,11 @@ DRAW_FREQUENCY = 2
 UPKEEP_GOLD = 2
 MAX_HAND_SIZE = 5
 
-
 class Game:
-    def __init__(self, input_type=''):
+    def __init__(self):
         self.players = {}
         self.board = None
-        print_startinfo()
         self.setup_phase()
-        self.input_type = input_type
         self.turn = 0
         self.turn_advantage = 0
 
@@ -84,8 +79,6 @@ class Game:
 
     def main_loop_once(self):
         self.pre_main_phases()
-        self.main_phase(0)
-        self.main_phase(1)
         gameover = self.post_main_phases()
         if gameover is not None:
             return gameover
@@ -146,13 +139,6 @@ class Game:
         if self.turn % DRAW_FREQUENCY == 0:
             for id, player in self.players.iteritems():
                 self.players[id].draw()
-
-    def main_phase(self, id):
-        if self.input_type != 'Console':
-            return
-
-        CLIClient.main_phase(id, self)
-        return
 
     def damage_phase(self):
         first = self.get_turn_advantage()
@@ -329,11 +315,4 @@ class Game:
                 )
 
 
-## Print out information needed to instantiate game
-def print_startinfo():
-    startinfo = {
-        "board_length": BOARD_LENGTH,
-        "board_width": BOARD_WIDTH,
-    }
-    print json.dumps(startinfo)
-    return
+
