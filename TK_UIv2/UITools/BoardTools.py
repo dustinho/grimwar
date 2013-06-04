@@ -1,7 +1,7 @@
 import math
 
 def get_hex_vertex_offsets(radius):
-    xoffset = radius * math.sqrt(3) / 2.0
+    xoffset = radius * math.sqrt(2) / 2.0
     yoffset = radius / 2.0
     return (xoffset, yoffset)
 
